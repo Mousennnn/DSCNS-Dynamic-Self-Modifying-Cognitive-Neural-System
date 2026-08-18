@@ -131,6 +131,48 @@ split (round 9, →5), split (round 11, →6), merge + dynamic connections
 perturbation (the design report's Risk-2), and the dynamic system did not
 outperform the fixed topology in this experiment.
 
+### Phase 4 — learned structural self-adaptation (fixed vs rule vs learned)
+
+Following the design-report modification proposal *"DSCNS 自主神经结构自修改
+机制"*, the structural-modification *decision* is moved from the rule engine
+to a small trainable policy (see `docs/PHASE4.md`). Final comparison on a
+shifted stream (16 rounds: general(4) → code(4) → mixed_code(4) →
+science(4), 32 experiences/round, eval 48/domain):
+
+| Metric | fixed | rule | learned |
+|---|---|---|---|
+| Final mean performance (5 domains) | 0.0554 | 0.0570 | **0.0585** |
+| Average Forgetting (AF) ↓ | **0.0000** | 0.0099 | 0.0029 |
+| Forward Transfer (FWT) ↑ | 0.0005 | **0.0009** | 0.0007 |
+| Continual Learning Score (CLS) ↑ | 0.0553 | 0.0471 | **0.0556** |
+| Code adaptation (round 4→8 Δ) | +0.0224 | +0.0326 | **+0.0336** |
+| Final network count | 5 | 2 | 2 |
+| Modification success rate | — | 1.00 | 1.00 |
+| Mean modification reward | — | — | −0.0031 |
+
+Controller activity:
+
+- **rule**: 4 structural actions (merge r3 N1+N2, merge r6 N4+N5, merge r9
+  N1+N4, split r12 N3), all accepted; aggressive merging hurt math retention
+  (math final 0.0361) and raised AF to 0.0099.
+- **learned**: warm-up (Stage A, r0–7) = rule decisions (merge r3, merge r6)
+  with imitation loss 1.99 → 1.55; Stage B (r8–15) = policy decisions:
+  merge N1+N3 at r11 (accepted, reward −0.009), 4 no-ops, plus invalid
+  disconnect/low-diversity attempts blocked by the safety layer. Policy
+  action entropy decreased 1.94 → 1.77 (behavior change over learning);
+  mean reward −0.0031 (structural merges yielded small negative marginal
+  reward vs the no-modification learning baseline).
+
+**Interpretation (single seed, prototype scale):** on this run the learned
+controller achieved the highest final mean, CLS and code adaptation, and
+lower forgetting than the rule controller. Its behavior — fewer, more
+conservative modifications informed by slightly negative rewards — is a
+plausible learned response, but the differences (≈0.003) are **not
+statistically established**. The experiment demonstrates the learned
+decision loop (state → policy → action → candidate → evaluate → reward →
+policy update) and that the policy can produce structural actions with the
+rule engine's decision logic switched off.
+
 ## 7. Known deviations from the design report
 
 1. **MATH dataset:** `hendrycks/competition_math` is gated; the loader falls
@@ -151,6 +193,14 @@ outperform the fixed topology in this experiment.
 6. **Evolution cadence:** a 6-round stabilization period, at most one
    split/merge per round, and conservative thresholds were added (explicit
    implementation of the report's Risk-2 mitigation).
+7. **Phase 4 protocol changes:** the Phase 4 rule arm uses a *single
+   ArchitectureAction per round* (priority split > merge > connect) so it is
+   directly comparable to the learned controller, and both dynamic arms go
+   through the same candidate → evaluate → accept/rollback machinery
+   (Phase 3 published numbers used direct execution and are unchanged).
+8. **Phase 4 reward uses probe sets; state features use eval sets** — the
+   same convention as the Phase 3 rule triggers (decisions are not made on
+   the final reported metrics alone).
 
 ## 8. Reproducibility
 

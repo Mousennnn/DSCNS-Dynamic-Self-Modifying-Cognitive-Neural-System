@@ -139,6 +139,60 @@ def phase3_section(out: list):
         out.append("")
 
 
+def phase4_section(out: list):
+    out.append("## Phase 4: 学习式结构自修改实验（fixed vs rule vs learned）\n")
+    out.append("| 指标 | fixed | rule | learned |")
+    out.append("|---|---|---|---|")
+    rows = {}
+    for tag in ["fixed", "rule", "learned"]:
+        r = load("phase4", tag)
+        if r is None:
+            continue
+        m = r.get("modification", {})
+        rows[tag] = {
+            "final_mean": float(np.mean(list(r["final_performance"].values()))),
+            "AF": r.get("AF"), "FWT": r.get("FWT"), "CLS": r.get("CLS"),
+            "code_delta": r.get("code_adapt_speed", {}).get("delta"),
+            "spec": r.get("structure", {}).get("mean_specialization"),
+            "n_nets": r.get("structure", {}).get("n_networks"),
+            "success": m.get("success_rate"),
+            "mean_reward": m.get("mean_reward"),
+        }
+    def get(tag, key, nd=4, default="-"):
+        rr = rows.get(tag)
+        if rr is None:
+            return default
+        v = rr[key]
+        return default if v is None else fmt(v, nd)
+    out.append(f"| 最终性能 (5域均值) | {get('fixed','final_mean')} | "
+               f"{get('rule','final_mean')} | {get('learned','final_mean')} |")
+    out.append(f"| 平均遗忘 AF ↓ | {get('fixed','AF')} | {get('rule','AF')} | "
+               f"{get('learned','AF')} |")
+    out.append(f"| 前向迁移 FWT ↑ | {get('fixed','FWT')} | {get('rule','FWT')} | "
+               f"{get('learned','FWT')} |")
+    out.append(f"| 综合持续学习分 CLS ↑ | {get('fixed','CLS')} | "
+               f"{get('rule','CLS')} | {get('learned','CLS')} |")
+    out.append(f"| 代码域适应 (round4→8 Δ) | {get('fixed','code_delta')} | "
+               f"{get('rule','code_delta')} | {get('learned','code_delta')} |")
+    out.append(f"| 最终网络数 | {get('fixed','n_nets',0)} | "
+               f"{get('rule','n_nets',0)} | {get('learned','n_nets',0)} |")
+    out.append(f"| 结构修改成功率 | - | {get('rule','success',2)} | "
+               f"{get('learned','success',2)} |")
+    out.append(f"| 结构修改平均奖励 | - | {get('rule','mean_reward')} | "
+               f"{get('learned','mean_reward')} |")
+    out.append("")
+    lr = rows.get("learned", {})
+    if lr and "success" in lr:
+        learned = load("phase4", "learned")
+        if learned and learned.get("modification"):
+            m = learned["modification"]
+            out.append("学习式控制器 (learned) 修改记录统计:\n")
+            out.append(f"- 动作分布 (rule 阶段): `{m.get('action_counts_rule')}`")
+            out.append(f"- 动作分布 (policy 阶段): `{m.get('action_counts_policy')}`")
+            out.append(f"- 修改奖励序列: `{[round(float(x),4) for x in m.get('rewards',[])]}`")
+            out.append("")
+
+
 def main():
     out = ["# DSCNS 复现实验结果汇总\n",
            "> 基础模型: GPT-2 (124M) 本地冻结底座 + 每网络 LoRA(r=16) 适配器 | "
@@ -146,6 +200,7 @@ def main():
     phase1_section(out)
     phase2_section(out)
     phase3_section(out)
+    phase4_section(out)
 
     text = "\n".join(out)
     with open("experiments/comparison.md", "w", encoding="utf-8") as f:

@@ -1,6 +1,6 @@
 # DSCNS — Dynamic Self-Modifying Cognitive Network System（動的自己修正認知ネットワークシステム）
 
-> **ステータス：初期研究プロトタイプ（v0.1.0）**
+> **ステータス：初期研究プロトタイプ（v0.2.0）**
 
 DSCNS は、**継続学習**・**候補知識の検証**・**選択的内化**・**記憶**・
 **メタ認知**・**構造進化**を探求する実験的研究プロトタイプです。
@@ -214,6 +214,7 @@ w_i = trust_i × R_i，        C_final = Σ w_i·C_i / Σ w_i
 | Phase 1 | 前方転移（Exp2） | 検証した方式で唯一の正値（+0.0013） |
 | Phase 2 | 情報利得サンプリング | 検証した戦略中最良（0.0591 vs ランダム 0.0572） |
 | Phase 3 | 動的トポロジ（分割/統合/接続） | 機構は動作；現状は固定トポロジに劣る |
+| Phase 4 | 学習型構造自己修正 | ポリシーが自己状態から構造決定を学習（下記参照） |
 
 ### Phase 1 — 継続学習（Control / Exp1 / Exp2）
 
@@ -255,6 +256,39 @@ Exp2 = 5 ネットワーク＋ネットワーク間検証。*
 
 ![Phase 3 コード曲線](experiments/phase3_code_curve.png)
 
+### Phase 4 — 学習型構造自己修正（rule vs learned vs fixed）
+
+分布シフト流（general(4)→code(4)→mixed_code(4)→science(4)、16 ラウンド）で
+3 つの制御方式を比較。`rule` と `learned` は同じ「候補→評価→受理/ロールバック」
+機構を使い、唯一の違いは構造アクションを**誰が決定するか**（人手ルール vs
+学習済みポリシー）。
+
+| 指標 | fixed | rule | learned |
+|---|---|---|---|
+| 最終平均性能（5 ドメイン） | 0.0554 | 0.0570 | **0.0585** |
+| 平均忘却 AF ↓ | **0.0000** | 0.0099 | 0.0029 |
+| 前方転移 FWT ↑ | 0.0005 | **0.0009** | 0.0007 |
+| 継続学習スコア CLS ↑ | 0.0553 | 0.0471 | **0.0556** |
+| コードドメイン適応（r4→8 Δ） | +0.0224 | +0.0326 | **+0.0336** |
+| 最終ネットワーク数 | 5 | 2 | 2 |
+| 修正成功率 | — | 1.00 | 1.00 |
+| 修正平均報酬 | — | — | −0.0031 |
+
+この単一シードの実行では、learned 制御方式が最高の最終平均性能・最高 CLS・
+最良のコードドメイン適応を示し、rule 制御方式より忘却が小さくなりました。
+learned ポリシーは Stage B で構造修正を**自律的に提案**し（r11 で統合）、
+アクション・エントロピーが学習とともに低下しました（挙動の変化）。
+**注意：** 単一シード・プロトタイプ規模であり、差（≈0.003）は統計的に
+確立されていません。報酬信号は僅かに負で、ポリシーは生のルールエンジンより
+保守的になりました。
+
+設計と議論の詳細は [docs/PHASE4.md](docs/PHASE4.md)。
+
+![Phase 4 比較](experiments/phase4/phase4_comparison.png)
+![Phase 4 アクション分布](experiments/phase4/phase4_actions.png)
+![Phase 4 報酬](experiments/phase4/phase4_reward.png)
+![Phase 4 学習曲線](experiments/phase4/phase4_learning.png)
+
 ## 現在の知見
 
 以下の知見は**暫定的**であり、本プロトタイプとその実験設定に限定されます。
@@ -270,6 +304,10 @@ Exp2 = 5 ネットワーク＋ネットワーク間検証。*
 4. **知見 4** — 動的トポロジ進化は現状、固定トポロジを上回るには*不十分*で、
    より良い構造可塑性制御が必要（分割/統合中の短期的性能擾乱を観測——
    設計レポートのリスク分析と整合）。
+5. **知見 5（Phase 4）** — ルール模倣＋REINFORCE で訓練した小さなポリシーが、
+   ルールエンジンなしでシステム自身の状態から構造修正決定を*生成できる*こと
+   を示した。ルールや固定トポロジを*上回るか*は、このプロトタイプ規模では
+   未確立（[docs/PHASE4.md](docs/PHASE4.md) と `experiments/phase4` 参照）。
 
 ## 再現
 
@@ -295,7 +333,10 @@ python scripts/run_phase2.py --out experiments/phase2
 # 5) Phase 3 — 構造進化
 python scripts/run_phase3.py --out experiments/phase3
 
-# 6) 結果を experiments/comparison.md と図に集約
+# 6) Phase 4 — 学習型構造自己修正（rule vs learned vs fixed）
+python scripts/run_phase4.py --out experiments/phase4
+
+# 7) 結果を experiments/comparison.md と図に集約
 python scripts/make_report.py
 ```
 
@@ -308,10 +349,10 @@ python scripts/make_report.py
 
 ```
 dscns/
-├── dscns/                  # 中核実装（15 モジュール）
+├── dscns/                  # 中核実装（17 モジュール、Phase 4 含む）
 ├── scripts/                # ダウンロード / 実験 / レポートスクリプト
 ├── config/phase1.yaml      # 実験設定
-├── docs/                   # 設計・実験・限界・ライセンス
+├── docs/                   # 設計・実験・限界・ライセンス・PHASE4
 ├── experiments/            # 公式結果（JSON + 図）— Git に保持
 ├── REPORT_zh.md            # 中国語再現レポート
 ├── requirements.txt
@@ -326,6 +367,10 @@ dscns/
 
 - 実装は DSCNS 設計レポート v1.0 に従います（英語の設計要約は
   `docs/DESIGN.md`）。
+- Phase 4 は設計レポート修正案《DSCNS 自主神経構造自修正メカニズム》に従い
+  （`docs/PHASE4.md`）、構造修正の*決定*をポリシー
+  （`SelfModificationPolicy`、模倣＋REINFORCE）が学習し、
+  `StructureEvolver` は実行とハード安全制約を担います。
 - マルチネットワーク＝共有凍結ベース＋ネットワーク別 LoRA アダプタ。
   パラメータ空間 Θ_i は独立、記憶は共有。
 - 知識項目ごとの状態レベルと内化度 I_ij ∈ [0,1] を記録し追跡可能にします。
@@ -336,7 +381,8 @@ dscns/
 
 - モデル規模が小さい（124M ベース）うえ、データ予算も限定的。
 - マルチネットワーク実験は厳格な計算予算の対等性に拘束。
-- 構造進化の機構は意図的にシンプル。
+- 構造進化の機構は意図的にシンプル。Phase 4 の学習型制御は小さなポリシーと
+  極小の RL 予算（概念実証であり、スケーラブルなアーキテクチャ探索ではない）。
 - 大規模ベンチマーク未実施；他モデル・他領域への一般化の証拠はまだない。
 - DSCNS が成熟した継続学習手法（EWC、経験リプレイ等）を一般に上回るという
   証拠はまだない。
@@ -346,9 +392,11 @@ dscns/
 
 - より長い学習期間と大きな予算で仮説 H1/H2 を再検証。
 - 手調整ではなく学習される関連性・信頼重み関数。
+- Phase 4：より大きな RL 予算、より長い適応ウィンドウ、レイヤー単位
+  （アダプタ集団単位に留まらない）の学習型自己修正。
 - より良い構造可塑性制御（適応的進化閾値、進化後の安定化スケジュール）。
 - より大規模なベンチマーク（EWC / リプレイ / PEFT ベースライン）。
-- マルチモーダル・オープン環境への拡張（設計レポート Phase 4–6）。
+- マルチモーダル・オープン環境への拡張（設計レポート Phase 5–6）。
 
 ## 引用
 
@@ -360,7 +408,7 @@ dscns/
   author = {Mousennnn},
   year   = {2026},
   month  = {aug},
-  note   = {Version v0.1.0, early research prototype},
+  note   = {Version v0.2.0, early research prototype},
   howpublished = {GitHub repository},
   url    = {https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System}
 }
@@ -376,7 +424,7 @@ dscns/
 **帰属要件：** ドキュメントを再利用・改変する際は、以下をクレジットして
 ください：
 
-> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.1.0)、
+> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.2.0)、
 > Mousennnn 著、CC BY 4.0 ライセンス。
 > https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System
 

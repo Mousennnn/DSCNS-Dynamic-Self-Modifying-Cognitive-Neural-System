@@ -60,6 +60,23 @@ class DSCNSConfig:
     merge_co_activation_threshold: int = 8
     merge_similarity_threshold: float = 0.9
 
+    # ---- learned structural self-adaptation (Phase 4) ----
+    # controller: "rule" (Phase 3 flow) | "single_rule" | "learned" | "none"
+    evolution_controller: str = "rule"
+    learned_warmup_rounds: int = 8       # Stage A: rule-driven imitation
+    policy_lr: float = 3e-4
+    policy_hidden: int = 64
+    policy_temperature: float = 0.8
+    policy_epsilon: float = 0.15         # Stage B exploration rate
+    modification_budget_max: int = 8     # hard cap on network count
+    adaptation_window: int = 3           # rounds over which a change is judged
+    modification_tolerance: float = 0.02 # probe drop allowed before rollback
+    reward_lambda_forgetting: float = 0.5
+    reward_lambda_params: float = 0.3
+    reward_lambda_compute: float = 0.1
+    reward_lambda_instability: float = 0.3
+    total_rounds: int = 16               # expected stream length (state feature)
+
     # ---- experiment ----
     num_networks: int = 5
     seed: int = 42

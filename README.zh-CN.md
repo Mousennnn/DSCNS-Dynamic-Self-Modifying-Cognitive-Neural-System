@@ -1,6 +1,6 @@
 # DSCNS — 动态自修改认知网络系统（Dynamic Self-Modifying Cognitive Network System）
 
-> **状态：早期研究原型（v0.1.0）**
+> **状态：早期研究原型（v0.2.0）**
 
 DSCNS 是一个实验性研究原型，探索用于**持续学习**、**候选知识验证**、
 **选择性内化**、**记忆**、**元认知**与**结构演化**的动态模块化神经架构。
@@ -202,6 +202,7 @@ w_i = trust_i × R_i，        C_final = Σ w_i·C_i / Σ w_i
 | Phase 1 | 前向迁移（Exp2） | 三个模式中唯一为正（+0.0013） |
 | Phase 2 | 信息增益采样 | 所测策略中最佳（0.0591 vs 随机 0.0572） |
 | Phase 3 | 动态拓扑（分裂/合并/连接） | 机制可运行；当前低于固定拓扑 |
+| Phase 4 | 学习式结构自修改 | 策略从自状态学习结构决策（见下文） |
 
 ### Phase 1 — 持续学习（Control / Exp1 / Exp2）
 
@@ -242,6 +243,36 @@ w_i = trust_i × R_i，        C_final = Σ w_i·C_i / Σ w_i
 
 ![Phase 3 代码域曲线](experiments/phase3_code_curve.png)
 
+### Phase 4 — 学习式结构自修改（rule vs learned vs fixed）
+
+在分布漂移流（general(4)→code(4)→mixed_code(4)→science(4)，16 轮）上对比
+三种控制器。`rule` 与 `learned` 使用相同的"候选→评估→接受/回滚"机制，
+唯一区别是**由谁决策**结构动作（人工规则 vs 训练得到的策略）。
+
+| 指标 | fixed | rule | learned |
+|---|---|---|---|
+| 最终平均性能（5 域） | 0.0554 | 0.0570 | **0.0585** |
+| 平均遗忘 AF ↓ | **0.0000** | 0.0099 | 0.0029 |
+| 前向迁移 FWT ↑ | 0.0005 | **0.0009** | 0.0007 |
+| 综合持续学习分 CLS ↑ | 0.0553 | 0.0471 | **0.0556** |
+| 代码域适应（r4→8 Δ） | +0.0224 | +0.0326 | **+0.0336** |
+| 最终网络数 | 5 | 2 | 2 |
+| 修改成功率 | — | 1.00 | 1.00 |
+| 修改平均奖励 | — | — | −0.0031 |
+
+本单种子运行中，learned 控制器取得最高最终平均性能、最高 CLS 与最佳代码域
+适应，遗忘低于 rule 控制器；learned 策略在 Stage B 自主提出结构修改
+（r11 合并），动作熵随学习下降（行为变化）。**注意：** 单种子、原型尺度，
+差异（≈0.003）不构成统计显著结论；奖励信号轻微为负，策略比原始规则引擎
+更保守。
+
+设计与完整讨论见 [docs/PHASE4.md](docs/PHASE4.md)。
+
+![Phase 4 对比](experiments/phase4/phase4_comparison.png)
+![Phase 4 动作分布](experiments/phase4/phase4_actions.png)
+![Phase 4 奖励](experiments/phase4/phase4_reward.png)
+![Phase 4 学习曲线](experiments/phase4/phase4_learning.png)
+
 ## 当前发现
 
 以下发现是**初步的**，仅限于本原型及其实验设置，不应被解读为关于持续学习或
@@ -253,6 +284,10 @@ w_i = trust_i × R_i，        C_final = Σ w_i·C_i / Σ w_i
 3. **发现 3** — 基于信息增益的经验选择在测试设置下*优于随机选择*。
 4. **发现 4** — 动态拓扑演化目前*不足以超越固定拓扑*，需要更好的结构可塑性
    控制（观测到分裂/合并期间的短期性能扰动，与设计报告风险分析一致）。
+5. **发现 5（Phase 4）** — 由规则模仿 + REINFORCE 训练的小型策略*可以*仅依据
+   系统自身状态产生结构修改决策（无需规则引擎）；是否*优于*规则或固定拓扑，
+   在本原型尺度上尚未确立（见 [docs/PHASE4.md](docs/PHASE4.md) 与
+   `experiments/phase4`）。
 
 ## 复现
 
@@ -278,7 +313,10 @@ python scripts/run_phase2.py --out experiments/phase2
 # 5) Phase 3 — 结构演化
 python scripts/run_phase3.py --out experiments/phase3
 
-# 6) 汇总结果到 experiments/comparison.md + 图
+# 6) Phase 4 — 学习式结构自修改（rule vs learned vs fixed）
+python scripts/run_phase4.py --out experiments/phase4
+
+# 7) 汇总结果到 experiments/comparison.md + 图
 python scripts/make_report.py
 ```
 
@@ -290,10 +328,10 @@ python scripts/make_report.py
 
 ```
 dscns/
-├── dscns/                  # 核心实现（15 个模块）
+├── dscns/                  # 核心实现（17 个模块，含 Phase 4）
 ├── scripts/                # 下载 / 实验 / 报告脚本
 ├── config/phase1.yaml      # 实验配置
-├── docs/                   # 设计、实验、局限、许可
+├── docs/                   # 设计、实验、局限、许可、PHASE4
 ├── experiments/            # 正式结果（JSON + 图）— 纳入版本控制
 ├── REPORT_zh.md            # 中文复现报告
 ├── requirements.txt
@@ -306,6 +344,10 @@ dscns/
 ## 设计说明
 
 - 实现遵循 DSCNS 设计报告 v1.0（英文设计摘要见 `docs/DESIGN.md`）。
+- Phase 4 遵循设计报告修改方案《DSCNS 自主神经结构自修改机制》（见
+  `docs/PHASE4.md`）：结构修改*决策*由策略学习
+  （`SelfModificationPolicy`，模仿 + REINFORCE），`StructureEvolver` 保留
+  执行与硬安全约束。
 - 多网络 = 共享冻结底座 + 每网络 LoRA 适配器，参数空间 Θ_i 独立、记忆共享。
 - 逐条记录知识状态等级与内化度 I_ij ∈ [0,1]，保证可追溯性。
 - 与设计报告的已知偏差记录于 `docs/EXPERIMENTS.md`（§7）与 `docs/LIMITATIONS.md`。
@@ -314,7 +356,8 @@ dscns/
 
 - 模型规模小（124M 底座）且数据预算有限。
 - 多网络实验受严格的计算预算公平约束。
-- 结构演化机制刻意保持简单。
+- 结构演化机制刻意保持简单；Phase 4 的学习式控制器是小型策略 + 极小 RL
+  预算（概念验证，而非可扩展的架构搜索）。
 - 未进行大规模基准测试；尚无证据表明可泛化到其他模型或领域。
 - 尚无证据表明 DSCNS 普遍优于成熟持续学习方法（EWC、经验回放等）。
 - 完整列表见 `docs/LIMITATIONS.md`。
@@ -323,9 +366,11 @@ dscns/
 
 - 更长的训练周期与更大预算，重新检验假设 H1/H2。
 - 学习式（而非手工调参的）相关性与信任权重函数。
+- Phase 4：更大 RL 预算、更长适应窗口、层级（而非仅 adapter 群体级）
+  学习式自修改。
 - 更好的结构可塑性控制（自适应演化阈值、演化后稳定调度）。
 - 更大规模基准（EWC / 回放 / PEFT 基线）。
-- 多模态与开放环境扩展（设计报告 Phase 4–6）。
+- 多模态与开放环境扩展（设计报告 Phase 5–6）。
 
 ## 引用
 
@@ -337,7 +382,7 @@ dscns/
   author = {Mousennnn},
   year   = {2026},
   month  = {aug},
-  note   = {Version v0.1.0, early research prototype},
+  note   = {Version v0.2.0, early research prototype},
   howpublished = {GitHub repository},
   url    = {https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System}
 }
@@ -351,7 +396,7 @@ dscns/
 
 **署名要求：** 复用或改编文档时，请注明：
 
-> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.1.0)，作者
+> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.2.0)，作者
 > Mousennnn，CC BY 4.0 许可。
 > https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System
 

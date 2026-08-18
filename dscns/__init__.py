@@ -9,7 +9,12 @@ Phase 0 + Phase 1 prototype scope: a 100M-500M base language model with
 5-6 cognitive networks, continual-learning experiments (Control / Exp1 / Exp2).
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
+
+from .modification_memory import ModificationMemory
+from .self_modification import (ArchitectureAction, SelfModificationController,
+                                SelfModificationPolicy, SelfStateEncoder)
+
 __all__ = [
     "DSCNSSystem",
     "BaseLanguageModel",
@@ -19,4 +24,9 @@ __all__ = [
     "MetaCognitiveController",
     "MemorySystem",
     "NetworkCommunicationBus",
+    "SelfModificationController",
+    "SelfModificationPolicy",
+    "SelfStateEncoder",
+    "ArchitectureAction",
+    "ModificationMemory",
 ]

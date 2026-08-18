@@ -30,12 +30,13 @@ intended to keep the repository scientifically honest.
 
 - The structural-evolution mechanism (split/merge/connect) is a prototype:
   triggers are hand-tuned thresholds; there is **no learned control policy**.
+  (Phase 4 adds a *learned* structural self-modification policy; see §7.)
 - Relevance and trust-weight functions are hand-designed heuristics.
 - The semantic memory is a lightweight knowledge graph, not a learned
   knowledge base.
 - The meta-cognitive layer is a rule-based controller, not a learned one.
 
-## 4. Hypotheses status (as of v0.1.0)
+## 4. Hypotheses status (as of v0.1.0; Phase 4 in §7 and `docs/PHASE4.md`)
 
 | Hypothesis | Status in this prototype |
 |---|---|
@@ -71,3 +72,31 @@ neural architecture design.
   modular cognition; it does **not** model human brain mechanisms.
 - No novelty is claimed beyond what is established by the experiments in
   this repository; a full literature review has not been published here.
+
+## 7. Phase 4 — learned structural self-adaptation (v0.2.0)
+
+Phase 4 (see `docs/PHASE4.md`) moves structural-modification *decisions*
+from the rule engine to a small trainable policy. Its limitations:
+
+- **Tiny policy and tiny RL budget.** The policy is a few hundred parameters
+  and the default run has at most 8 Stage-B rounds; the REINFORCE signal is a
+  proof-of-concept, **not** evidence of scalable architecture search.
+- **Action space is closed.** The policy chooses among 7 predefined
+  operations; it cannot invent new operations or edit code/graphs directly
+  (an explicit design boundary).
+- **Self-modification object is the network/adapter population**, not the
+  transformer's internal layer graph.
+- **Evaluation/state leakage conventions.** State features use eval-set
+  performance and the reward uses probe-set performance — the same
+  convention as the Phase 3 rule triggers; decisions are not made on the
+  final reported metrics alone.
+- **Imitation dependence.** The learned controller starts from rule-imitation
+  (Stage A); without the imitation prior the RL stage would be much weaker.
+- **Rollback is partial in one case:** after a rejected merge, the surviving
+  network keeps the learning performed during the adaptation window (the
+  rejected partner's bookkeeping is fully restored).
+- peft 0.12 has no `delete_adapter`; rolled-back adapters remain orphaned in
+  the PeftModel (unused, small memory cost).
+- **No claim** that learned self-modification outperforms rule-based or
+  fixed topology — the comparison in `experiments/phase4` is the evidence
+  base, including negative or mixed outcomes.

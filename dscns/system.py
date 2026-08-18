@@ -4,11 +4,24 @@
     evaluation -> cross-network verification -> meta decision ->
     selective progressive internalization -> memory update ->
     structure evolution check -> new system state.
+
+Phase 4 (learned structural self-adaptation): ``evolve_structure`` is
+dispatched by ``config.evolution_controller``:
+
+  * "rule"       -- Phase 3 flow (rule engine decides, direct execution);
+  * "single_rule"-- one ArchitectureAction per round from the rule engine,
+                    through the same candidate -> evaluate -> accept/rollback
+                    protocol as the learned controller;
+  * "learned"    -- Stage A (rule imitation) then Stage B (learned policy
+                    proposes actions, receives the modification reward and
+                    is updated by REINFORCE);
+  * "none"       -- fixed topology (control arm).
 """
 from __future__ import annotations
 
+import copy
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -19,6 +32,8 @@ from .memory import MemorySystem
 from .metacognition import MetaCognitiveController, MetaCognitiveState
 from .networks import (CognitiveNetwork, LanguageNetwork, LogicNetwork,
                        MathNetwork, VerificationNetwork, WorldKnowledgeNetwork)
+from .self_modification import (ArchitectureAction, DOM_DIM, FEAT_DIM,
+                                STATE_DIM, SelfModificationController)
 from .verification import VerificationNetwork as Verifier
 
 
@@ -80,6 +95,16 @@ class DSCNSSystem:
         self.connections: Dict[tuple, float] = {}
         self.eval_sets: Dict[str, List[str]] = {}
         self._round_trials_used = 0
+
+        # Phase 4: learned structural self-adaptation
+        self.evolution_controller = getattr(config, "evolution_controller", "rule")
+        self.self_mod: Optional[SelfModificationController] = None
+        if self.evolution_controller in ("single_rule", "learned"):
+            self.self_mod = SelfModificationController(
+                domains=list(domain_exemplars.keys()), config=config, seed=seed)
+        self._pending_mod: Optional[Dict[str, Any]] = None
+        self._adapter_serial = 0
+        self._last_evolve_change = -10
 
     # ------------------------------------------------------------------ #
     # initialization
@@ -325,16 +350,36 @@ class DSCNSSystem:
 
     # ------------------------------------------------------------------ #
     def evolve_structure(self) -> Dict[str, Any]:
-        """Run split / merge / connect checks (report section 4)."""
+        """Run structural evolution (report section 4 / Phase 4 controller)."""
         from .evolution import StructureEvolver
 
         min_round = getattr(self.config, "evolution_min_round", 6)
         if self.round_idx < min_round:
-            # stabilization period: networks need time to specialize first
             self.evolver = StructureEvolver()
+            if self.self_mod is not None:
+                probe = self.probe_perf()
+                self.self_mod.track_probe(probe)
+                self.self_mod.track_perf(
+                    self.best_domain_performance(self.eval_sets))
+                self.self_mod.record_round(
+                    self.round_idx,
+                    ArchitectureAction("no_op", source="rule",
+                                       round=self.round_idx),
+                    probe=probe, n_networks=len(self.networks),
+                    n_connections=len(self.connections),
+                    note=f"before_min_round_{min_round}")
             return {"evolutions": [], "n_networks": len(self.networks),
                     "connections": len(self.connections), "changed": False,
                     "reason": f"before_min_round_{min_round}"}
+        if self.evolution_controller == "rule":
+            return self._evolve_rule_legacy()
+        return self._evolve_action_based()
+
+    # ------------------------------------------------------------------ #
+    def _evolve_rule_legacy(self) -> Dict[str, Any]:
+        """Phase 3 flow: rule engine decides, direct execution."""
+        from .evolution import StructureEvolver
+
         evolver = StructureEvolver(
             diversity_threshold=getattr(self.config, "split_diversity_threshold", 0.8),
             overlap_threshold=getattr(self.config, "merge_overlap_threshold", 0.97),
@@ -381,6 +426,250 @@ class DSCNSSystem:
                 "n_networks": len(nets),
                 "connections": len(self.connections),
                 "changed": changed}
+
+    # ------------------------------------------------------------------ #
+    def _evolve_action_based(self) -> Dict[str, Any]:
+        """Phase 4: one ArchitectureAction per round with candidate evaluation.
+
+        Both the rule controller ("single_rule") and the learned controller
+        ("learned") go through the same protocol:
+
+            decide -> validate (safety) -> snapshot -> apply ->
+            short adaptation (window) -> regression evaluation ->
+            accept / rollback -> reward -> policy update (learned only).
+        """
+        from .evolution import StructureEvolver
+
+        evolver = StructureEvolver(
+            diversity_threshold=getattr(self.config, "split_diversity_threshold", 0.8),
+            overlap_threshold=getattr(self.config, "merge_overlap_threshold", 0.97),
+            co_activation_threshold=getattr(self.config, "merge_co_activation_threshold", 8),
+            similarity_threshold=getattr(self.config, "merge_similarity_threshold", 0.9),
+        )
+        self.evolver = evolver
+        sm = self.self_mod
+        warmup = getattr(self.config, "learned_warmup_rounds", 8)
+
+        perf_by_domain = self.best_domain_performance(self.eval_sets)
+        probe_now = self.probe_perf()
+        pending = self._pending_mod is not None
+        sm.track_perf(perf_by_domain)
+        sm.track_probe(probe_now, pending=pending)
+
+        # 1. evaluate a pending modification whose adaptation window completed
+        self._maybe_finalize_pending(probe_now)
+
+        # 2. decide the action for this round
+        state_pack = None
+        if self._pending_mod is not None:
+            action = ArchitectureAction(
+                "no_op",
+                source="policy" if self.evolution_controller == "learned" else "rule",
+                round=self.round_idx, reason="pending_evaluation")
+        elif self.evolution_controller == "single_rule" or self.round_idx < warmup:
+            action = sm.rule_decision(evolver, self, perf_by_domain)
+        else:
+            state_pack = sm.collect_state(self)
+            sm.set_last_state(state_pack[0])
+            action = sm.propose(self, state_pack)
+
+        # 3. validate against hard safety constraints
+        ok, reason = evolver.validate_action(
+            action, self.networks, self.connections,
+            budget=getattr(self.config, "modification_budget_max", 8),
+            min_accepted=8, domains=list(self.domain_embeddings.keys()))
+        if not ok and action.operation != "no_op":
+            action = ArchitectureAction(
+                "no_op", source=action.source, round=self.round_idx,
+                reason=f"invalid:{reason}")
+
+        # 4. apply (with snapshot) when structural and nothing pending
+        if action.operation != "no_op" and self._pending_mod is None:
+            snapshot = self._snapshot_architecture()
+            new_nets, new_conns, created = evolver.execute_action(
+                action, self.networks, self.connections,
+                self.base_model.peft_model, self.round_idx,
+                serial=self._adapter_serial,
+                lora_kwargs={"r": getattr(self.config, "lora_r", 16),
+                             "lora_alpha": getattr(self.config, "lora_alpha", 32),
+                             "lora_dropout": getattr(self.config, "lora_dropout", 0.1)},
+                domain_embeddings=self.domain_embeddings, memory=self.memory,
+                base_lr=getattr(self.config, "lora_lr", 5e-4),
+                network_factory=self._network_factory)
+            changed = (new_nets is not self.networks or
+                       new_conns is not self.connections)
+            self.networks = new_nets
+            self.connections = new_conns
+            self.bus.networks = new_nets
+            if changed:
+                self._adapter_serial += 1
+                self._last_evolve_change = self.round_idx
+            self._pending_mod = {
+                "action": action, "snapshot": snapshot, "created": created,
+                "state": state_pack[0] if state_pack is not None else None,
+                "probe_before": probe_now,
+                "params_before": self._adapter_param_count(),
+                "forgetting_before": sm.current_forgetting(),
+                "round": self.round_idx,
+            }
+
+        # 5. Stage A (imitation) / Stage B (RL) learning
+        imitation_loss = rl_loss = 0.0
+        if self.evolution_controller == "learned":
+            if self.round_idx < warmup:
+                if state_pack is None:
+                    state_pack = sm.collect_state(self)
+                    sm.set_last_state(state_pack[0])
+                sm.record_imitation(state_pack, action)
+                if self._pending_mod is not None and \
+                        self._pending_mod.get("state") is None:
+                    self._pending_mod["state"] = state_pack[0]
+                imitation_loss = sm.train_imitation()
+            else:
+                if action.operation == "no_op" and self._pending_mod is None:
+                    if state_pack is None:
+                        state_pack = sm.collect_state(self)
+                        sm.set_last_state(state_pack[0])
+                    sm.record_policy_noop(state_pack[0], reason=action.reason)
+                rl_loss = sm.train_rl()
+
+        # 6. trace
+        sm.record_round(self.round_idx, action, probe=probe_now,
+                        n_networks=len(self.networks),
+                        n_connections=len(self.connections),
+                        imitation_loss=imitation_loss, rl_loss=rl_loss)
+        return {"evolutions": evolver.evolution_log[-10:],
+                "n_networks": len(self.networks),
+                "connections": len(self.connections),
+                "changed": self._pending_mod is not None}
+
+    # ------------------------------------------------------------------ #
+    def _maybe_finalize_pending(self, probe_now: float) -> None:
+        """Accept / rollback a pending modification after its window."""
+        pend = self._pending_mod
+        sm = self.self_mod
+        if pend is None or sm is None:
+            return
+        window = getattr(self.config, "adaptation_window", 3)
+        if self.round_idx - pend["round"] < window:
+            return
+        action = pend["action"]
+        reward, comps = sm.compute_reward(
+            action.operation, pend["probe_before"], probe_now,
+            pend["forgetting_before"], sm.current_forgetting(),
+            pend["params_before"], self._adapter_param_count(),
+            sm.probe_window(pend["round"], self.round_idx), window)
+        accepted = comps["delta"] >= -getattr(self.config, "modification_tolerance", 0.02)
+        if accepted:
+            action.reason = "accepted"
+        else:
+            action.reason = "rollback"
+            self._restore_architecture(pend["snapshot"])
+        warmup = getattr(self.config, "learned_warmup_rounds", 8)
+        in_stage_b = (self.evolution_controller == "learned" and
+                      self.round_idx >= warmup)
+        sm.record_modification(
+            action, accepted=accepted,
+            reward=reward if in_stage_b else None, comps=comps,
+            probe_before=pend["probe_before"], probe_after=probe_now,
+            state=pend.get("state"))
+        self._pending_mod = None
+        if in_stage_b:
+            sm.train_rl()
+
+    # ------------------------------------------------------------------ #
+    # Phase 4 helpers
+    # ------------------------------------------------------------------ #
+    def probe_perf(self) -> float:
+        """System-level probe performance (best network per domain, mean)."""
+        perfs = []
+        size = getattr(self.config, "probe_size", 16)
+        batch = getattr(self.config, "probe_batch", 8)
+        for texts in self.probe_sets.values():
+            if not texts:
+                continue
+            best = -1.0
+            for net in self.networks.values():
+                v = net.evaluate_texts(texts[:size], self.base_model.tokenizer,
+                                       batch_size=batch)
+                if v > best:
+                    best = v
+            if best >= 0.0:
+                perfs.append(best)
+        return float(np.mean(perfs)) if perfs else 0.0
+
+    def _adapter_param_count(self) -> int:
+        n = 0
+        for name, p in self.base_model.peft_model.named_parameters():
+            if "lora" in name:
+                n += p.numel()
+        return n
+
+    def _network_factory(self, net_id: str,
+                         domain_embedding: Optional[np.ndarray],
+                         data_domain: Optional[str]) -> CognitiveNetwork:
+        """Factory for evolved networks (EXPAND)."""
+        net = CognitiveNetwork(
+            net_id=net_id, name=f"Evolved-{net_id}",
+            domain=data_domain or "general",
+            peft_model=self.base_model.peft_model, memory=self.memory,
+            domain_embedding=domain_embedding,
+            base_lr=getattr(self.config, "lora_lr", 5e-4))
+        net.data_domain = data_domain
+        net.set_trainable(False)
+        return net
+
+    def _snapshot_architecture(self) -> Dict[str, Any]:
+        """Snapshot network bookkeeping + adapter weights + connections."""
+        nets: Dict[str, Dict[str, Any]] = {}
+        for nid, net in self.networks.items():
+            nets[nid] = {
+                "book": {
+                    "internalization_level": dict(net.internalization_level),
+                    "knowledge_states": dict(net.knowledge_states),
+                    "accepted_embeddings": list(net.accepted_embeddings),
+                    "accepted_ids": list(net.accepted_ids),
+                    "recent_domains": list(net.recent_domains),
+                    "performance_history": list(net.performance_history),
+                    "domain_embedding": (net.domain_embedding.copy()
+                                         if net.domain_embedding is not None else None),
+                    "inbox": list(net.inbox),
+                    "baseline_performance": net.baseline_performance,
+                    "trust": net.trust,
+                    "competence": net.competence,
+                    "uncertainty": net.uncertainty,
+                },
+                "weights": net.snapshot_adapter(),
+            }
+        return {"networks": nets, "connections": dict(self.connections)}
+
+    def _restore_architecture(self, snap: Dict[str, Any]) -> None:
+        """Rollback to a snapshot: restore bookkeeping/weights/connections."""
+        for nid, entry in snap["networks"].items():
+            net = self.networks.get(nid)
+            if net is None:
+                continue
+            book = entry["book"]
+            net.internalization_level = dict(book["internalization_level"])
+            net.knowledge_states = dict(book["knowledge_states"])
+            net.accepted_embeddings = list(book["accepted_embeddings"])
+            net.accepted_ids = list(book["accepted_ids"])
+            net.recent_domains = list(book["recent_domains"])
+            net.performance_history = list(book["performance_history"])
+            net.domain_embedding = (book["domain_embedding"].copy()
+                                    if book["domain_embedding"] is not None else None)
+            net.inbox = list(book["inbox"])
+            net.baseline_performance = book["baseline_performance"]
+            net.trust = book["trust"]
+            net.competence = book["competence"]
+            net.uncertainty = book["uncertainty"]
+            if entry["weights"]:
+                net.restore_adapter(entry["weights"])
+        # drop networks created after the snapshot (orphaned adapters remain)
+        self.networks = {nid: self.networks[nid] for nid in snap["networks"]
+                         if nid in self.networks}
+        self.connections = dict(snap["connections"])
+        self.bus.networks = self.networks
 
     # ------------------------------------------------------------------ #
     def meta_update(self, metrics: Optional[Dict[str, float]] = None) -> None:

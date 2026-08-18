@@ -1,6 +1,6 @@
 # DSCNS — Dynamic Self-Modifying Cognitive Network System
 
-> **Status: Early Research Prototype (v0.1.0)**
+> **Status: Early Research Prototype (v0.2.0)**
 
 DSCNS is an experimental research prototype exploring a dynamic modular
 neural architecture for **continual learning**, **candidate knowledge
@@ -23,7 +23,7 @@ Experience
 ```
 
 This repository contains the current prototype implementation and its
-experimental results (Phases 0–3). It is intended as an open, honest,
+experimental results (Phases 0–4). It is intended as an open, honest,
 reproducible research artifact — **not** as a claim of solved continual
 learning, AGI, or human-level intelligence.
 
@@ -37,7 +37,10 @@ DSCNS replaces the single "data → gradient update" flow with a closed-loop
 cognitive process: experiences are observed by multiple networks, evaluated
 independently, verified across networks, and only then progressively
 internalized — or stored as callable knowledge instead. The network topology
-itself is treated as a learnable structure (split / merge / connect).
+itself is treated as a learnable structure (split / merge / connect), and in
+Phase 4 the *decision* of when/what/where/how-much to modify is learned by a
+small neural self-modification policy trained by imitation + reinforcement
+(see [docs/PHASE4.md](docs/PHASE4.md)).
 
 The current prototype builds on a **frozen GPT-2 small (124M) base model**
 with **one LoRA adapter per cognitive network**, and implements the full
@@ -178,7 +181,9 @@ human brain mechanisms.
 | Meta-cognitive controller | `dscns/metacognition.py` | §6 |
 | Message bus / communication | `dscns/communication.py` | §8.1 |
 | Three-layer memory | `dscns/memory.py` | §5 |
-| Structural evolution | `dscns/evolution.py` | §4 |
+| Structural evolution (executor) | `dscns/evolution.py` | §4 |
+| Learned self-modification (Phase 4) | `dscns/self_modification.py` | Phase-4 proposal §3–12 |
+| Modification memory (Phase 4) | `dscns/modification_memory.py` | Phase-4 proposal §13 |
 | System orchestration | `dscns/system.py` | §7.3, §11 |
 | Metrics (AF/FWT/CLS) | `dscns/evaluation.py` | §7.4, §10.3 |
 
@@ -224,6 +229,7 @@ Detailed numbers are in `experiments/comparison.md` and `REPORT_zh.md`
 | Phase 1 | Forward transfer (Exp2) | Only positive FWT among tested modes (+0.0013) |
 | Phase 2 | Information-gain sampling | Best strategy among those tested (0.0591 vs random 0.0572) |
 | Phase 3 | Dynamic topology (split/merge/connect) | Mechanism works; currently below fixed topology |
+| Phase 4 | Learned structural self-adaptation | Learned controller makes structure decisions (see below) |
 
 ### Phase 1 — continual learning (Control / Exp1 / Exp2)
 
@@ -265,6 +271,40 @@ merge + dynamic connections (round 13).
 
 ![Phase 3 code curve](experiments/phase3_code_curve.png)
 
+### Phase 4 — learned structural self-adaptation (rule vs learned vs fixed)
+
+On a shifted stream (general(4) → code(4) → mixed_code(4) → science(4),
+16 rounds) three controllers are compared. `rule` and `learned` use the same
+candidate → evaluate → accept/rollback protocol; the difference is **who
+decides** the structural action (hand-coded rules vs a trained policy).
+
+| Metric | fixed | rule | learned |
+|---|---|---|---|
+| Final mean performance (5 domains) | 0.0554 | 0.0570 | **0.0585** |
+| Average Forgetting (AF) ↓ | **0.0000** | 0.0099 | 0.0029 |
+| Forward Transfer (FWT) ↑ | 0.0005 | **0.0009** | 0.0007 |
+| Continual Learning Score (CLS) ↑ | 0.0553 | 0.0471 | **0.0556** |
+| Code adaptation (round 4→8 Δ) | +0.0224 | +0.0326 | **+0.0336** |
+| Final network count | 5 | 2 | 2 |
+| Modification success rate | — | 1.00 | 1.00 |
+| Mean modification reward | — | — | −0.0031 |
+
+On this single-seed run the learned controller achieved the highest final
+mean performance, the highest CLS and the best code-domain adaptation, with
+lower forgetting than the rule controller. The learned policy proposed a
+structural modification by itself in Stage B (merge at round 11) and its
+action entropy decreased over the run (behavior change). **Caveats:** single
+seed, prototype scale, differences are small (≈0.003) and not statistically
+established; the reward signal was slightly negative, and the policy became
+more conservative than the raw rule engine.
+
+Design and full discussion: [docs/PHASE4.md](docs/PHASE4.md).
+
+![Phase 4 comparison](experiments/phase4/phase4_comparison.png)
+![Phase 4 actions](experiments/phase4/phase4_actions.png)
+![Phase 4 reward](experiments/phase4/phase4_reward.png)
+![Phase 4 learning](experiments/phase4/phase4_learning.png)
+
 ## Current Findings
 
 These findings are **preliminary**, limited to this prototype and its
@@ -282,6 +322,11 @@ about continual learning or neural architecture design.
    to outperform a fixed topology* and requires better structural-plasticity
    control (short-term perturbation during split/merge operations was
    observed, consistent with the design report's risk analysis).
+5. **Finding 5 (Phase 4)** — A small policy trained by rule-imitation +
+   REINFORCE *can* produce structural modification decisions from the
+   system's own state without the rule engine; whether it *outperforms*
+   rules or fixed topology is not established at this prototype scale
+   (see [docs/PHASE4.md](docs/PHASE4.md) and `experiments/phase4`).
 
 ## Reproduction
 
@@ -308,7 +353,10 @@ python scripts/run_phase2.py --out experiments/phase2
 # 5) Phase 3 — structural evolution
 python scripts/run_phase3.py --out experiments/phase3
 
-# 6) Aggregate results into experiments/comparison.md + plots
+# 6) Phase 4 — learned structural self-adaptation (rule vs learned vs fixed)
+python scripts/run_phase4.py --out experiments/phase4
+
+# 7) Aggregate results into experiments/comparison.md + plots
 python scripts/make_report.py
 ```
 
@@ -321,10 +369,10 @@ that was used to bootstrap the original environment through a local proxy.
 
 ```
 dscns/
-├── dscns/                  # core implementation (15 modules)
+├── dscns/                  # core implementation (17 modules, incl. Phase 4)
 ├── scripts/                # download / experiment / report scripts
 ├── config/phase1.yaml      # experiment configuration
-├── docs/                   # design, experiments, limitations, licenses
+├── docs/                   # design, experiments, limitations, licenses, PHASE4
 ├── experiments/            # official results (JSON + plots) — kept in git
 ├── REPORT_zh.md            # Chinese reproduction report
 ├── requirements.txt
@@ -339,6 +387,11 @@ version control by `.gitignore`.
 
 - The implementation follows the DSCNS design report v1.0
   (see `docs/DESIGN.md` for the English design summary).
+- Phase 4 follows the design-report modification proposal
+  *"DSCNS 自主神经结构自修改机制"* (see `docs/PHASE4.md`): the structural
+  modification *decision* is learned by a policy
+  (`SelfModificationPolicy`, imitation + REINFORCE), while `StructureEvolver`
+  keeps execution and hard safety constraints.
 - Multi-network = shared frozen base + per-network LoRA adapters, keeping
   the parameter spaces Θ_i independent while sharing memory.
 - Knowledge-state levels and internalization degrees I_ij ∈ [0,1] are
@@ -350,7 +403,9 @@ version control by `.gitignore`.
 
 - Small model scale (124M base) and small data budgets.
 - Multi-network experiments are bound by a strict computation-budget parity.
-- The structural-evolution mechanism is intentionally simple.
+- The structural-evolution mechanism is intentionally simple; Phase 4's
+  learned controller is a tiny policy with a tiny RL budget
+  (proof-of-concept, not scalable architecture search).
 - No large-scale benchmarks; no evidence of generalization to other models
   or domains yet.
 - No evidence that DSCNS outperforms mature continual-learning methods
@@ -361,10 +416,12 @@ version control by `.gitignore`.
 
 - Longer training horizons and larger budgets to re-test hypotheses H1/H2.
 - Learned (rather than hand-tuned) relevance and trust-weight functions.
+- Phase 4: larger RL budgets, longer adaptation windows, and
+  layer-level (not only adapter-population-level) learned self-modification.
 - Better structural-plasticity control (e.g., adaptive evolution thresholds,
   post-evolution stabilization schedules).
 - Larger-scale benchmarks (EWC / replay / PEFT baselines).
-- Multimodal and open-environment extensions (design report Phases 4–6).
+- Multimodal and open-environment extensions (design report Phases 5–6).
 
 ## Citation
 
@@ -376,7 +433,7 @@ If you use this repository in your work, please cite it as:
   author = {Mousennnn},
   year   = {2026},
   month  = {aug},
-  note   = {Version v0.1.0, early research prototype},
+  note   = {Version v0.2.0, early research prototype},
   howpublished = {GitHub repository},
   url    = {https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System}
 }
@@ -390,7 +447,7 @@ If you use this repository in your work, please cite it as:
 
 **Attribution:** When reusing or adapting the documentation, please credit:
 
-> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.1.0), by
+> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.2.0), by
 > Mousennnn, licensed under CC BY 4.0.
 > https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System
 

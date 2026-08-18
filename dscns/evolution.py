@@ -1,17 +1,24 @@
-"""Network structure evolution (report section 4).
+"""Network structure evolution (report section 4) + Phase 4 executor.
 
 Implements specialization scoring, split / merge triggers and strategies,
 and dynamic connection establishment via the co-activation matrix and
 information flow.  All operations are conservative: they run only when the
 corresponding thresholds are exceeded and are followed by a stabilization
 period (report section 14.1 risk mitigation).
+
+Phase 4 (learned structural self-adaptation): the rule triggers are kept as
+the Stage-A decision source and as hard safety constraints; the executor
+exposes :meth:`validate_action` and :meth:`execute_action` so that a learned
+``ArchitectureAction`` from ``SelfModificationPolicy`` can drive the same
+mutations.  Human rules move from *decision maker* to *constraint layer*.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 
+from .self_modification import ArchitectureAction
 from .utils import cosine_similarity, entropy
 
 
@@ -139,12 +146,13 @@ class StructureEvolver:
     def split_network(self, network: Any, networks: Dict[str, Any],
                       round_idx: int, peft_model: Any = None,
                       lora_kwargs: Optional[Dict[str, Any]] = None,
-                      tmp_dir: str = None) -> Dict[str, Any]:
+                      tmp_dir: str = None, serial: int = 0) -> Dict[str, Any]:
         """N_i -> [N_i^a, N_i^b] with disjoint task partition.
 
         Each child receives its own LoRA adapter: if ``peft_model`` is given,
         the parent's adapter weights are copied to two fresh adapters (so the
         children start from the parent's knowledge and then specialize).
+        ``serial`` disambiguates adapter names across repeated split attempts.
         """
         from sklearn.cluster import KMeans
 
@@ -163,13 +171,14 @@ class StructureEvolver:
             snap = {k: v.detach().clone()
                     for k, v in peft_model.state_dict().items()
                     if f".{network.id}." in k or k.endswith(f".{network.id}")}
-            for new_id in (f"{network.id}a", f"{network.id}b"):
+            for new_id in self._child_ids(network.id, serial):
                 peft_model.add_adapter(new_id, _lora_config(peft_model))
-            _load_adapter_state(peft_model, snap, f"{network.id}a")
-            _load_adapter_state(peft_model, snap, f"{network.id}b")
+            for new_id in self._child_ids(network.id, serial):
+                _load_adapter_state(peft_model, snap, new_id)
 
-        net_a = self._clone_network(network, f"{network.id}a", "split_a")
-        net_b = self._clone_network(network, f"{network.id}b", "split_b")
+        new_ids = self._child_ids(network.id, serial)
+        net_a = self._clone_network(network, new_ids[0], "split_a")
+        net_b = self._clone_network(network, new_ids[1], "split_b")
         # domain embeddings follow the cluster centroids
         net_a.domain_embedding = km.cluster_centers_[0]
         net_b.domain_embedding = km.cluster_centers_[1]
@@ -191,6 +200,11 @@ class StructureEvolver:
         )
         self._last_change_round = round_idx
         return new_nets
+
+    @staticmethod
+    def _child_ids(parent_id: str, serial: int = 0) -> List[str]:
+        suffix = "" if serial == 0 else str(serial)
+        return [f"{parent_id}a{suffix}", f"{parent_id}b{suffix}"]
 
     @staticmethod
     def _clone_network(network: Any, new_id: str, new_domain: str) -> Any:
@@ -292,6 +306,166 @@ class StructureEvolver:
                 {"op": "connect", "pairs": list(connections.keys()), "round": round_idx}
             )
         return connections
+
+    # ------------------------------------------------------------------ #
+    # Phase 4: executor interface for ArchitectureAction (learned controller)
+    # ------------------------------------------------------------------ #
+    def validate_action(self, action: ArchitectureAction,
+                        networks: Dict[str, Any],
+                        connections: Dict[Tuple[str, str], float],
+                        budget: int = 8, min_accepted: int = 8,
+                        domains: Optional[List[str]] = None) -> Tuple[bool, str]:
+        """Hard safety constraints (rules become constraints, proposal sec 6)."""
+        n = len(networks)
+        op = action.operation
+        if op == "no_op":
+            return True, ""
+        if op in ("merge", "connect", "disconnect") and n < 2:
+            return False, "need_at_least_two_networks"
+        if op in ("expand", "split") and n >= budget:
+            return False, "budget_exceeded"
+        if op == "split":
+            net = networks.get(action.target)
+            if net is None:
+                return False, "unknown_target"
+            if len(net.accepted_embeddings) < min_accepted:
+                return False, "insufficient_data"
+            if net.task_diversity() <= self.diversity_threshold:
+                return False, "low_diversity"
+        elif op == "merge":
+            if action.target not in networks or action.secondary_target not in networks:
+                return False, "unknown_target"
+            if action.target == action.secondary_target:
+                return False, "same_target"
+        elif op == "connect":
+            if action.target not in networks or action.secondary_target not in networks:
+                return False, "unknown_target"
+            if action.target == action.secondary_target:
+                return False, "same_target"
+            if (action.target, action.secondary_target) in connections or \
+                    (action.secondary_target, action.target) in connections:
+                return False, "already_connected"
+        elif op == "disconnect":
+            if action.target not in networks or action.secondary_target not in networks:
+                return False, "unknown_target"
+            if (action.target, action.secondary_target) not in connections and \
+                    (action.secondary_target, action.target) not in connections:
+                return False, "no_connection"
+        elif op == "contract":
+            if action.target not in networks:
+                return False, "unknown_target"
+            if n <= 1:
+                return False, "need_at_least_one_network"
+        elif op == "expand":
+            if domains is not None and action.target not in domains:
+                return False, "unknown_domain"
+        return True, ""
+
+    def execute_action(self, action: ArchitectureAction,
+                       networks: Dict[str, Any],
+                       connections: Dict[Tuple[str, str], float],
+                       peft_model: Any, round_idx: int, serial: int = 0,
+                       lora_kwargs: Optional[Dict[str, Any]] = None,
+                       domain_embeddings: Optional[Dict[str, np.ndarray]] = None,
+                       memory: Any = None, base_lr: float = 5e-4,
+                       network_factory: Optional[Callable[..., Any]] = None
+                       ) -> Tuple[Dict[str, Any], Dict[Tuple[str, str], float], List[str]]:
+        """Execute one validated ArchitectureAction.
+
+        Returns (new_networks, new_connections, created_ids) where
+        ``created_ids`` lists the network ids newly added (used for rollback
+        bookkeeping; orphaned adapters are kept, entries removed).
+        """
+        op = action.operation
+        created: List[str] = []
+        if op == "no_op":
+            return networks, connections, created
+        if op == "split":
+            net = networks.get(action.target)
+            if net is not None:
+                new_nets = self.split_network(
+                    net, networks, round_idx, peft_model=peft_model,
+                    lora_kwargs=lora_kwargs, serial=serial)
+                created = [i for i in self._child_ids(net.id, serial)
+                           if i in new_nets]
+                return new_nets, connections, created
+            return networks, connections, created
+        if op == "merge":
+            a, b = action.target, action.secondary_target
+            if a in networks and b in networks:
+                new_nets = self.merge_networks(networks[a], networks[b],
+                                               networks, round_idx)
+                return new_nets, connections, created
+            return networks, connections, created
+        if op == "connect":
+            new_conns = dict(connections)
+            new_conns[(action.target, action.secondary_target)] = float(
+                np.clip(action.magnitude, 0.0, 1.0))
+            self.evolution_log.append(
+                {"op": "connect", "pairs": [(action.target, action.secondary_target)],
+                 "round": round_idx})
+            self._last_change_round = round_idx
+            return networks, new_conns, created
+        if op == "disconnect":
+            new_conns = dict(connections)
+            for key in ((action.target, action.secondary_target),
+                        (action.secondary_target, action.target)):
+                new_conns.pop(key, None)
+            self.evolution_log.append(
+                {"op": "disconnect", "pairs": [(action.target, action.secondary_target)],
+                 "round": round_idx})
+            self._last_change_round = round_idx
+            return networks, new_conns, created
+        if op == "expand":
+            new_nets, new_id = self.expand_network(
+                networks, action.target, peft_model, domain_embeddings,
+                memory, round_idx, serial, lora_kwargs, base_lr, network_factory)
+            created = [new_id] if new_id else []
+            return new_nets, connections, created
+        if op == "contract":
+            new_nets, removed = self.contract_network(networks, action.target,
+                                                      round_idx)
+            return new_nets, connections, created
+        return networks, connections, created
+
+    def expand_network(self, networks: Dict[str, Any], domain: str,
+                       peft_model: Any,
+                       domain_embeddings: Optional[Dict[str, np.ndarray]],
+                       memory: Any, round_idx: int, serial: int,
+                       lora_kwargs: Optional[Dict[str, Any]],
+                       base_lr: float,
+                       network_factory: Optional[Callable[..., Any]]) -> Tuple[Dict[str, Any], Optional[str]]:
+        """Add a new network specialized for ``domain`` (learned EXPAND)."""
+        new_id = f"NX{serial}"
+        if new_id in networks:
+            return networks, None
+        peft_model.add_adapter(new_id, _lora_config(peft_model))
+        emb = (domain_embeddings or {}).get(domain)
+        if network_factory is not None:
+            net = network_factory(new_id, emb, domain)
+        else:
+            net = None
+        if net is None:
+            return networks, None
+        new_nets = dict(networks)
+        new_nets[new_id] = net
+        self.evolution_log.append(
+            {"op": "expand", "domain": domain, "into": new_id,
+             "round": round_idx})
+        self._last_change_round = round_idx
+        return new_nets, new_id
+
+    def contract_network(self, networks: Dict[str, Any], target: str,
+                         round_idx: int) -> Tuple[Dict[str, Any], Optional[str]]:
+        """Remove one network (learned CONTRACT); its adapter stays orphaned."""
+        if target not in networks:
+            return networks, None
+        new_nets = dict(networks)
+        del new_nets[target]
+        self.evolution_log.append(
+            {"op": "contract", "source": target, "round": round_idx})
+        self._last_change_round = round_idx
+        return new_nets, target
 
     def stats(self) -> Dict[str, int]:
         counts: Dict[str, int] = {}

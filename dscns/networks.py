@@ -306,6 +306,30 @@ class CognitiveNetwork:
             return np.zeros(1, dtype=np.float32)
         return np.mean(np.stack(self.accepted_embeddings), axis=0)
 
+    # ------------------------------------------------------------------ #
+    # Phase 4: model self-state interface (proposal section 15)
+    # ------------------------------------------------------------------ #
+    def get_self_state(self) -> Dict[str, float]:
+        """Per-network self-state features used by the learned policy.
+
+        Collected together with the meta-cognitive state into the global
+        self-state vector (see SelfModificationController.collect_state).
+        """
+        hist = self.performance_history
+        last = hist[-1] if hist else 0.0
+        return {
+            "competence": float(last),
+            "uncertainty": float(np.clip(1.0 - last, 0.0, 1.0)),
+            "task_diversity": float(self.task_diversity()),
+            "log_accepted": float(np.log1p(len(self.accepted_embeddings))),
+            "trust": float(self.trust),
+            "activation_norm": float(self.activation_count / 200.0),
+            "perf_trend": float(hist[-1] - hist[-2]) if len(hist) >= 2 else 0.0,
+            "queries_norm": float(self.queries_answered / max(1, self.activation_count)),
+            "corrections_norm": float(self.corrections_received / max(1, self.activation_count)),
+            "bookkeeping_norm": float(len(self.internalization_level) / 200.0),
+        }
+
 
 class WorldKnowledgeNetwork(CognitiveNetwork):
     """N1: general / world knowledge."""
