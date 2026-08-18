@@ -1,0 +1,45 @@
+{
+  "git_commit": "3208463dbb1b9c26f610c69938492990eb0d3af9",
+  "experiment": "P5 150-round long-horizon intrinsic self-modification",
+  "python": "3.8.16",
+  "torch": "1.13.1+cu117",
+  "cuda": "11.7",
+  "cuda_available": true,
+  "gpu": "NVIDIA GeForce RTX 3070 Ti Laptop GPU",
+  "seed": 42,
+  "num_rounds": 150,
+  "batch_size_per_round": 8,
+  "model": {
+    "name": "models/hf/gpt2",
+    "hidden_dim": 768,
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.1
+  },
+  "plasticity": {
+    "alpha": 0.01,
+    "rank": 8,
+    "meta_dim": 32,
+    "modulation_strength_init": 0.05,
+    "use_hidden": true,
+    "use_param_stats": true,
+    "use_meta": true
+  },
+  "data": {
+    "domains": [
+      "general",
+      "math",
+      "logic",
+      "code",
+      "science"
+    ],
+    "sampling": "with replacement, 20-round phase pattern repeated",
+    "max_len": 192
+  },
+  "loop": {
+    "network": "N1 (single theta-chain)",
+    "apply_every_round": true,
+    "validation_rollback": false,
+    "note": "stress test of the intrinsic mechanism; controller-side validation is intentionally disabled"
+  }
+}

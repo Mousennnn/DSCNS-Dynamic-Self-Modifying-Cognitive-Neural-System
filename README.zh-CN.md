@@ -314,6 +314,10 @@ w_i = trust_i × R_i，        C_final = Σ w_i·C_i / Σ w_i
 ![Phase 5 对照](experiments/phase5/phase5_controls.png)
 ![Phase 5 学习](experiments/phase5/phase5_learning.png)
 
+### Phase 5 — 长期内生参数自修改（150 轮）
+
+150 轮长期实验：见 `docs/PHASE5_LONG_RUN.md`。
+
 ## 当前发现
 
 以下发现是**初步的**，仅限于本原型及其实验设置，不应被解读为关于持续学习或

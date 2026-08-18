@@ -335,6 +335,10 @@ learned ポリシーは Stage B で構造修正を**自律的に提案**し（r1
 ![Phase 5 対照](experiments/phase5/phase5_controls.png)
 ![Phase 5 学習](experiments/phase5/phase5_learning.png)
 
+### Phase 5 — 長期内在的パラメータ自己修正（150 ラウンド）
+
+150 ラウンド長期実験：`docs/PHASE5_LONG_RUN.md` を参照。
+
 ## 現在の知見
 
 以下の知見は**暫定的**であり、本プロトタイプとその実験設定に限定されます。

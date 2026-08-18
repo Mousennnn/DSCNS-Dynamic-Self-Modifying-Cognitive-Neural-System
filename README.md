@@ -352,6 +352,11 @@ confounded by extra adaptation compute.
 ![Phase 5 controls](experiments/phase5/phase5_controls.png)
 ![Phase 5 learning](experiments/phase5/phase5_learning.png)
 
+### Phase 5 — Long-Horizon Intrinsic Self-Modification
+
+150-round long-horizon experiment:
+see `docs/PHASE5_LONG_RUN.md`.
+
 ## Current Findings
 
 These findings are **preliminary**, limited to this prototype and its
