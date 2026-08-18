@@ -100,3 +100,40 @@ from the rule engine to a small trainable policy. Its limitations:
 - **No claim** that learned self-modification outperforms rule-based or
   fixed topology — the comparison in `experiments/phase4` is the evidence
   base, including negative or mixed outcomes.
+
+## 8. Phase 5 — intrinsic parameter self-modification (v0.3.0)
+
+Phase 5 (see `docs/PHASE5.md`) adds an `IntrinsicPlasticityModule` inside
+each cognitive network that maps internal state to a continuous parameter
+change (θ → h → Δθ → θ'). Its limitations:
+
+- **Parameter sensing is a 4-dimensional statistic** `[mean, std, min, max]`
+  of the adapter weights — an acknowledged low-dimensional approximation,
+  not full-parameter conditioning (the report lists this as a deliberate
+  P5-B limit).
+- **Trigger is external and fixed-frequency** — the network does not decide
+  *when* to modify itself (Level 4, explicitly out of P5 scope).
+- **Validation and rollback are experiment-controller duties**, not model
+  mechanisms — the report is explicit that this must not be described as the
+  model "deciding" to undo its own change.
+- **Δθ application scope is partial:** the generated low-rank Δθ (768→16→768)
+  is applied to hidden-dimension LoRA projections only; c_attn's
+  QKV-concatenated up-projection (3H, r) and the MLP input projection
+  (r, 3H) are skipped because their shapes do not match the generated delta.
+- **Delta generation is off the gradient path** (`no_grad`); P5-C learning is
+  offline (reward-weighted imitation of successful deltas) rather than
+  end-to-end differentiable self-modification — an explicit scope boundary.
+- **P5-C budget is tiny:** ≤100 recorded cases, a handful of training calls,
+  and rewards near zero at `plasticity_alpha=0.01`; any improvement in P_φ is
+  expected to be small and is **not** claimed.
+- **Closed loop was validated at prototype scale only:** GPT-2 small, single
+  LoRA rank, single seed, 20 rounds. No claim that the loop generalizes to
+  other scales, models, or seeds.
+- **Performance is descriptive, not probative:** P5 explicitly does not use
+  performance gains as evidence of self-modification; the small arm
+  differences (≈0.00x, single seed) are not statistically established.
+- **Meta vector is padded** to 32 dims with 13 populated features — the
+  remaining capacity is reserved for future meta signals.
+- **No claim** of a model that "wants" or "decides" to change itself, and no
+  claim that intrinsic modification improves continual learning — the
+  experiments in `experiments/phase5` are the (conservative) evidence base.

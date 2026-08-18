@@ -77,6 +77,40 @@ class DSCNSConfig:
     reward_lambda_instability: float = 0.3
     total_rounds: int = 16               # expected stream length (state feature)
 
+    # ---- intrinsic parameter self-modification (Phase 5) ----
+    # P5-B: theta -> h -> delta_theta -> theta'  (IntrinsicPlasticityModule)
+    enable_plasticity: bool = False      # attach the plasticity module to networks
+    plasticity_mode: str = "modification"  # "modification" (P5-B) | "modulation" (P5-A)
+    plasticity_interval: int = 4         # external trigger: every N grad steps
+    plasticity_alpha: float = 0.01       # theta' = theta + alpha * delta_theta
+    min_delta_threshold: float = 1e-6    # skip near-zero deltas
+    plasticity_hidden_dim: int = 768     # GPT-2 hidden dim
+    meta_dim: int = 32                   # self-state meta vector dim (s_t)
+    plasticity_rank: int = 8             # low-rank delta generation rank
+    plasticity_hidden_dims: List[int] = field(default_factory=lambda: [256, 256])
+    modulation_strength_init: float = 0.05  # learnable global modulation strength init
+    plasticity_lr: float = 1e-5          # plasticity module LR (P5-C)
+    train_plasticity: bool = False       # P5-B off / P5-C on
+    plasticity_train_threshold: int = 10 # start training after this many success cases
+    plasticity_train_batches: int = 5
+    plasticity_train_batch_size: int = 4
+    min_memory_size: int = 10
+    max_memory_size: int = 100
+    adaptation_steps: int = 3            # short adaptation before reward (P5-C)
+    # state-component ablation (which inputs feed P_phi)
+    use_hidden: bool = True              # h_t
+    use_param_stats: bool = True         # stats(theta_t)
+    use_meta: bool = True                # s_t
+    # validation / safety (experiment controller, not model mechanism)
+    quick_validation_samples: int = 8
+    validation_loss_margin: float = 0.5  # nats; accept if loss_after < loss_before + margin
+    validation_perplexity_cap: float = 100.0
+    max_param_change_ratio: float = 0.1
+    rollback_on_failure: bool = True
+    save_snapshots: bool = True
+    run_negative_controls: bool = True   # random / constant / shuffled delta arms
+    task_lr: float = 5e-5                # task-learning LR used by the P5 loop
+
     # ---- experiment ----
     num_networks: int = 5
     seed: int = 42

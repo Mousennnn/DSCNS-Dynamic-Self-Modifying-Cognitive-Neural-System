@@ -1,0 +1,61 @@
+# DSCNS Phase 5 configuration
+# Intrinsic Parameter Self-Modification  (theta -> h -> delta_theta -> theta')
+# Design report: "P5 - 内生式参数自修改机制" (2026-08-18)
+
+# ---- base model / LoRA ----
+model_name: models/hf/gpt2        # local copy of gpt2 (124M)
+device: cuda
+torch_dtype: float32
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.1
+lora_lr: 0.0005
+task_lr: 0.00005                  # P5 loop task-learning LR
+
+# ---- experiment ----
+num_networks: 5
+samples_per_round: 32
+max_len: 192
+num_rounds: 20                    # general(5) -> code(5) -> mixed(5) -> science(5)
+seed: 42
+eval_per_domain: 64
+probe_per_domain: 16
+
+# ---- P5 plasticity (report section 5.2 / 13.1) ----
+enable_plasticity: true           # attach IntrinsicPlasticityModule
+plasticity_mode: modification     # modification (P5-B) | modulation (P5-A)
+plasticity_interval: 4            # external trigger: every N grad steps
+plasticity_alpha: 0.01            # theta' = theta + alpha * delta
+min_delta_threshold: 1.0e-6
+plasticity_hidden_dim: 768        # GPT-2 hidden dim
+meta_dim: 32                      # self-state meta vector s_t
+plasticity_rank: 8                # low-rank delta generation rank
+plasticity_hidden_dims: [256, 256]
+modulation_strength_init: 0.05
+plasticity_lr: 1.0e-5             # P5-C: plasticity module LR
+train_plasticity: false           # P5-B off / P5-C on
+plasticity_train_threshold: 10
+plasticity_train_batches: 5
+plasticity_train_batch_size: 4
+min_memory_size: 10
+max_memory_size: 100
+adaptation_steps: 3
+
+# ---- state-component ablation ----
+use_hidden: true
+use_param_stats: true
+use_meta: true
+
+# ---- validation / safety (experiment controller) ----
+quick_validation_samples: 8
+validation_loss_margin: 0.5       # nats; accept if loss_after < loss_before + margin
+validation_perplexity_cap: 100.0
+max_param_change_ratio: 0.1
+rollback_on_failure: true
+save_snapshots: true
+
+# ---- negative controls (report section 10.2) ----
+run_negative_controls: true       # random / constant / shuffled delta arms
+
+# ---- output ----
+output_dir: experiments/phase5

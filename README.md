@@ -1,6 +1,6 @@
 # DSCNS — Dynamic Self-Modifying Cognitive Network System
 
-> **Status: Early Research Prototype (v0.2.0)**
+> **Status: Early Research Prototype (v0.3.0)**
 
 DSCNS is an experimental research prototype exploring a dynamic modular
 neural architecture for **continual learning**, **candidate knowledge
@@ -40,7 +40,10 @@ internalized — or stored as callable knowledge instead. The network topology
 itself is treated as a learnable structure (split / merge / connect), and in
 Phase 4 the *decision* of when/what/where/how-much to modify is learned by a
 small neural self-modification policy trained by imitation + reinforcement
-(see [docs/PHASE4.md](docs/PHASE4.md)).
+(see [docs/PHASE4.md](docs/PHASE4.md)). In Phase 5 each network hosts an
+*intrinsic plasticity module* whose own internal state directly produces
+continuous changes to its parameters — `θ → h → Δθ → θ'` (see
+[docs/PHASE5.md](docs/PHASE5.md)).
 
 The current prototype builds on a **frozen GPT-2 small (124M) base model**
 with **one LoRA adapter per cognitive network**, and implements the full
@@ -184,6 +187,8 @@ human brain mechanisms.
 | Structural evolution (executor) | `dscns/evolution.py` | §4 |
 | Learned self-modification (Phase 4) | `dscns/self_modification.py` | Phase-4 proposal §3–12 |
 | Modification memory (Phase 4) | `dscns/modification_memory.py` | Phase-4 proposal §13 |
+| Intrinsic plasticity (Phase 5) | `dscns/intrinsic_plasticity.py` | Phase-5 report §4–6 |
+| Plasticity trainer (Phase 5-C) | `dscns/plasticity_trainer.py` | Phase-5 report §11 |
 | System orchestration | `dscns/system.py` | §7.3, §11 |
 | Metrics (AF/FWT/CLS) | `dscns/evaluation.py` | §7.4, §10.3 |
 
@@ -230,6 +235,7 @@ Detailed numbers are in `experiments/comparison.md` and `REPORT_zh.md`
 | Phase 2 | Information-gain sampling | Best strategy among those tested (0.0591 vs random 0.0572) |
 | Phase 3 | Dynamic topology (split/merge/connect) | Mechanism works; currently below fixed topology |
 | Phase 4 | Learned structural self-adaptation | Learned controller makes structure decisions (see below) |
+| Phase 5 | Intrinsic parameter self-modification | Closed loop `θ→h→Δθ→θ'` exists, stable, state-dependent (see below) |
 
 ### Phase 1 — continual learning (Control / Exp1 / Exp2)
 
@@ -305,6 +311,47 @@ Design and full discussion: [docs/PHASE4.md](docs/PHASE4.md).
 ![Phase 4 reward](experiments/phase4/phase4_reward.png)
 ![Phase 4 learning](experiments/phase4/phase4_learning.png)
 
+### Phase 5 — intrinsic parameter self-modification (θ → h → Δθ → θ')
+
+Each network hosts an `IntrinsicPlasticityModule` (a *member* of the network)
+that maps its own internal state to a continuous parameter change. P5's core
+claim is the existence of a repeatable, stable, measurable, state-dependent
+parameter–state feedback loop; **performance is descriptive, not probative**
+(per the design report). On a 20-round shifted stream (general(5) → code(5) →
+mixed_code(5) → science(5)):
+
+| Metric | fixed | p5b (intrinsic) | random | constant | shuffled |
+|---|---|---|---|---|---|
+| Final mean performance (5 domains) | **0.0413** | 0.0412 | 0.0405 | 0.0409 | 0.0407 |
+| Average Forgetting (AF) ↓ | **0.0090** | 0.0090 | 0.0097 | 0.0094 | 0.0095 |
+| Continual Learning Score (CLS) ↑ | **0.0323** | 0.0322 | 0.0308 | 0.0315 | 0.0312 |
+| Plasticity triggers / acceptance | — | 100 / 1.00 | 100 / 1.00 | 100 / 1.00 | 100 / 1.00 |
+| Mean Δθ norm | — | **1.285** | 1.310 | 1.325 | 1.288 |
+| Δθ norm variance | — | **4.8e-3** | 1.3e-2 | 3.3e-3 | 1.8e-3 |
+| Prediction-change rate | — | **0.014%** | 0.019% | 0.012% | 0.007% |
+
+Core validation (all pass, single seed): Δθ is non-zero (‖ΔW_A‖≈0.67,
+‖ΔW_B‖≈0.69), state-dependent (deterministic under identical input;
+cross-input difference ≈0.23), transitions parameters (‖θ'−θ‖≈32.7),
+changes behavior (logits diff ≈0.21), forms a non-constant non-diverging
+loop, and stays stable over 20 steps (no NaN, entropy ≈3.87). Negative
+controls are distinguishable from intrinsic Δθ (random / constant / shuffled
+deltas through the same protocol). At matched Δθ norm, intrinsic deltas show
+the **lowest** across-event variance and the **smallest** behavioral
+perturbation — consistent with state-aligned, structured modification.
+
+**P5-C** (offline adaptive plasticity learning) is reported separately in
+[docs/PHASE5.md](docs/PHASE5.md) §5.4: the mechanism ran (100 triggers, 19/20
+success cases and 11 training calls per network, mean reward +9.6e-4), but
+the reward-weighted offline signal (≈1e-9) is negligible at this scale, so no
+measurable plasticity improvement was observed; its higher final metrics are
+confounded by extra adaptation compute.
+
+![Phase 5 comparison](experiments/phase5/phase5_perf.png)
+![Phase 5 loop](experiments/phase5/phase5_loop.png)
+![Phase 5 controls](experiments/phase5/phase5_controls.png)
+![Phase 5 learning](experiments/phase5/phase5_learning.png)
+
 ## Current Findings
 
 These findings are **preliminary**, limited to this prototype and its
@@ -327,6 +374,12 @@ about continual learning or neural architecture design.
    system's own state without the rule engine; whether it *outperforms*
    rules or fixed topology is not established at this prototype scale
    (see [docs/PHASE4.md](docs/PHASE4.md) and `experiments/phase4`).
+6. **Finding 6 (Phase 5)** — A model's internal state *can* directly produce
+   state-dependent, stable, measurable changes to its own parameters
+   (`θ → h → Δθ → θ'`); the closed loop passes Tests 1–6 and is
+   distinguishable from random/constant/shuffled modifications — no
+   performance gain is claimed (see [docs/PHASE5.md](docs/PHASE5.md) and
+   `experiments/phase5`).
 
 ## Reproduction
 
@@ -356,7 +409,19 @@ python scripts/run_phase3.py --out experiments/phase3
 # 6) Phase 4 — learned structural self-adaptation (rule vs learned vs fixed)
 python scripts/run_phase4.py --out experiments/phase4
 
-# 7) Aggregate results into experiments/comparison.md + plots
+# 7) Phase 5 — intrinsic parameter self-modification
+#    (a) core validation: Tests 1-6 + negative controls
+python scripts/validate_phase5.py
+#    (b) main experiment: fixed vs intrinsic (p5b) — 20 rounds
+python scripts/run_phase5_b.py --out experiments/phase5
+#    (c) negative-control arms: random / constant / shuffled deltas
+python scripts/run_negative_controls.py --out experiments/phase5
+#    (d) P5-C: adaptive plasticity learning
+python scripts/run_phase5_c.py --out experiments/phase5
+#    (e) analysis tables + plots
+python scripts/analyze_phase5.py --out experiments/phase5
+
+# 8) Aggregate results into experiments/comparison.md + plots
 python scripts/make_report.py
 ```
 
@@ -369,10 +434,11 @@ that was used to bootstrap the original environment through a local proxy.
 
 ```
 dscns/
-├── dscns/                  # core implementation (17 modules, incl. Phase 4)
+├── dscns/                  # core implementation (19 modules, incl. Phase 4+5)
 ├── scripts/                # download / experiment / report scripts
-├── config/phase1.yaml      # experiment configuration
-├── docs/                   # design, experiments, limitations, licenses, PHASE4
+├── config/                 # phase1.yaml, phase5.yaml
+├── tests/                  # Phase 5 validation suites (Test 1-6 + controls)
+├── docs/                   # design, experiments, limitations, licenses, PHASE4, PHASE5
 ├── experiments/            # official results (JSON + plots) — kept in git
 ├── REPORT_zh.md            # Chinese reproduction report
 ├── requirements.txt
@@ -392,6 +458,11 @@ version control by `.gitignore`.
   modification *decision* is learned by a policy
   (`SelfModificationPolicy`, imitation + REINFORCE), while `StructureEvolver`
   keeps execution and hard safety constraints.
+- Phase 5 follows the design report *"DSCNS Phase 5 内生式参数自修改机制"*
+  (see `docs/PHASE5.md`): each network's internal state directly produces
+  continuous parameter changes (`IntrinsicPlasticityModule`,
+  `θ → h → Δθ → θ'`); triggers/validation/rollback stay with the experiment
+  controller.
 - Multi-network = shared frozen base + per-network LoRA adapters, keeping
   the parameter spaces Θ_i independent while sharing memory.
 - Knowledge-state levels and internalization degrees I_ij ∈ [0,1] are
@@ -406,6 +477,9 @@ version control by `.gitignore`.
 - The structural-evolution mechanism is intentionally simple; Phase 4's
   learned controller is a tiny policy with a tiny RL budget
   (proof-of-concept, not scalable architecture search).
+- Phase 5's intrinsic plasticity is validated at prototype scale only
+  (single seed, GPT-2 small, single LoRA rank, external fixed trigger);
+  performance gains are *not* claimed for it.
 - No large-scale benchmarks; no evidence of generalization to other models
   or domains yet.
 - No evidence that DSCNS outperforms mature continual-learning methods
@@ -418,10 +492,13 @@ version control by `.gitignore`.
 - Learned (rather than hand-tuned) relevance and trust-weight functions.
 - Phase 4: larger RL budgets, longer adaptation windows, and
   layer-level (not only adapter-population-level) learned self-modification.
+- Phase 5: end-to-end differentiable plasticity, learned triggers
+  (Level 4), full-parameter conditioning, multi-layer coordination;
+  Phase 6 (intrinsic *structural* self-modification) as the next stage.
 - Better structural-plasticity control (e.g., adaptive evolution thresholds,
   post-evolution stabilization schedules).
 - Larger-scale benchmarks (EWC / replay / PEFT baselines).
-- Multimodal and open-environment extensions (design report Phases 5–6).
+- Multimodal and open-environment extensions (design report Phases 6+).
 
 ## Citation
 
@@ -433,7 +510,7 @@ If you use this repository in your work, please cite it as:
   author = {Mousennnn},
   year   = {2026},
   month  = {aug},
-  note   = {Version v0.2.0, early research prototype},
+  note   = {Version v0.3.0, early research prototype},
   howpublished = {GitHub repository},
   url    = {https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System}
 }
@@ -447,7 +524,7 @@ If you use this repository in your work, please cite it as:
 
 **Attribution:** When reusing or adapting the documentation, please credit:
 
-> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.2.0), by
+> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.3.0), by
 > Mousennnn, licensed under CC BY 4.0.
 > https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System
 

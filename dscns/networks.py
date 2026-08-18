@@ -28,6 +28,8 @@ class CognitiveNetwork:
         base_lr: float = 5e-4,
         source_weight: float = 0.5,
         trust: float = 0.5,
+        plasticity: Any = None,          # Phase 5: IntrinsicPlasticityModule
+        plasticity_cfg: Optional[Dict[str, Any]] = None,
     ):
         self.id = net_id
         self.name = name
@@ -62,6 +64,13 @@ class CognitiveNetwork:
 
         # optimizer over this network's adapter parameters
         self.optimizer = None
+
+        # Phase 5: intrinsic parameter self-modification
+        self.plasticity = plasticity          # IntrinsicPlasticityModule or None
+        self.plasticity_cfg = plasticity_cfg or {}
+        self.plasticity_optimizer = None      # used by P5-C offline training
+        self.step_count: int = 0              # grad-step counter (external trigger)
+        self.modification_history: List[Dict[str, Any]] = []
 
     # ------------------------------------------------------------------ #
     # adapter management
@@ -305,6 +314,209 @@ class CognitiveNetwork:
         if not self.accepted_embeddings:
             return np.zeros(1, dtype=np.float32)
         return np.mean(np.stack(self.accepted_embeddings), axis=0)
+
+    # ------------------------------------------------------------------ #
+    # Phase 5: intrinsic parameter self-modification
+    #   theta -> h -> delta_theta -> theta'   (report sections 4-7)
+    #
+    # Plasticity *generation* (P_phi(h, stats(theta), s)) and the parameter
+    # *transition* (theta' = theta + alpha*delta) are model-side mechanisms;
+    # triggers, validation and rollback are experiment-controller concerns.
+    # ------------------------------------------------------------------ #
+    def _current_params_tensors(self) -> Dict[str, Any]:
+        """Flattened live copies of this adapter's lora_A / lora_B weights.
+
+        Used only for the low-dimensional stats(theta) input of P_phi;
+        the full parameter vector is never passed to the plasticity module.
+        """
+        import torch
+
+        wa, wb = [], []
+        for n, p in self.peft_model.named_parameters():
+            if f".{self.id}." in n:
+                if "lora_A" in n:
+                    wa.append(p.detach().flatten())
+                elif "lora_B" in n:
+                    wb.append(p.detach().flatten())
+        W_A = torch.cat(wa) if wa else torch.zeros(1)
+        W_B = torch.cat(wb) if wb else torch.zeros(1)
+        return {"W_A": W_A, "W_B": W_B}
+
+    def param_stats(self) -> List[float]:
+        """[mean, std, min, max] over this network's adapter parameters."""
+        import torch
+
+        tensors = self._current_params_tensors()
+        all_ = torch.cat([tensors["W_A"], tensors["W_B"]])
+        return [float(all_.mean()), float(all_.std()),
+                float(all_.min()), float(all_.max())]
+
+    def _get_meta_info(self, meta_dim: int = 32) -> Any:
+        """Build the self-state meta vector s_t (padded to meta_dim).
+
+        Combines the Phase 4 self-state features with learning-progress,
+        modification count and step count.  This is model-side meta info,
+        not an external observation.
+        """
+        import torch
+
+        s = self.get_self_state()
+        hist = self.performance_history
+        progress = float(hist[-1] - hist[-2]) if len(hist) >= 2 else 0.0
+        feats = [
+            s["competence"], s["uncertainty"], progress,
+            float(len(self.modification_history)), float(self.step_count),
+            s["task_diversity"], s["trust"], s["log_accepted"],
+            s["activation_norm"], s["perf_trend"], s["queries_norm"],
+            s["corrections_norm"], s["bookkeeping_norm"],
+        ]
+        vec = torch.tensor(feats, dtype=torch.float32)
+        if vec.size(0) < meta_dim:
+            vec = torch.cat([vec, torch.zeros(meta_dim - vec.size(0))])
+        return vec[:meta_dim]
+
+    def snapshot_parameters(self) -> Dict[str, Any]:
+        """Snapshot adapter weights (experiment safety mechanism, section 7.2)."""
+        return {
+            "lora_A": {n: p.detach().clone()
+                       for n, p in self.peft_model.named_parameters()
+                       if f".{self.id}." in n and "lora_A" in n},
+            "lora_B": {n: p.detach().clone()
+                       for n, p in self.peft_model.named_parameters()
+                       if f".{self.id}." in n and "lora_B" in n},
+            "step": self.step_count,
+        }
+
+    def restore_parameters(self, snapshot: Dict[str, Any]) -> None:
+        """Restore adapter weights from a snapshot (rollback safety)."""
+        with self._no_grad_ctx():
+            for n, p in self.peft_model.named_parameters():
+                if n in snapshot.get("lora_A", {}):
+                    p.data.copy_(snapshot["lora_A"][n])
+                elif n in snapshot.get("lora_B", {}):
+                    p.data.copy_(snapshot["lora_B"][n])
+
+    @staticmethod
+    def _no_grad_ctx():
+        import torch
+
+        return torch.no_grad()
+
+    def apply_intrinsic_modification(self, delta_params: Dict[str, Any],
+                                     alpha: float = 1.0,
+                                     permanent: bool = True) -> bool:
+        """Model-side parameter transition: theta' = theta + alpha * delta.
+
+        delta_params: {'delta_W_A': (H, r), 'delta_W_B': (r, H), ...}
+        The same low-rank delta is applied to every LoRA injection point of
+        this network's adapter (all lora_A/lora_B matrices share shape
+        (r, H) / (H, r) in this prototype).
+        """
+        dA = delta_params["delta_W_A"].transpose(0, 1)  # (r, H)
+        dB = delta_params["delta_W_B"].transpose(0, 1)  # (H, r)
+        with self._no_grad_ctx():
+            for n, p in self.peft_model.named_parameters():
+                if f".{self.id}." in n:
+                    if "lora_A" in n and p.size(1) == dA.size(1):
+                        # down-projections with hidden-size input: c_attn
+                        # and attention c_proj (mlp c_proj input is 3072)
+                        p.data.add_(dA.to(p.device) * alpha)
+                    elif "lora_B" in n and p.size(0) == dB.size(0):
+                        # up-projections with hidden-size output; c_attn's
+                        # (3*H, r) QKV output is skipped in this prototype
+                        p.data.add_(dB.to(p.device) * alpha)
+        self.modification_history.append({
+            "step": self.step_count,
+            "delta_W_A_norm": float(delta_params["delta_W_A"].norm()),
+            "delta_W_B_norm": float(delta_params["delta_W_B"].norm()),
+            "modulation_strength": float(delta_params.get("modulation_strength", 0.0)),
+            "alpha": alpha,
+            "permanent": permanent,
+        })
+        return True
+
+    def generate_delta(self, texts: List[str], tokenizer: Any,
+                       meta_info: Optional[Any] = None,
+                       batch_size: int = 8, max_len: int = 192,
+                       grad_enabled: bool = False) -> Dict[str, Any]:
+        """Model-side plasticity generation: P_phi(h, stats(theta), s).
+
+        Runs the base model + this adapter on ``texts``, pools the last
+        hidden states, encodes current parameter statistics and the meta
+        vector, and returns the generated delta (consensus over the batch).
+
+        ``grad_enabled`` (P5-C training) keeps gradients flowing through the
+        plasticity module only: the base-model forward and the parameter
+        statistics stay detached, so the frozen base never receives grads.
+        """
+        import torch
+
+        if self.plasticity is None:
+            raise RuntimeError("network has no plasticity module")
+        self.peft_model.set_adapter(self.id)
+        self.peft_model.eval()
+        self.plasticity.eval()
+        enc = tokenizer(texts, return_tensors="pt", padding=True,
+                        truncation=True, max_length=max_len)
+        enc = {k: v.to(self.peft_model.device) for k, v in enc.items()}
+        with torch.no_grad():
+            out = self.peft_model(**enc, output_hidden_states=True)
+            hidden = out.hidden_states[-1]  # (B, T, H), detached
+            B = hidden.size(0)
+            if meta_info is None:
+                meta_dim = self.plasticity_cfg.get("meta_dim", 32)
+                meta_info = self._get_meta_info(meta_dim)
+                meta_info = meta_info.to(hidden.device).unsqueeze(0).expand(B, -1)
+            current_params = self._current_params_tensors()
+        if grad_enabled:
+            self.plasticity.train()
+            delta = self.plasticity(
+                hidden, current_params, meta_info,
+                mask=enc["attention_mask"],
+            )
+        else:
+            with torch.no_grad():
+                delta = self.plasticity(
+                    hidden, current_params, meta_info,
+                    mask=enc["attention_mask"],
+                )
+        delta["meta_info"] = meta_info.detach()
+        return delta
+
+    def modulate_forward(self, texts: List[str], tokenizer: Any,
+                         delta_params: Dict[str, Any], alpha: float = 1.0,
+                         max_len: int = 192) -> Dict[str, Any]:
+        """P5-A parameter *modulation*: apply delta transiently, then restore.
+
+        Verifies that internal state can influence the model's own
+        computation without permanently modifying parameters.
+        """
+        import torch
+
+        snap = self.snapshot_parameters()
+        logits_before = self._logits_for_texts(texts, tokenizer, max_len)
+        self.apply_intrinsic_modification(delta_params, alpha=alpha)
+        logits_after = self._logits_for_texts(texts, tokenizer, max_len)
+        self.restore_parameters(snap)
+        return {
+            "logits_before": logits_before,
+            "logits_after": logits_after,
+            "logits_diff": float((logits_after - logits_before).abs().mean()),
+            "weights_restored": True,
+        }
+
+    def _logits_for_texts(self, texts: List[str], tokenizer: Any,
+                          max_len: int = 192) -> Any:
+        import torch
+
+        self.peft_model.set_adapter(self.id)
+        self.peft_model.eval()
+        enc = tokenizer(texts, return_tensors="pt", padding=True,
+                        truncation=True, max_length=max_len)
+        enc = {k: v.to(self.peft_model.device) for k, v in enc.items()}
+        with torch.no_grad():
+            out = self.peft_model(**enc)
+            return out.logits.detach()
 
     # ------------------------------------------------------------------ #
     # Phase 4: model self-state interface (proposal section 15)

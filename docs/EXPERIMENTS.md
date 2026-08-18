@@ -173,6 +173,70 @@ decision loop (state → policy → action → candidate → evaluate → reward
 policy update) and that the policy can produce structural actions with the
 rule engine's decision logic switched off.
 
+### Phase 5 — intrinsic parameter self-modification (fixed vs p5b vs p5c + controls)
+
+Following the design report *"DSCNS Phase 5 内生式参数自修改机制"*, each
+cognitive network hosts an `IntrinsicPlasticityModule` (a member of the
+network, not an external observer) that maps its own internal state to a
+continuous parameter change:
+
+```
+theta_t -> h_t -> delta_theta_t = P_phi(h_t, stats(theta_t), s_t)
+        -> theta_{t+1} = theta_t + alpha * delta_theta_t -> h_{t+1} -> ...
+```
+
+Primary evidence is the closed loop itself; performance is recorded as a
+descriptive outcome (the report explicitly does **not** require performance
+gains for P5). Stream: 20 rounds = general(5) → code(5) → mixed_code(5) →
+science(5), 32 experiences/round, sampling with replacement (small HumanEval
+pool), external fixed trigger every 4 grad steps (1 plasticity step per
+network per round), `plasticity_alpha=0.01`, learnable modulation strength
+init 0.05, seed 42.
+
+| Metric | fixed | p5b (intrinsic) | random | constant | shuffled |
+|---|---|---|---|---|---|
+| Final mean performance (5 domains) | **0.0413** | 0.0412 | 0.0405 | 0.0409 | 0.0407 |
+| Average Forgetting (AF) ↓ | **0.0090** | 0.0090 | 0.0097 | 0.0094 | 0.0095 |
+| Continual Learning Score (CLS) ↑ | **0.0323** | 0.0322 | 0.0308 | 0.0315 | 0.0312 |
+| Plasticity triggers | — | 100 | 100 | 100 | 100 |
+| Acceptance rate | — | 1.00 | 1.00 | 1.00 | 1.00 |
+| Mean Δθ norm | — | **1.285** | 1.310 | 1.325 | 1.288 |
+| Δθ norm variance (across events) | — | **4.8e-3** | 1.3e-2 | 3.3e-3* | 1.8e-3 |
+| Prediction-change rate | — | **0.014%** | 0.019% | 0.012% | 0.007% |
+| Logits change | — | **0.0074** | 0.0078 | 0.0078 | 0.0081 |
+
+\* the constant arm caches one constant delta *per network*, so its
+across-event variance reflects between-network differences, not input
+dependence.
+
+**P5-C (adaptive plasticity learning, compute non-parity — reported
+separately):** 100 triggers, 100 accepted, 19/20 success cases and 11 offline
+training calls per network, mean reward **+9.6e-4** (after the short
+adaptation, performance on the trigger texts generally improved). Unweighted
+replay MSE 1.35e-5 → 1.90e-5 (real but tiny); the reward-weighted loss is
+≈1e-9, so P_φ updates are negligible. p5c's higher final metrics (final mean
+0.0552, AF 0.0007, CLS 0.0545) are **confounded by the 60 extra task-learning
+steps per network** spent in the adaptation phase and must **not** be
+attributed to plasticity learning (see `docs/PHASE5.md` §5.4).
+
+Core-validation evidence (see `docs/PHASE5.md` §4): Tests 1–6 and the P5-A
+modulation test all pass — Δθ is non-zero (‖ΔW_A‖≈0.67, ‖ΔW_B‖≈0.69), state
+dependent (deterministic under identical input, cross-input difference
+≈0.23, random-hidden ablation ≈1.25), transitions parameters (‖θ'−θ‖≈32.7 at
+α=1.0), changes behavior (logits diff ≈0.21, prediction change 0.91%),
+forms a non-constant non-diverging loop over 5 iterations, and stays stable
+over 20 consecutive steps (no NaN, bounded norms, entropy ≈3.87). Negative
+controls are distinguishable: intrinsic vs same-norm random deltas differ in
+behavioral effect; intrinsic cross-input Δθ variance ≫ 0 vs 0 for a constant
+delta; correct state↔delta pairing produces different effects than shuffled
+pairing.
+
+**Interpretation (single seed, prototype scale):** P5's core claim — a
+repeatable, stable, measurable parameter–state feedback loop exists and is
+state-dependent — is supported by the validation suite. Performance
+differences between arms (≈0.00x) are not statistically established and are
+not the point of P5.
+
 ## 7. Known deviations from the design report
 
 1. **MATH dataset:** `hendrycks/competition_math` is gated; the loader falls
@@ -201,6 +265,22 @@ rule engine's decision logic switched off.
 8. **Phase 4 reward uses probe sets; state features use eval sets** — the
    same convention as the Phase 3 rule triggers (decisions are not made on
    the final reported metrics alone).
+9. **Phase 5 validation uses a relative safety criterion** — accept when
+   `loss_after < loss_before + 0.5 nats` (with an absolute perplexity cap as
+   a secondary guard) instead of the report's absolute `perplexity < 100`,
+   because GPT-2 raw perplexity varies across domains and an absolute cap
+   alone rejects valid modifications.
+10. **Phase 5 Δθ application scope** — the generated low-rank Δθ
+    (768→16→768) is applied to the hidden-dimension LoRA projections
+    (c_attn / attention c_proj down, c_proj / mlp c_proj up); c_attn's
+    QKV-concatenated output projection (3H, r) and the MLP input projection
+    (r, 3H) are skipped (dimension mismatch; documented in LIMITATIONS).
+11. **Phase 5 trigger is external and fixed-frequency** (every 4 grad
+    steps) — per the report, the trigger is experiment scheduling, not part
+    of the intrinsic mechanism.
+12. **Phase 5 stream uses sampling with replacement** for all domains (the
+    report's 20-round length exceeds the small HumanEval pool without
+    reuse; P5 focuses on the closed loop, not stream curation).
 
 ## 8. Reproducibility
 

@@ -1,0 +1,129 @@
+{
+  "core_tests": {
+    "test1_delta_existence": {
+      "delta_W_A_norm": 0.7475525140762329,
+      "delta_W_B_norm": 0.5983505845069885,
+      "ok": true
+    },
+    "test2_state_dependency": {
+      "determinism_diff": 0.0,
+      "input_diff": 0.1694227010011673,
+      "random_h_ablation_diff": 1.2282780408859253,
+      "ok": true
+    },
+    "test3_parameter_transition": {
+      "param_change": 32.30167496204376,
+      "ok": true
+    },
+    "test4_behavioral_change": {
+      "logits_diff": 0.17317639291286469,
+      "pred_change_rate": 0.0013020833721384406,
+      "ok": true
+    },
+    "test5_modification_loop": {
+      "delta_norms": [
+        1.316652774810791,
+        1.3069965839385986,
+        1.3022026419639587,
+        1.300288200378418,
+        1.295281708240509
+      ],
+      "delta_variance": 5.233688480558385e-05,
+      "ok": true
+    },
+    "test6_stability": {
+      "param_norms": [
+        14.06190299987793,
+        14.10060977935791,
+        14.141708374023438,
+        14.185083389282227,
+        14.230643272399902,
+        14.278331756591797,
+        14.328169822692871,
+        14.380162239074707,
+        14.434306144714355,
+        14.490582466125488,
+        14.548996925354004,
+        14.609600067138672,
+        14.672436714172363,
+        14.737527847290039,
+        14.804872512817383,
+        14.874466896057129,
+        14.946309089660645,
+        15.020395278930664,
+        15.096709251403809,
+        15.175235748291016
+      ],
+      "entropies": [
+        3.87939453125,
+        3.8794474601745605,
+        3.8794944286346436,
+        3.8795318603515625,
+        3.8795623779296875,
+        3.8795878887176514,
+        3.8796050548553467,
+        3.879617214202881,
+        3.879626750946045,
+        3.8796327114105225,
+        3.8796374797821045,
+        3.87964129447937,
+        3.879646062850952,
+        3.8796520233154297,
+        3.8796558380126953,
+        3.879662275314331,
+        3.879671096801758,
+        3.8796796798706055,
+        3.8796918392181396,
+        3.8797011375427246
+      ],
+      "ok": true
+    },
+    "test_modulation_p5a": {
+      "logits_diff": 0.2220170646905899,
+      "weights_restored": true,
+      "ok": true
+    }
+  },
+  "negative_controls": {
+    "control_a_random": {
+      "intrinsic": {
+        "pass": true,
+        "reason": "ok",
+        "pred_change": 0.0,
+        "logits_diff": 0.019309621304273605
+      },
+      "random": {
+        "pass": true,
+        "reason": "ok",
+        "pred_change": 0.0013020833721384406,
+        "logits_diff": 0.02091989666223526
+      },
+      "same_content": false,
+      "ok": true
+    },
+    "control_b_constant": {
+      "intrinsic_cross_input_diff": 0.1669657975435257,
+      "constant_cross_input_diff": 0.0,
+      "ok": true
+    },
+    "control_c_shuffled": {
+      "correct_pairing": {
+        "pass": true,
+        "reason": "ok",
+        "pred_change": 0.0,
+        "logits_diff": 0.01971728913486004
+      },
+      "shuffled_pairing": {
+        "pass": true,
+        "reason": "ok",
+        "pred_change": 0.0,
+        "logits_diff": 0.019264670088887215
+      },
+      "ok": true
+    }
+  },
+  "core_ok": true,
+  "controls_ok": true,
+  "overall_ok": true,
+  "wall_seconds": 9.480831861495972
+}

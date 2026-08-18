@@ -4,16 +4,18 @@ title: "DSCNS: Dynamic Self-Modifying Cognitive Network System"
 abstract: >-
   A research prototype exploring dynamic modular neural systems with
   continual learning, candidate knowledge validation, selective
-  internalization, memory, meta-cognition, and structural evolution.
-  Includes a learned structural self-modification policy (Phase 4).
-  Early research prototype (v0.2.0); experimental results include mixed
-  and negative findings and should be interpreted conservatively.
+  internalization, memory, meta-cognition, structural evolution,
+  learned structural self-modification (Phase 4) and intrinsic
+  parameter self-modification (Phase 5: theta -> h -> delta_theta ->
+  theta'). Early research prototype (v0.3.0); experimental results
+  include mixed and negative findings and should be interpreted
+  conservatively.
 authors:
   - family-names: "Mousennnn"
     given-names: ""
     alias: "Mousennnn"
     website: "https://github.com/Mousennnn"
-version: "v0.2.0"
+version: "v0.3.0"
 date-released: "2026-08-18"
 license: "GPL-3.0"
 url: "https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System"
@@ -22,5 +24,6 @@ keywords:
   - modular neural networks
   - structural evolution
   - learned structural self-modification
+  - intrinsic parameter self-modification
   - active learning
   - meta-cognition

@@ -193,6 +193,52 @@ def phase4_section(out: list):
             out.append("")
 
 
+def phase5_section(out: list):
+    out.append("## Phase 5: 内生式参数自修改实验（fixed vs p5b + 负对照）\n")
+    out.append("| 指标 | fixed | p5b (intrinsic) | random | constant | shuffled |")
+    out.append("|---|---|---|---|---|---|")
+    rows = {}
+    for tag in ["fixed", "p5b", "p5c", "random", "constant", "shuffled"]:
+        r = load("phase5", tag)
+        if r is None:
+            continue
+        cl = r.get("closed_loop", {})
+        rows[tag] = {
+            "final_mean": float(np.mean(list(r["final_performance"].values()))),
+            "AF": r.get("AF"), "FWT": r.get("FWT"), "CLS": r.get("CLS"),
+            "triggers": r.get("triggers", 0),
+            "accept": r.get("acceptance_rate"),
+            "d_norm": cl.get("delta_norm_mean"),
+            "pred": cl.get("pred_change_mean"),
+        }
+    def get(tag, key, nd=4, default="-"):
+        rr = rows.get(tag)
+        if rr is None:
+            return default
+        v = rr[key]
+        return default if v is None else fmt(v, nd)
+    cols = ["fixed", "p5b", "random", "constant", "shuffled"]
+    out.append(f"| 最终性能 (5域均值) | " +
+               " | ".join(get(t, "final_mean") for t in cols) + " |")
+    out.append(f"| 平均遗忘 AF ↓ | " + " | ".join(get(t, "AF") for t in cols) + " |")
+    out.append(f"| 前向迁移 FWT ↑ | " + " | ".join(get(t, "FWT") for t in cols) + " |")
+    out.append(f"| 综合持续学习分 CLS ↑ | " + " | ".join(get(t, "CLS") for t in cols) + " |")
+    out.append(f"| 可塑性触发次数 | " +
+               " | ".join(get(t, "triggers", 0) for t in cols) + " |")
+    out.append(f"| 修改接受率 | " +
+               " | ".join(get(t, "accept", 2) for t in cols) + " |")
+    out.append(f"| Δθ 平均范数 | " +
+               " | ".join(get(t, "d_norm") for t in cols) + " |")
+    out.append(f"| 预测变化率 | " +
+               " | ".join(get(t, "pred") for t in cols) + " |")
+    out.append("")
+    out.append("> P5 核心命题是闭环存在性 `θ → h → Δθ → θ'`，性能为描述性指标；"
+               "闭环证据（Test 1-6 全过 + 负对照区分）见 docs/PHASE5.md §5。"
+               "P5-C（离线可塑性学习）因含额外适应计算（预算不对等）单独报告于 "
+               "docs/PHASE5.md §5.4。")
+    out.append("")
+
+
 def main():
     out = ["# DSCNS 复现实验结果汇总\n",
            "> 基础模型: GPT-2 (124M) 本地冻结底座 + 每网络 LoRA(r=16) 适配器 | "
@@ -201,6 +247,7 @@ def main():
     phase2_section(out)
     phase3_section(out)
     phase4_section(out)
+    phase5_section(out)
 
     text = "\n".join(out)
     with open("experiments/comparison.md", "w", encoding="utf-8") as f:

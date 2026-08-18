@@ -1,6 +1,6 @@
 # DSCNS — Dynamic Self-Modifying Cognitive Network System（動的自己修正認知ネットワークシステム）
 
-> **ステータス：初期研究プロトタイプ（v0.2.0）**
+> **ステータス：初期研究プロトタイプ（v0.3.0）**
 
 DSCNS は、**継続学習**・**候補知識の検証**・**選択的内化**・**記憶**・
 **メタ認知**・**構造進化**を探求する実験的研究プロトタイプです。
@@ -35,7 +35,10 @@ DSCNS は単一の「データ → 勾配更新」フローを、閉ループの
 えます：経験は複数ネットワークによって観察され、独立に評価され、ネットワーク
 間で検証され、その後にのみ漸進的に内化されるか、呼び出し可能な知識として保存
 されます。ネットワークトポロジ自体も学習可能な構造（分割・統合・接続）として
-扱われます。
+扱われます。Phase 4 では、いつ・何を・どこを・どれだけ修正するかの*決定*を
+小さなニューラル自己修正ポリシーが模倣＋強化学習で学習し、Phase 5 では各
+ネットワークの内部状態が自身のパラメータへの連続的な変更を直接生成します
+（`θ → h → Δθ → θ'`、[docs/PHASE5.md](docs/PHASE5.md) 参照）。
 
 現在のプロトタイプは、**凍結された GPT-2 small（124M）ベースモデル**と
 **認知ネットワークごとの LoRA アダプタ**を基盤とし、設計文書に記述された
@@ -171,6 +174,10 @@ w_i = trust_i × R_i，        C_final = Σ w_i·C_i / Σ w_i
 | メッセージバス / 通信 | `dscns/communication.py` | §8.1 |
 | 3 層記憶 | `dscns/memory.py` | §5 |
 | 構造進化 | `dscns/evolution.py` | §4 |
+| 学習型自己修正（Phase 4） | `dscns/self_modification.py` | Phase-4 提案 §3–12 |
+| 修正記憶（Phase 4） | `dscns/modification_memory.py` | Phase-4 提案 §13 |
+| 内在的可塑性（Phase 5） | `dscns/intrinsic_plasticity.py` | Phase-5 報告 §4–6 |
+| 可塑性トレーナ（Phase 5-C） | `dscns/plasticity_trainer.py` | Phase-5 報告 §11 |
 | システム統合 | `dscns/system.py` | §7.3, §11 |
 | 指標（AF/FWT/CLS） | `dscns/evaluation.py` | §7.4, §10.3 |
 
@@ -215,6 +222,7 @@ w_i = trust_i × R_i，        C_final = Σ w_i·C_i / Σ w_i
 | Phase 2 | 情報利得サンプリング | 検証した戦略中最良（0.0591 vs ランダム 0.0572） |
 | Phase 3 | 動的トポロジ（分割/統合/接続） | 機構は動作；現状は固定トポロジに劣る |
 | Phase 4 | 学習型構造自己修正 | ポリシーが自己状態から構造決定を学習（下記参照） |
+| Phase 5 | 内在的パラメータ自己修正 | 閉ループ `θ→h→Δθ→θ'` が存在・安定・状態依存的（下記参照） |
 
 ### Phase 1 — 継続学習（Control / Exp1 / Exp2）
 
@@ -289,6 +297,44 @@ learned ポリシーは Stage B で構造修正を**自律的に提案**し（r1
 ![Phase 4 報酬](experiments/phase4/phase4_reward.png)
 ![Phase 4 学習曲線](experiments/phase4/phase4_learning.png)
 
+### Phase 5 — 内在的パラメータ自己修正（θ → h → Δθ → θ'）
+
+各ネットワークは `IntrinsicPlasticityModule`（ネットワークの**メンバ**）を
+持ち、自身の内部状態を連続的なパラメータ変化に写像します。P5 の中心的命題は
+「パラメータ―状態フィードバック閉ループ」の存在性・安定性・状態依存性・
+識別可能性であり、**性能は記述的指標であり証明には用いません**（設計
+レポートに従う）。20 ラウンドのシフトストリーム
+（general(5)→code(5)→mixed_code(5)→science(5)）：
+
+| 指標 | fixed | p5b（内在） | random | constant | shuffled |
+|---|---|---|---|---|---|
+| 最終平均性能（5 ドメイン） | **0.0413** | 0.0412 | 0.0405 | 0.0409 | 0.0407 |
+| 平均忘却 AF ↓ | **0.0090** | 0.0090 | 0.0097 | 0.0094 | 0.0095 |
+| 継続学習スコア CLS ↑ | **0.0323** | 0.0322 | 0.0308 | 0.0315 | 0.0312 |
+| トリガ数 / 受容率 | — | 100 / 1.00 | 100 / 1.00 | 100 / 1.00 | 100 / 1.00 |
+| Δθ 平均ノルム | — | **1.285** | 1.310 | 1.325 | 1.288 |
+| Δθ ノルム分散 | — | **4.8e-3** | 1.3e-2 | 3.3e-3 | 1.8e-3 |
+| 予測変化率 | — | **0.014%** | 0.019% | 0.012% | 0.007% |
+
+中核検証（単一シード、全て合格）：Δθ は非ゼロ（‖ΔW_A‖≈0.67、
+‖ΔW_B‖≈0.69）、状態依存的（同一入力なら決定論的；入力間差 ≈0.23）、
+パラメータを遷移（‖θ'−θ‖≈32.7）、挙動を変更（logits 差 ≈0.21）、
+閉ループは非定常かつ発散せず、20 ステップ安定（NaN なし、エントロピー
+≈3.87）；ランダム/固定/シャッフル Δθ と識別可能。同一ノルムの Δθ のうち、
+内在 Δθ はイベント間分散が**最小**・挙動撹乱が**最小**——状態に整合した
+構造化修正と整合します。
+
+**P5-C**（オフライン適応的可塑性学習）は [docs/PHASE5.md](docs/PHASE5.md)
+§5.4 に別途報告：機構は完全に動作（100 トリガ、各ネットワーク 19/20 成功
+ケースと 11 回の訓練、平均報酬 +9.6e-4）しましたが、報酬重み付きオフライン
+信号（≈1e-9）は本規模では無視でき、測定可能な可塑性改善は観測されません
+でした。より高い最終指標は追加の適応計算による交絡です。
+
+![Phase 5 性能](experiments/phase5/phase5_perf.png)
+![Phase 5 閉ループ](experiments/phase5/phase5_loop.png)
+![Phase 5 対照](experiments/phase5/phase5_controls.png)
+![Phase 5 学習](experiments/phase5/phase5_learning.png)
+
 ## 現在の知見
 
 以下の知見は**暫定的**であり、本プロトタイプとその実験設定に限定されます。
@@ -308,6 +354,10 @@ learned ポリシーは Stage B で構造修正を**自律的に提案**し（r1
    ルールエンジンなしでシステム自身の状態から構造修正決定を*生成できる*こと
    を示した。ルールや固定トポロジを*上回るか*は、このプロトタイプ規模では
    未確立（[docs/PHASE4.md](docs/PHASE4.md) と `experiments/phase4` 参照）。
+6. **知見 6（Phase 5）** — モデルの内部状態は、自身のパラメータへの状態依存的・
+   安定的・測定可能な変更を*直接生成できる*（`θ → h → Δθ → θ'`）。閉ループは
+   Test 1-6 を通過し、ランダム/固定/シャッフル修正と区別可能——性能向上は
+   主張しません（[docs/PHASE5.md](docs/PHASE5.md) と `experiments/phase5` 参照）。
 
 ## 再現
 
@@ -336,7 +386,19 @@ python scripts/run_phase3.py --out experiments/phase3
 # 6) Phase 4 — 学習型構造自己修正（rule vs learned vs fixed）
 python scripts/run_phase4.py --out experiments/phase4
 
-# 7) 結果を experiments/comparison.md と図に集約
+# 7) Phase 5 — 内在的パラメータ自己修正
+#    (a) 中核検証：Test 1-6 ＋ 負の対照
+python scripts/validate_phase5.py
+#    (b) 主実験：fixed vs intrinsic (p5b) — 20 ラウンド
+python scripts/run_phase5_b.py --out experiments/phase5
+#    (c) 負の対照アーム：ランダム / 固定 / シャッフル Δθ
+python scripts/run_negative_controls.py --out experiments/phase5
+#    (d) P5-C：適応的可塑性学習
+python scripts/run_phase5_c.py --out experiments/phase5
+#    (e) 分析テーブルと図
+python scripts/analyze_phase5.py --out experiments/phase5
+
+# 8) 結果を experiments/comparison.md と図に集約
 python scripts/make_report.py
 ```
 
@@ -349,10 +411,11 @@ python scripts/make_report.py
 
 ```
 dscns/
-├── dscns/                  # 中核実装（17 モジュール、Phase 4 含む）
+├── dscns/                  # 中核実装（19 モジュール、Phase 4+5 含む）
 ├── scripts/                # ダウンロード / 実験 / レポートスクリプト
-├── config/phase1.yaml      # 実験設定
-├── docs/                   # 設計・実験・限界・ライセンス・PHASE4
+├── config/                 # phase1.yaml, phase5.yaml
+├── tests/                  # Phase 5 検証スイート（Test 1-6 ＋ 負の対照）
+├── docs/                   # 設計・実験・限界・ライセンス・PHASE4・PHASE5
 ├── experiments/            # 公式結果（JSON + 図）— Git に保持
 ├── REPORT_zh.md            # 中国語再現レポート
 ├── requirements.txt
@@ -371,6 +434,10 @@ dscns/
   （`docs/PHASE4.md`）、構造修正の*決定*をポリシー
   （`SelfModificationPolicy`、模倣＋REINFORCE）が学習し、
   `StructureEvolver` は実行とハード安全制約を担います。
+- Phase 5 は設計レポート《DSCNS Phase 5 内生式参数自修改机制》に従い
+  （`docs/PHASE5.md`）、ネットワーク内部状態が直接、連続的なパラメータ変化を
+  生成します（`IntrinsicPlasticityModule`、`θ → h → Δθ → θ'`）。トリガ・
+  検証・ロールバックは実験コントローラの責務です。
 - マルチネットワーク＝共有凍結ベース＋ネットワーク別 LoRA アダプタ。
   パラメータ空間 Θ_i は独立、記憶は共有。
 - 知識項目ごとの状態レベルと内化度 I_ij ∈ [0,1] を記録し追跡可能にします。
@@ -383,6 +450,8 @@ dscns/
 - マルチネットワーク実験は厳格な計算予算の対等性に拘束。
 - 構造進化の機構は意図的にシンプル。Phase 4 の学習型制御は小さなポリシーと
   極小の RL 予算（概念実証であり、スケーラブルなアーキテクチャ探索ではない）。
+- Phase 5 の内在的可塑性はプロトタイプ規模でのみ検証（単一シード、GPT-2
+  small、単一 LoRA ランク、外部固定トリガ）；性能向上は主張しません。
 - 大規模ベンチマーク未実施；他モデル・他領域への一般化の証拠はまだない。
 - DSCNS が成熟した継続学習手法（EWC、経験リプレイ等）を一般に上回るという
   証拠はまだない。
@@ -394,9 +463,11 @@ dscns/
 - 手調整ではなく学習される関連性・信頼重み関数。
 - Phase 4：より大きな RL 予算、より長い適応ウィンドウ、レイヤー単位
   （アダプタ集団単位に留まらない）の学習型自己修正。
+- Phase 5：エンドツーエンド微分可能な可塑性、学習型トリガ（Level 4）、
+  完全パラメータ条件付け、多層連携；次段階は Phase 6（内在的*構造*自己修正）。
 - より良い構造可塑性制御（適応的進化閾値、進化後の安定化スケジュール）。
 - より大規模なベンチマーク（EWC / リプレイ / PEFT ベースライン）。
-- マルチモーダル・オープン環境への拡張（設計レポート Phase 5–6）。
+- マルチモーダル・オープン環境への拡張（設計レポート Phase 6+）。
 
 ## 引用
 
@@ -408,7 +479,7 @@ dscns/
   author = {Mousennnn},
   year   = {2026},
   month  = {aug},
-  note   = {Version v0.2.0, early research prototype},
+  note   = {Version v0.3.0, early research prototype},
   howpublished = {GitHub repository},
   url    = {https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System}
 }
@@ -424,7 +495,7 @@ dscns/
 **帰属要件：** ドキュメントを再利用・改変する際は、以下をクレジットして
 ください：
 
-> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.2.0)、
+> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.3.0)、
 > Mousennnn 著、CC BY 4.0 ライセンス。
 > https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System
 
