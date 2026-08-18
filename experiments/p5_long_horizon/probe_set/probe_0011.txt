@@ -1,0 +1,4 @@
+Question: Quinn catches twice the amount of frogs as Alster who caught 2.  Bret catches three times the amount of frogs as Quinn.  How many frogs did Bret catch?
+Answer: Quinn catches twice the amount as Alster, who caught 2 frogs so Quinn caught 2*2 = <<2*2=4>>4 frogs
+Bret catches three times the amount as Quinn who caught 4 frogs so Bret caught 3*4 = <<3*4=12>>12 frogs
+#### 12

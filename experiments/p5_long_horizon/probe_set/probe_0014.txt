@@ -1,0 +1,7 @@
+Question: Rica's group won in a dance competition. She got 3/8 of the prize money. From Rica's prize money, she spent 1/5 of it and is now left with $300. How much was the prize money that her group won?
+Answer: Rica is left with 1 - 1/5 = 4/5 of her prize money which is equal to $300.
+Since 4/5 is worth $300, then 1/5 is worth $300/4 = $75.
+So, Rica got $75 x 5 = $375 from their prize money which is 3/8 of the total prize.
+Since 3/8 is equal to $375, then 1/8 is worth $375/3 = $125.
+So, the total prize money is $125 x 8 = $<<125*8=1000>>1000.
+#### 1000

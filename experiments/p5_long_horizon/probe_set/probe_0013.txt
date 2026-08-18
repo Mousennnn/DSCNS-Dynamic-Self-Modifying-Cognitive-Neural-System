@@ -1,0 +1,4 @@
+Question: Alia has 2 times as many markers as Austin. Austin has one-third as many markers as Steve does. If Steve has 60 markers, how many does Alia have?
+Answer: Austin has 60/3=<<60/3=20>>20 markers
+Alia has 20*2=<<20*2=40>>40 markers
+#### 40

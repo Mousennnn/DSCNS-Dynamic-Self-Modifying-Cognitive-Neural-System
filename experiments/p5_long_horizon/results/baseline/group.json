@@ -1,0 +1,12 @@
+{
+  "group": "baseline",
+  "mode": "baseline",
+  "num_rounds": 0,
+  "seed": 42,
+  "git_commit": "91b176e7a139a3aab32cad95b2801e56190ec259",
+  "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
+  "param_norm_0": 13.85280704498291,
+  "probe_loss": 3.2205093687749002,
+  "probe_entropy": 4.568333983421326,
+  "note": "initial state reference (theta_0); no modification"
+}

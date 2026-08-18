@@ -1,0 +1,5 @@
+Question: James has a rainwater collection barrel.  For each inch of rain he collects 15 gallons.  On Monday it rained 4 inches and on Tuesday it rained 3 inches.  He can sell water for $1.2 per gallon.  How much money did he make from selling all the water?
+Answer: It rained 3+4=<<3+4=7>>7 inches
+So he collected 7*15=<<7*15=105>>105 gallons
+So he makes 105*1.2=$<<105*1.2=126>>126 from selling the water
+#### 126

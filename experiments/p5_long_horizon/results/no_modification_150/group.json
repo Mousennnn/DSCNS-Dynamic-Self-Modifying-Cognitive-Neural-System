@@ -1,0 +1,22 @@
+{
+  "group": "no_modification_150",
+  "mode": "no_modification",
+  "num_rounds": 150,
+  "seed": 42,
+  "git_commit": "91b176e7a139a3aab32cad95b2801e56190ec259",
+  "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
+  "hash_final": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
+  "hash_constant": true,
+  "param_norm_0": 13.85280704498291,
+  "param_norm_final": 13.85280704498291,
+  "gross_movement": 0.0,
+  "true_net_drift": 0.0,
+  "drift_ratio": 0.0,
+  "max_single_step_drift": 0.0,
+  "mean_single_step_drift": 0.0,
+  "first_nan_round": null,
+  "first_inf_round": null,
+  "probe_output_drift_final": 0.0,
+  "probe_output_drift_mean": 0.0,
+  "wall_seconds": 2612.489470243454
+}

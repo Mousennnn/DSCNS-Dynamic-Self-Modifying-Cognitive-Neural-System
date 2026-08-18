@@ -1,0 +1,2 @@
+Question: What does glycolysis generate in phase ii?
+Answer: atp

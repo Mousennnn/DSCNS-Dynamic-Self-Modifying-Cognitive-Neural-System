@@ -1,0 +1,7 @@
+Question: Fiona and Casey share the hoodies they own. Between the two of them, they own eight hoodies. Casey owns two more than Fiona. How many hoodies does Fiona own?
+Answer: Let H be the number of hoodies Fiona owns.
+Casey owns H + 2 hoodies.
+Together, they own H + H + 2 = 2H + 2 = 8 hoodies.
+Thus, 2H = 8 - 2 = 6 hoodies.
+Therefore, Fiona owns H = 6 / 2 = <<6/2=3>>3 hoodies.
+#### 3

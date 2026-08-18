@@ -1,0 +1,8 @@
+{
+  "L0_no_parameter_change": true,
+  "L1_parameter_modification": true,
+  "L2_net_parameter_drift": true,
+  "L3_behavioral_drift": true,
+  "L4_distinct_from_random_control": true,
+  "L5_long_term_dynamics": true
+}

@@ -1,0 +1,27 @@
+git_commit: 91b176e7a139a3aab32cad95b2801e56190ec259
+seed: 42
+model:
+  name: models/hf/gpt2
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.1
+plasticity:
+  alpha: 0.01
+  rank: 8
+  meta_dim: 32
+  modulation_strength_init: 0.05
+data:
+  batch_size: 8
+  max_len: 192
+  probe_set:
+    seed: 1234
+    count: 32
+loop:
+  network: N1
+  apply_every_round: true
+  validation_rollback: false
+group: p5_150
+mode: p5
+rounds: 150
+probe_every: 1
+checkpoint_every: 50

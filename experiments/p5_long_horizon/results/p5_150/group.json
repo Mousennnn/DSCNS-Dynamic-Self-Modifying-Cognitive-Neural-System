@@ -1,0 +1,22 @@
+{
+  "group": "p5_150",
+  "mode": "p5",
+  "num_rounds": 150,
+  "seed": 42,
+  "git_commit": "91b176e7a139a3aab32cad95b2801e56190ec259",
+  "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
+  "hash_final": "fe0f69d4b6cd896088b8bcec1c6c8468f22e9032cea6dcf36790f4c08433d96b",
+  "hash_constant": false,
+  "param_norm_0": 13.85280704498291,
+  "param_norm_final": 19.474242210388184,
+  "gross_movement": 46.361352489795536,
+  "true_net_drift": 42.45602422952652,
+  "drift_ratio": 0.9157632801776108,
+  "max_single_step_drift": 0.35157431941479445,
+  "mean_single_step_drift": 0.3091255397079451,
+  "first_nan_round": null,
+  "first_inf_round": null,
+  "probe_output_drift_final": 0.43664221838116646,
+  "probe_output_drift_mean": 0.21543299987235132,
+  "wall_seconds": 2278.2097520828247
+}

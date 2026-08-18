@@ -1,0 +1,25 @@
+{
+  "p5_150": {
+    "net_drift_slope": 0.27987942114341563
+  },
+  "random_control_150": {
+    "net_drift_slope": 0.019796846969862735
+  },
+  "no_modification_150": {
+    "net_drift_slope": 0.0
+  },
+  "p5_3000": {
+    "regime": "B: continuous drift",
+    "net_drift_slope": 0.316928526777472,
+    "theta_norm_slope": 0.06179611317445162,
+    "delta_norm_slope": 4.488888542505024e-06,
+    "output_drift_slope": 0.0031373732804109307,
+    "second_half_minus_first_half_growth": 475.76829826836916,
+    "delta_lag1_autocorr": 0.9933081398873634,
+    "final_net_drift": 945.428876876831,
+    "final_theta_norm": 194.14545440673828,
+    "final_output_drift": 63.560797691345215,
+    "nan_total": 0,
+    "inf_total": 0
+  }
+}

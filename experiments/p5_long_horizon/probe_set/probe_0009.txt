@@ -1,0 +1,5 @@
+Question: Lucille is wondering who has the tallest house between her and her neighbors. His family's house is 80 feet tall. One neighbor's house is 70 feet tall. Another neighbor's house is 99 feet tall. How much shorter is Lucille's house than the average height?
+Answer: The houses are 249 feet in total because 70 + 80 + 99 = <<70+80+99=249>>249
+The average height is 83 feet because 249 / 3 = <<249/3=83>>83
+Her house is 3 feet shorter because 83 - 80 = <<83-80=3>>3
+#### 3

@@ -1,0 +1,22 @@
+{
+  "group": "random_control_150",
+  "mode": "random",
+  "num_rounds": 150,
+  "seed": 42,
+  "git_commit": "91b176e7a139a3aab32cad95b2801e56190ec259",
+  "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
+  "hash_final": "f94acc0d54430ce92e0623e0d8054c6b7c2bdab204d449d00b16b1f3dc46e4a0",
+  "hash_constant": false,
+  "param_norm_0": 13.85280704498291,
+  "param_norm_final": 14.239576816558838,
+  "gross_movement": 46.36135285254568,
+  "true_net_drift": 3.7793909534811974,
+  "drift_ratio": 0.08152029052089214,
+  "max_single_step_drift": 0.3515743026509881,
+  "mean_single_step_drift": 0.3091255419499037,
+  "first_nan_round": null,
+  "first_inf_round": null,
+  "probe_output_drift_final": 0.0364114660769701,
+  "probe_output_drift_mean": 0.022230632655823444,
+  "wall_seconds": 1445.121473312378
+}
