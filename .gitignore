@@ -1,0 +1,57 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ---------- Virtual environments ----------
+.venv/
+venv/
+env/
+conda-env/
+
+# ---------- Jupyter / IDE ----------
+.ipynb_checkpoints/
+.vscode/
+.idea/
+*.swp
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+
+# ---------- Model / dataset caches (intentionally excluded; see README) ----------
+models/
+data/
+wheelhouse/
+hf_cache/
+.cache/
+.huggingface/
+
+# ---------- Temporary files / logs ----------
+tmp/
+temp/
+*.tmp
+*.log
+*.part
+
+# ---------- Checkpoints / weights ----------
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.safetensors
+
+# ---------- Secrets ----------
+.env
+.env.*
+*.key
+*.pem
+*.p12
+credentials*
+
+# NOTE: experiments/ is intentionally NOT ignored --
+# the JSON results and PNG plots are part of the research record.

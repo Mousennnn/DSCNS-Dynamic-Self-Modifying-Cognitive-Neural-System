@@ -1,0 +1,60 @@
+# DSCNS Phase 0 + Phase 1 prototype configuration
+# Dynamic Self-Modifying Cognitive Network System
+
+# ---- base model (Phase 0) ----
+model_name: models/hf/gpt2   # local copy of gpt2 (124M params, within 100M-500M)
+device: cuda
+torch_dtype: float32
+
+# ---- LoRA ----
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.1
+lora_lr: 0.0005
+
+# ---- data ----
+data_cache: data
+max_train_per_domain: 1200
+eval_per_domain: 64
+probe_per_domain: 16
+exemplars_per_domain: 48
+samples_per_round: 32
+
+# experience stream: 6 phases (report 10.2), 4 rounds each = 24 rounds
+phases: [general, math, logic, code, science, mixed]
+phase_rounds: [4, 4, 4, 4, 4, 4]
+
+# ---- parsing / evaluation ----
+max_len: 256
+parse_batch: 8
+eval_batch: 16
+probe_batch: 8
+probe_size: 16
+
+# ---- verification ----
+conflict_threshold: 0.4
+trust_lr: 0.05
+acceptance_threshold: 0.25
+
+# ---- internalization (report 3.5 / 8.3) ----
+internalization_tolerance: 0.02
+max_alpha: 1.0             # alpha ramp max (steps: 0.2..1.0 x base_lr)
+internalization_steps: 5
+
+# ---- meta cognition ----
+buffer_capacity: 10000
+store_threshold: 0.3
+
+# ---- structure evolution (Phase 3) ----
+evolution_enabled: false
+evolution_every: 4
+split_diversity_threshold: 0.8
+merge_overlap_threshold: 0.8
+
+# ---- experiment ----
+num_networks: 5            # 5 for Exp2, 1 for Exp1
+seed: 42
+eval_every: 1
+with_generation_eval: true
+train_steps_per_round: 8   # Control compute budget (grad steps / round)
+max_grad_steps_per_round: 8  # Exp1/Exp2 compute budget (trial steps / round, parity)

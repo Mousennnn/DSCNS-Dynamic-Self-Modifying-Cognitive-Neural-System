@@ -1,0 +1,364 @@
+{
+  "mode": "exp1",
+  "config": {
+    "model_name": "models/hf/gpt2",
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "lora_lr": 0.0005,
+    "samples_per_round": 32,
+    "phases": [
+      "general",
+      "math",
+      "logic",
+      "code",
+      "science",
+      "mixed"
+    ],
+    "phase_rounds": [
+      4,
+      4,
+      4,
+      4,
+      4,
+      4
+    ],
+    "num_networks": 1,
+    "seed": 42,
+    "internalization_tolerance": 0.02,
+    "max_alpha": 1.0,
+    "internalization_steps": 5,
+    "acceptance_threshold": 0.25,
+    "conflict_threshold": 0.4,
+    "evolution_enabled": false
+  },
+  "domains": [
+    "general",
+    "math",
+    "logic",
+    "code",
+    "science"
+  ],
+  "phase_rounds": [
+    4,
+    4,
+    4,
+    4,
+    4,
+    4
+  ],
+  "performance_matrix": [
+    [
+      0.020174197751991793,
+      0.049649683092964095,
+      0.07770187810403988,
+      0.06988465540996724,
+      0.008702031288535377
+    ],
+    [
+      0.01952557935859575,
+      0.044644313393170924,
+      0.07634812314211015,
+      0.07454444682857472,
+      0.008950517303184462
+    ],
+    [
+      0.019165340135179162,
+      0.0347882716741454,
+      0.06877777406584125,
+      0.05837812019071711,
+      0.008286543942064819
+    ],
+    [
+      0.020394001464304003,
+      0.03994845612550046,
+      0.07205237211905074,
+      0.06719785095743137,
+      0.00834124417189061
+    ],
+    [
+      0.020721389119086716,
+      0.04974914577987032,
+      0.07604673494998197,
+      0.06997098348802737,
+      0.008960257768804403
+    ],
+    [
+      0.0207361018038726,
+      0.054837913073067256,
+      0.07612711566026703,
+      0.0658846950411296,
+      0.009573079168468036
+    ],
+    [
+      0.02064012181633689,
+      0.062339125372473166,
+      0.07898698589450112,
+      0.0694162196964531,
+      0.01130169696039751
+    ],
+    [
+      0.02042645399517753,
+      0.06876767370167207,
+      0.08122279696234518,
+      0.07189090246333724,
+      0.01354478064920168
+    ],
+    [
+      0.020389241819438787,
+      0.07127004111476995,
+      0.08556067784467145,
+      0.07410326858969495,
+      0.016127748923954088
+    ],
+    [
+      0.020240703039515275,
+      0.0715753957662782,
+      0.08974807321784285,
+      0.07678959318515188,
+      0.018208547662390245
+    ],
+    [
+      0.02000959502357473,
+      0.07166681960166817,
+      0.09452614170520131,
+      0.07969866913036322,
+      0.019066904471667832
+    ],
+    [
+      0.019716139951289822,
+      0.07132618813235171,
+      0.09855019993545067,
+      0.08193995229812147,
+      0.019351822064315516
+    ],
+    [
+      0.019874054216877088,
+      0.07053403176850612,
+      0.10027771019598805,
+      0.1048147892659318,
+      0.018839355087583113
+    ],
+    [
+      0.020010825891508103,
+      0.06891496435138966,
+      0.09949506557673249,
+      0.11580488810575056,
+      0.018425486037101403
+    ],
+    [
+      0.01975143140534782,
+      0.06800654288361316,
+      0.09825763745970266,
+      0.12695538617258498,
+      0.018062023895560532
+    ],
+    [
+      0.019364680475640786,
+      0.0676093611338224,
+      0.09739801470503825,
+      0.1353751704405831,
+      0.017865909862420717
+    ],
+    [
+      0.019086835033604303,
+      0.0632687308285383,
+      0.09144344999166826,
+      0.13012246643347783,
+      0.020402901430915138
+    ],
+    [
+      0.018680017612654174,
+      0.059522486156201364,
+      0.08782401874348277,
+      0.12253111658360297,
+      0.027490003017159943
+    ],
+    [
+      0.017345670112748617,
+      0.052240030810655855,
+      0.08266791369554688,
+      0.11371942987403819,
+      0.03530276083644085
+    ],
+    [
+      0.015537478024305013,
+      0.04394231829931929,
+      0.0754866213553993,
+      0.10288941152499652,
+      0.03948095277470696
+    ],
+    [
+      0.018014630513620723,
+      0.05770827134136041,
+      0.09030590209634375,
+      0.13811404371351815,
+      0.04073561126930425
+    ],
+    [
+      0.019338575668972173,
+      0.06438594980572576,
+      0.0958655968149495,
+      0.1423370696379656,
+      0.039340497791473784
+    ],
+    [
+      0.02008007175904846,
+      0.06868623636986175,
+      0.09815901479551645,
+      0.14395423534658927,
+      0.0380961148361503
+    ],
+    [
+      0.020554311335772183,
+      0.07194669807670734,
+      0.09940925459473862,
+      0.14344252309968872,
+      0.03715080240829611
+    ]
+  ],
+  "final_performance": {
+    "general": 0.020554311335772183,
+    "math": 0.07194669807670734,
+    "logic": 0.09940925459473862,
+    "code": 0.14344252309968872,
+    "science": 0.03715080240829611
+  },
+  "generation_accuracy": {
+    "science": 0.0,
+    "math": 0.0
+  },
+  "structure": {
+    "n_networks": 1.0,
+    "mean_complementarity": 0.0,
+    "mean_redundancy": 0.0,
+    "mean_specialization": 0.00023501697424632706,
+    "bus_messages": {
+      "broadcast": 760,
+      "confidence": 760,
+      "update_notify": 24
+    },
+    "verification": {
+      "aggregated": 760
+    },
+    "trust_weights": {
+      "N1": 1.0
+    }
+  },
+  "metrics": {
+    "AF": 0.0010293534354517083,
+    "FWT": -0.0040895129275646605,
+    "CLS": 0.07347136446758888
+  },
+  "per_domain": {
+    "general": {
+      "initial": 0.020174197751991793,
+      "peak": 0.0207361018038726,
+      "final": 0.020554311335772183,
+      "forgetting_rate": -0.018841571221480738,
+      "acquisition": 0.00038011358378039
+    },
+    "math": {
+      "initial": 0.049649683092964095,
+      "peak": 0.07194669807670734,
+      "final": 0.07194669807670734,
+      "forgetting_rate": -0.4490867533231642,
+      "acquisition": 0.022297014983743244
+    },
+    "logic": {
+      "initial": 0.07770187810403988,
+      "peak": 0.10027771019598805,
+      "final": 0.09940925459473862,
+      "forgetting_rate": -0.27936746215623504,
+      "acquisition": 0.021707376490698746
+    },
+    "code": {
+      "initial": 0.06988465540996724,
+      "peak": 0.14395423534658927,
+      "final": 0.14344252309968872,
+      "forgetting_rate": -1.0525610702121362,
+      "acquisition": 0.07355786768972147
+    },
+    "science": {
+      "initial": 0.008702031288535377,
+      "peak": 0.04073561126930425,
+      "final": 0.03715080240829611,
+      "forgetting_rate": -3.2692103919737683,
+      "acquisition": 0.028448771119760734
+    }
+  },
+  "acquisition_retention": {
+    "mean_acquisition": 0.07251359966334336,
+    "mean_retention": 0.0745007179030406,
+    "per_domain_acquired": [
+      0.020394001464304003,
+      0.06876767370167207,
+      0.09855019993545067,
+      0.1353751704405831,
+      0.03948095277470696
+    ],
+    "per_domain_retained": [
+      0.020554311335772183,
+      0.07194669807670734,
+      0.09940925459473862,
+      0.14344252309968872,
+      0.03715080240829611
+    ]
+  },
+  "per_network_trace": {
+    "N1": [
+      0.043762577314668386,
+      0.04342355864502949,
+      0.0355086542450006,
+      0.03996031095223446,
+      0.043604806682074754,
+      0.04342563477486373,
+      0.046600744532398874,
+      0.04913452951140872,
+      0.05114501871103076,
+      0.05301193995896271,
+      0.054966589539132624,
+      0.05637642182373801,
+      0.06154676592105494,
+      0.06370405824000287,
+      0.06563193777526838,
+      0.0671142405061886,
+      0.06398339822690434,
+      0.062196104846074275,
+      0.05944768791380439,
+      0.05481477137758463,
+      0.06796307821724325,
+      0.07079123825425085,
+      0.07215336109179796,
+      0.07278731356671272
+    ]
+  },
+  "log": [
+    "[exp1] exp1: 1 network(s), selective internalization",
+    "[exp1] round 1/24: general=0.0202, math=0.0496, logic=0.0777, code=0.0699, science=0.0087 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.6015294189713889, 'trials': 5, 'perf_before': 0.04302347271753567, 'perf_after': 0.043762577314668386, 'stop_reason': ''}}",
+    "[exp1] round 2/24: general=0.0195, math=0.0446, logic=0.0763, code=0.0745, science=0.0090 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.4919024325786374, 'trials': 5, 'perf_before': 0.043762577314668386, 'perf_after': 0.04342355864502949, 'stop_reason': ''}}",
+    "[exp1] round 3/24: general=0.0192, math=0.0348, logic=0.0688, code=0.0584, science=0.0083 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.4826830198748172, 'trials': 5, 'perf_before': 0.04342355864502949, 'perf_after': 0.0355086542450006, 'stop_reason': ''}}",
+    "[exp1] round 4/24: general=0.0204, math=0.0399, logic=0.0721, code=0.0672, science=0.0083 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.4826000571447435, 'trials': 5, 'perf_before': 0.0355086542450006, 'perf_after': 0.03996031095223446, 'stop_reason': ''}}",
+    "[exp1] round 5/24: general=0.0207, math=0.0497, logic=0.0760, code=0.0700, science=0.0090 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.5208304058263387, 'trials': 5, 'perf_before': 0.03996031095223446, 'perf_after': 0.043604806682074754, 'stop_reason': ''}}",
+    "[exp1] round 6/24: general=0.0207, math=0.0548, logic=0.0761, code=0.0659, science=0.0096 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.49131086123551515, 'trials': 5, 'perf_before': 0.043604806682074754, 'perf_after': 0.04342563477486373, 'stop_reason': ''}}",
+    "[exp1] round 7/24: general=0.0206, math=0.0623, logic=0.0790, code=0.0694, science=0.0113 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.4994377421692704, 'trials': 5, 'perf_before': 0.04342563477486373, 'perf_after': 0.046600744532398874, 'stop_reason': ''}}",
+    "[exp1] round 8/24: general=0.0204, math=0.0688, logic=0.0812, code=0.0719, science=0.0135 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.4975419429238527, 'trials': 5, 'perf_before': 0.046600744532398874, 'perf_after': 0.04913452951140872, 'stop_reason': ''}}",
+    "[exp1] round 9/24: general=0.0204, math=0.0713, logic=0.0856, code=0.0741, science=0.0161 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.5650002697462974, 'trials': 5, 'perf_before': 0.04913452951140872, 'perf_after': 0.05114501871103076, 'stop_reason': ''}}",
+    "[exp1] round 10/24: general=0.0202, math=0.0716, logic=0.0897, code=0.0768, science=0.0182 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.5605121956351677, 'trials': 5, 'perf_before': 0.05114501871103076, 'perf_after': 0.05301193995896271, 'stop_reason': ''}}",
+    "[exp1] round 11/24: general=0.0200, math=0.0717, logic=0.0945, code=0.0797, science=0.0191 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.5301788566377793, 'trials': 5, 'perf_before': 0.05301193995896271, 'perf_after': 0.054966589539132624, 'stop_reason': ''}}",
+    "[exp1] round 12/24: general=0.0197, math=0.0713, logic=0.0986, code=0.0819, science=0.0194 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.4967179688515798, 'trials': 5, 'perf_before': 0.054966589539132624, 'perf_after': 0.05637642182373801, 'stop_reason': ''}}",
+    "[exp1] round 13/24: general=0.0199, math=0.0705, logic=0.1003, code=0.1048, science=0.0188 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.5801910858965837, 'trials': 5, 'perf_before': 0.05637642182373801, 'perf_after': 0.06154676592105494, 'stop_reason': ''}}",
+    "[exp1] round 14/24: general=0.0200, math=0.0689, logic=0.0995, code=0.1158, science=0.0184 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.5735697368079781, 'trials': 5, 'perf_before': 0.06154676592105494, 'perf_after': 0.06370405824000287, 'stop_reason': ''}}",
+    "[exp1] round 15/24: general=0.0198, math=0.0680, logic=0.0983, code=0.1270, science=0.0181 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.56666395817786, 'trials': 5, 'perf_before': 0.06370405824000287, 'perf_after': 0.06563193777526838, 'stop_reason': ''}}",
+    "[exp1] round 16/24: general=0.0194, math=0.0676, logic=0.0974, code=0.1354, science=0.0179 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.5329806531421959, 'trials': 5, 'perf_before': 0.06563193777526838, 'perf_after': 0.0671142405061886, 'stop_reason': ''}}",
+    "[exp1] round 17/24: general=0.0191, math=0.0633, logic=0.0914, code=0.1301, science=0.0204 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.4988430037031685, 'trials': 5, 'perf_before': 0.0671142405061886, 'perf_after': 0.06398339822690434, 'stop_reason': ''}}",
+    "[exp1] round 18/24: general=0.0187, math=0.0595, logic=0.0878, code=0.1225, science=0.0275 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.49102468448839603, 'trials': 5, 'perf_before': 0.06398339822690434, 'perf_after': 0.062196104846074275, 'stop_reason': ''}}",
+    "[exp1] round 19/24: general=0.0173, math=0.0522, logic=0.0827, code=0.1137, science=0.0353 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.4830719842586786, 'trials': 5, 'perf_before': 0.062196104846074275, 'perf_after': 0.05944768791380439, 'stop_reason': ''}}",
+    "[exp1] round 20/24: general=0.0155, math=0.0439, logic=0.0755, code=0.1029, science=0.0395 | decisions={'internalize': 32} | internalize={'N1': {'success': True, 'final_level': 0.4748514176186611, 'trials': 5, 'perf_before': 0.05944768791380439, 'perf_after': 0.05481477137758463, 'stop_reason': ''}}",
+    "[exp1] round 21/24: general=0.0180, math=0.0577, logic=0.0903, code=0.1381, science=0.0407 | decisions={'internalize': 30} | internalize={'N1': {'success': True, 'final_level': 0.4793658337286673, 'trials': 5, 'perf_before': 0.05481477137758463, 'perf_after': 0.06796307821724325, 'stop_reason': ''}}",
+    "[exp1] round 22/24: general=0.0193, math=0.0644, logic=0.0959, code=0.1423, science=0.0393 | decisions={'internalize': 30} | internalize={'N1': {'success': True, 'final_level': 0.46483425895055197, 'trials': 5, 'perf_before': 0.06796307821724325, 'perf_after': 0.07079123825425085, 'stop_reason': ''}}",
+    "[exp1] round 23/24: general=0.0201, math=0.0687, logic=0.0982, code=0.1440, science=0.0381 | decisions={'internalize': 30} | internalize={'N1': {'success': True, 'final_level': 0.4651867393106801, 'trials': 5, 'perf_before': 0.07079123825425085, 'perf_after': 0.07215336109179796, 'stop_reason': ''}}",
+    "[exp1] round 24/24: general=0.0206, math=0.0719, logic=0.0994, code=0.1434, science=0.0372 | decisions={'internalize': 30} | internalize={'N1': {'success': True, 'final_level': 0.4663677756548025, 'trials': 5, 'perf_before': 0.07215336109179796, 'perf_after': 0.07278731356671272, 'stop_reason': ''}}",
+    "[exp1] generation accuracy: {'science': 0.0, 'math': 0.0}"
+  ],
+  "wall_seconds": 475.6017487049103
+}

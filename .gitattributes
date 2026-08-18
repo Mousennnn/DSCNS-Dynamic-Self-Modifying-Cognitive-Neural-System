@@ -1,0 +1,18 @@
+# Normalize line endings for all text files
+* text=auto
+
+# Source code: LF
+*.py text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.sh text eol=lf
+*.json text eol=lf
+
+# Docs: LF
+*.md text eol=lf
+*.txt text eol=lf
+*.cff text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary

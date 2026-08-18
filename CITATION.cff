@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software in your research, please cite it as below."
+title: "DSCNS: Dynamic Self-Modifying Cognitive Network System"
+abstract: >-
+  A research prototype exploring dynamic modular neural systems with
+  continual learning, candidate knowledge validation, selective
+  internalization, memory, meta-cognition, and structural evolution.
+  Early research prototype (v0.1.0); experimental results include mixed
+  and negative findings and should be interpreted conservatively.
+authors:
+  - family-names: "Mousennnn"
+    given-names: ""
+    alias: "Mousennnn"
+    website: "https://github.com/Mousennnn"
+version: "v0.1.0"
+date-released: "2026-08-18"
+license: "GPL-3.0"
+url: "https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System"
+keywords:
+  - continual learning
+  - modular neural networks
+  - structural evolution
+  - active learning
+  - meta-cognition
