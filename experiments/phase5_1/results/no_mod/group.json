@@ -1,0 +1,42 @@
+{
+  "arm": "no_mod",
+  "rounds": 150,
+  "seed": 42,
+  "git_commit": "9ebf448ee49024e88ef61e2904ad37bbe8444a45",
+  "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
+  "hash_final": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
+  "hash_changed": false,
+  "param_norm_0": 83.11617279052734,
+  "param_norm_final": 13.85280704498291,
+  "gross_drift": 0.0,
+  "net_drift": 0.0,
+  "drift_ratio": 0.0,
+  "probe_drift_final": 0.0,
+  "probe_loss_final": 3.2205093363525066,
+  "probe_entropy_final": 4.568333983421326,
+  "success_count": 150,
+  "failure_count": 0,
+  "recovery_count": 0,
+  "repeated_errors": 0,
+  "failure_rate": 0.0,
+  "repeated_error_rate": 0.0,
+  "nan_total": 0,
+  "inf_total": 0,
+  "magnitude_stats": {
+    "requested_mean": 0.0,
+    "applied_mean": 0.0,
+    "applied_std": 0.0
+  },
+  "target_distribution": {
+    "attn_lora_A": 0,
+    "attn_lora_B": 0,
+    "mlp_lora_B": 0
+  },
+  "memory_stats": {
+    "success": 150,
+    "failure": 0,
+    "recovery": 0,
+    "total": 150
+  },
+  "wall_seconds": 1361.7254962921143
+}

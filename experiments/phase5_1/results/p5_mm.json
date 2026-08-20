@@ -1,0 +1,42 @@
+{
+  "arm": "p5_mm",
+  "rounds": 150,
+  "seed": 42,
+  "git_commit": "9ebf448ee49024e88ef61e2904ad37bbe8444a45",
+  "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
+  "hash_final": "96d71771871412c3a16a1683c911fc95f97bbb6f17d9c895647ef9faea79e49f",
+  "hash_changed": true,
+  "param_norm_0": 83.11617279052734,
+  "param_norm_final": 13.986236318945885,
+  "gross_drift": 0.6420824186643586,
+  "net_drift": 0.6065028347074986,
+  "drift_ratio": 0.9445872010779058,
+  "probe_drift_final": 0.010895675630308688,
+  "probe_loss_final": 3.220545130675216,
+  "probe_entropy_final": 4.568304598331451,
+  "success_count": 150,
+  "failure_count": 0,
+  "recovery_count": 0,
+  "repeated_errors": 0,
+  "failure_rate": 0.0,
+  "repeated_error_rate": 0.0,
+  "nan_total": 0,
+  "inf_total": 0,
+  "magnitude_stats": {
+    "requested_mean": 0.053565771530071894,
+    "applied_mean": 0.053565771530071894,
+    "applied_std": 0.0011895892258999168
+  },
+  "target_distribution": {
+    "attn_lora_A": 0,
+    "attn_lora_B": 42,
+    "mlp_lora_B": 108
+  },
+  "memory_stats": {
+    "success": 150,
+    "failure": 0,
+    "recovery": 0,
+    "total": 150
+  },
+  "wall_seconds": 1200.1314449310303
+}

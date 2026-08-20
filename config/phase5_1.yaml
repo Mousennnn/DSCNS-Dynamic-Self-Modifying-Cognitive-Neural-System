@@ -1,0 +1,45 @@
+# DSCNS Phase 5.1 configuration
+# Mandatory Self-Modification + Self-Determined Magnitude + Error-Driven Correction
+
+# ---- base model / LoRA (inherited from P5) ----
+model_name: models/hf/gpt2
+device: cuda
+torch_dtype: float32
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.1
+lora_lr: 0.0005
+task_lr: 0.00005
+
+# ---- experiment ----
+num_networks: 1
+samples_per_round: 32
+max_len: 192
+seed: 42
+
+# ---- P5.1 mandatory self-modification ----
+p51_enabled: true
+p51_m_min: 0.02
+p51_m_max: 1.0
+p51_m_init_bias: -3.0
+p51_error_dim: 32
+p51_num_target_groups: 3
+p51_memory_capacity: 2000
+p51_memory_top_k: 8
+p51_success_threshold: 0.001
+p51_failure_threshold: -0.001
+p51_catastrophic_entropy: 0.1
+p51_catastrophic_param_norm: 1000.0
+p51_max_param_ratio: 0.1
+p51_train_every: 1
+p51_lambda_delta: 1.0
+p51_lambda_mag: 0.5
+p51_lambda_target: 0.5
+p51_failure_replay_ratio: 1.0
+p51_plasticity_lr: 0.0003
+p51_plasticity_batch: 8
+
+# ---- P5 legacy (kept for reference) ----
+enable_plasticity: true
+plasticity_interval: 1
+plasticity_alpha: 0.01

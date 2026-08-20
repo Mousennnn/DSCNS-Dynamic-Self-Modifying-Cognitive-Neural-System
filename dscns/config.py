@@ -111,6 +111,28 @@ class DSCNSConfig:
     run_negative_controls: bool = True   # random / constant / shuffled delta arms
     task_lr: float = 5e-5                # task-learning LR used by the P5 loop
 
+    # ---- P5.1: mandatory self-modification + error correction ----
+    p51_enabled: bool = False            # enable P5.1 mode (mandatory, magnitude, error)
+    p51_m_min: float = 0.02             # minimum modification magnitude
+    p51_m_max: float = 1.0              # maximum modification magnitude
+    p51_m_init_bias: float = -3.0       # sigmoid init for m ≈ m_min + 0.05
+    p51_error_dim: int = 32             # error encoder output dim
+    p51_num_target_groups: int = 3      # 0=attn_A, 1=attn_B, 2=mlp_B
+    p51_memory_capacity: int = 2000
+    p51_memory_top_k: int = 8
+    p51_success_threshold: float = 0.001
+    p51_failure_threshold: float = -0.001
+    p51_catastrophic_entropy: float = 0.1
+    p51_catastrophic_param_norm: float = 1000.0
+    p51_max_param_ratio: float = 0.1    # safety: ||Δθ|| ≤ ratio × ||θ||
+    p51_train_every: int = 1            # train Pφ every N rounds
+    p51_lambda_delta: float = 1.0
+    p51_lambda_mag: float = 0.5
+    p51_lambda_target: float = 0.5
+    p51_failure_replay_ratio: float = 1.0  # 1:1 success:failure
+    p51_plasticity_lr: float = 3e-4     # Pφ learning rate (online)
+    p51_plasticity_batch: int = 8       # experience replay batch
+
     # ---- experiment ----
     num_networks: int = 5
     seed: int = 42

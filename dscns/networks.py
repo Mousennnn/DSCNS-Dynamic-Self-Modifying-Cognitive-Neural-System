@@ -519,6 +519,60 @@ class CognitiveNetwork:
             return out.logits.detach()
 
     # ------------------------------------------------------------------ #
+    # Phase 5.1: self-modification with magnitude and target (report §5-9)
+    # ------------------------------------------------------------------ #
+    def apply_self_modification(self, proposal: Any, alpha: float = 1.0) -> bool:
+        """Apply a ModificationProposal (magnitude + target selection).
+
+        proposal: dict with delta_W_A, delta_W_B, magnitude, target_group.
+        The magnitude scales the update and the target_group selects
+        which adapter projection group receives the delta.
+
+        Target groups (P5.1, shape-compatible projections only):
+          0 = attn c_proj lora_A  (12 layers × 16×768, shape matched by dA)
+          1 = attn c_proj lora_B  (12 layers × 768×16, shape matched by dB)
+          2 = mlp  c_proj lora_B  (12 layers × 768×16, shape matched by dB)
+
+        Returns True if at least one parameter was modified.
+        """
+        import torch
+
+        dA = proposal["delta_W_A"].transpose(0, 1)   # (r, H)
+        dB = proposal["delta_W_B"].transpose(0, 1)   # (H, r)
+        magnitude = float(proposal["magnitude"])
+        target = int(proposal["target_group"])
+        effective_alpha = alpha * magnitude
+        modified = False
+        with torch.no_grad():
+            for n, p in self.peft_model.named_parameters():
+                if f".{self.id}." not in n:
+                    continue
+                is_attn = ("h." in n and "attn" in n) or ("attn" in n and "transformer" in n)
+                is_mlp = ("mlp" in n or ("h." in n and "mlp" in n))
+                if "lora_A" in n and target == 0 and p.size(1) == dA.size(1):
+                    # attn lora_A: target group 0
+                    p.data.add_(dA.to(p.device) * effective_alpha)
+                    modified = True
+                elif "lora_B" in n and p.size(0) == dB.size(0):
+                    if target == 1 and is_attn:
+                        p.data.add_(dB.to(p.device) * effective_alpha)
+                        modified = True
+                    elif target == 2 and is_mlp:
+                        p.data.add_(dB.to(p.device) * effective_alpha)
+                        modified = True
+        self.modification_history.append({
+            "step": self.step_count,
+            "magnitude": magnitude,
+            "target_group": target,
+            "effective_alpha": effective_alpha,
+            "delta_W_A_norm": float(proposal["delta_W_A"].norm()),
+            "delta_W_B_norm": float(proposal["delta_W_B"].norm()),
+            "confidence": float(proposal.get("confidence", 0)),
+        })
+        return modified
+
+
+    # ------------------------------------------------------------------ #
     # Phase 4: model self-state interface (proposal section 15)
     # ------------------------------------------------------------------ #
     def get_self_state(self) -> Dict[str, float]:

@@ -137,3 +137,25 @@ change (Î¸ â†’ h â†’ Î”Î¸ â†’ Î¸'). Its limitations:
 - **No claim** of a model that "wants" or "decides" to change itself, and no
   claim that intrinsic modification improves continual learning â€” the
   experiments in `experiments/phase5` are the (conservative) evidence base.
+
+## 9. Phase 5.1 ¡ª mandatory self-modification + error correction (v0.4.0)
+
+Phase 5.1 (see docs/PHASE5_1.md) extends P5 with mandatory per-round
+modifications, self-determined magnitude, target selection, and an
+error-conditioned learning signal.  Its limitations:
+
+- **Magnitude head is conservative by design** ¡ª initial m_t ¡Ö 0.05;
+  self-selected magnitude may remain small for a long time before the
+  error signal drives meaningful magnitude changes.
+- **Target selection is coarse** ¡ª only 3 groups (attn lora_A, attn lora_B,
+  mlp lora_B); c_attn QKV and mlp input projections are skipped (shape
+  mismatch).  Per-layer granularity is not implemented.
+- **Error learning is simplified** ¡ª the training uses recorded core_z +
+  error encoder + target/magnitude heads; the delta generator itself is
+  not modified by the error signal in this version (Level 6, planned).
+- **Memory retrieval is cosine-only** ¡ª no learned retrieval; the top-k
+  selection may not find the most relevant experiences for a given state.
+- **Single seed, single network, single model** ¡ª same limitations as P5.
+- **No claim** that the system "understands" its errors or "intentionally"
+  corrects itself ¡ª the evidence shows error-conditioned behavior change,
+  not comprehension.

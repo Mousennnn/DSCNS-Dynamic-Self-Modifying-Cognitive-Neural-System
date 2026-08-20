@@ -12,8 +12,9 @@ Phase 5: intrinsic parameter self-modification
         (theta -> h -> delta_theta -> theta', IntrinsicPlasticityModule).
 """
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
+from .error_correction import (ErrorEncoder, ErrorState, OutcomeEvaluator)
 from .intrinsic_plasticity import IntrinsicPlasticityModule
 from .modification_memory import ModificationMemory
 from .plasticity_trainer import PlasticityTrainer
