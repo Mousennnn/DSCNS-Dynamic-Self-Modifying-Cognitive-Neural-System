@@ -2,7 +2,7 @@
 
 **Date**: 2026-08-18 | **Version**: v0.4.0
 **Base**: Phase 5 intrinsic parameter self-modification (v0.3.0)
-**Status**: Implementation & 150-round validation complete; 3000-round extreme run in progress.
+**Status**: Implementation complete; 150-round + 3000-round experiments complete.
 
 > **Important disclaimer**: P5.1 does NOT claim the system "understands" its errors
 > or "intentionally" corrects itself.  The evidence shows error-conditioned
@@ -61,9 +61,38 @@ P5.1  (new):       [z; error; memory] → magnitude_head → m_t
 - **No failures** at α=0.01 + m≈0.05 — modifications too small for probe
   degradation; error-correction mechanism in place but not fully exercised.
 
-## 4. 3000-round extreme run
+## 4. 3000-round extreme run (p5_mme) — FINAL RESULTS
 
-*(In progress — results in `experiments/phase5_1/results/p5_mme_3000/`)*
+Completed: 3000 rounds, 6956 s (116 min), **0 failures, 0 NaN/Inf**.
+
+| Metric | R0 | R500 | R1000 | R1500 | R2000 | R3000 |
+|---|---|---|---|---|---|---|
+| Net drift | 0.00 | 14.7 | 39.0 | 64.9 | 91.2 | **145.54** |
+| θ norm | 13.85 | 19.34 | 25.13 | 32.62 | 40.99 | **55.87** |
+| Magnitude m_t | 0.059 | 0.465 | 0.621 | 0.635 | 0.646 | **0.663** |
+| Probe drift | 0.0005 | 0.390 | 0.631 | 1.051 | 1.542 | **2.446** |
+| Success / Fail | 500/0 | 1000/0 | 1500/0 | 2000/0 | 2500/0 | **3000/0** |
+
+Drift gain per 500 rounds: 14.7 → 24.3 → 25.9 → 26.3 → 26.9 → 27.2.
+
+**Key findings:**
+
+1. **Magnitude grew 11× (0.06 → 0.66) then saturated** — the error encoder
+   drove the magnitude head from a conservative init of 0.05 to a steady
+   state of ≈0.66 over ~1500 rounds, then it plateaued.  This is the
+   error-conditioned equilibrium.
+
+2. **Zero failures over 3000 rounds** — at the saturated magnitude (0.66)
+   and α=0.01, the system never degrades the probe.
+
+3. **Drift is super-linear (accelerating):** gains 14.7 → 27.2 per 500
+   rounds — magnitude increase causes accelerating drift, but acceleration
+   decelerates as magnitude saturates.  No divergence, no collapse.
+
+4. **Regime: sustained drift with error-conditioned magnitude adaptation**
+   — the system continuously modifies itself, the magnitude self-adjusts
+   via the error signal, and behavior grows proportionally without
+   degradation.
 
 ## 5. Limitations
 

@@ -1,147 +1,21 @@
 {
-  "no_mod": {
-    "arm": "no_mod",
-    "rounds": 150,
-    "seed": 42,
-    "git_commit": "9ebf448ee49024e88ef61e2904ad37bbe8444a45",
-    "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
-    "hash_final": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
-    "hash_changed": false,
-    "param_norm_0": 83.11617279052734,
-    "param_norm_final": 13.85280704498291,
-    "gross_drift": 0.0,
-    "net_drift": 0.0,
-    "drift_ratio": 0.0,
-    "probe_drift_final": 0.0,
-    "probe_loss_final": 3.2205093363525066,
-    "probe_entropy_final": 4.568333983421326,
-    "success_count": 150,
-    "failure_count": 0,
-    "recovery_count": 0,
-    "repeated_errors": 0,
-    "failure_rate": 0.0,
-    "repeated_error_rate": 0.0,
-    "nan_total": 0,
-    "inf_total": 0,
-    "magnitude_stats": {
-      "requested_mean": 0.0,
-      "applied_mean": 0.0,
-      "applied_std": 0.0
-    },
-    "target_distribution": {
-      "attn_lora_A": 0,
-      "attn_lora_B": 0,
-      "mlp_lora_B": 0
-    },
-    "memory_stats": {
-      "success": 150,
-      "failure": 0,
-      "recovery": 0,
-      "total": 150
-    },
-    "wall_seconds": 1361.7254962921143
-  },
-  "p5_m": {
-    "arm": "p5_m",
-    "rounds": 150,
-    "seed": 42,
-    "git_commit": "9ebf448ee49024e88ef61e2904ad37bbe8444a45",
-    "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
-    "hash_final": "fe0f69d4b6cd896088b8bcec1c6c8468f22e9032cea6dcf36790f4c08433d96b",
-    "hash_changed": true,
-    "param_norm_0": 83.11617279052734,
-    "param_norm_final": 19.474242210388184,
-    "gross_drift": 46.361352489795536,
-    "net_drift": 42.45602422952652,
-    "drift_ratio": 0.9157632801776305,
-    "probe_drift_final": 0.43664221838116646,
-    "probe_loss_final": 3.220470624014359,
-    "probe_entropy_final": 4.572973728179932,
-    "success_count": 150,
-    "failure_count": 0,
-    "recovery_count": 0,
-    "repeated_errors": 0,
-    "failure_rate": 0.0,
-    "repeated_error_rate": 0.0,
-    "nan_total": 0,
-    "inf_total": 0,
-    "magnitude_stats": {
-      "requested_mean": 1.0,
-      "applied_mean": 0.9991665328736655,
-      "applied_std": 0.005895283169312367
-    },
-    "target_distribution": {
-      "attn_lora_A": 0,
-      "attn_lora_B": 0,
-      "mlp_lora_B": 0
-    },
-    "memory_stats": {
-      "success": 150,
-      "failure": 0,
-      "recovery": 0,
-      "total": 150
-    },
-    "wall_seconds": 1230.0199904441833
-  },
-  "p5_mm": {
-    "arm": "p5_mm",
-    "rounds": 150,
-    "seed": 42,
-    "git_commit": "9ebf448ee49024e88ef61e2904ad37bbe8444a45",
-    "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
-    "hash_final": "96d71771871412c3a16a1683c911fc95f97bbb6f17d9c895647ef9faea79e49f",
-    "hash_changed": true,
-    "param_norm_0": 83.11617279052734,
-    "param_norm_final": 13.986236318945885,
-    "gross_drift": 0.6420824186643586,
-    "net_drift": 0.6065028347074986,
-    "drift_ratio": 0.9445872010779058,
-    "probe_drift_final": 0.010895675630308688,
-    "probe_loss_final": 3.220545130675216,
-    "probe_entropy_final": 4.568304598331451,
-    "success_count": 150,
-    "failure_count": 0,
-    "recovery_count": 0,
-    "repeated_errors": 0,
-    "failure_rate": 0.0,
-    "repeated_error_rate": 0.0,
-    "nan_total": 0,
-    "inf_total": 0,
-    "magnitude_stats": {
-      "requested_mean": 0.053565771530071894,
-      "applied_mean": 0.053565771530071894,
-      "applied_std": 0.0011895892258999168
-    },
-    "target_distribution": {
-      "attn_lora_A": 0,
-      "attn_lora_B": 42,
-      "mlp_lora_B": 108
-    },
-    "memory_stats": {
-      "success": 150,
-      "failure": 0,
-      "recovery": 0,
-      "total": 150
-    },
-    "wall_seconds": 1200.1314449310303
-  },
   "p5_mme": {
     "arm": "p5_mme",
-    "rounds": 150,
+    "rounds": 3000,
     "seed": 42,
-    "git_commit": "9ebf448ee49024e88ef61e2904ad37bbe8444a45",
+    "git_commit": "1825bc10f214e4ebdb0e0a7b472292f2d09d57b0",
     "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
-    "hash_final": "b67484b9d84e04aafb3d5dc5d27d20db148903a8c55547e5546d338ed0fe2ed8",
+    "hash_final": "c5f3bdc4f34fb630e5a7a32332c7bbff1e45b88448881821d6ec1ac4bbeb9f61",
     "hash_changed": true,
     "param_norm_0": 83.11617279052734,
-    "param_norm_final": 14.531090021133423,
-    "gross_drift": 2.4320184784010053,
-    "net_drift": 2.3496410250663757,
-    "drift_ratio": 0.966127949246179,
-    "probe_drift_final": 0.03983498131856322,
-    "probe_loss_final": 3.220720989738961,
-    "probe_entropy_final": 4.568177163600922,
-    "success_count": 150,
+    "param_norm_final": 55.86752796173096,
+    "gross_drift": 145.76879590004683,
+    "net_drift": 145.5432586669922,
+    "drift_ratio": 0.998452774260348,
+    "probe_drift_final": 2.4460142254829407,
+    "probe_loss_final": 3.2434266838894423,
+    "probe_entropy_final": 4.563903748989105,
+    "success_count": 3000,
     "failure_count": 0,
     "recovery_count": 0,
     "repeated_errors": 0,
@@ -150,63 +24,21 @@
     "nan_total": 0,
     "inf_total": 0,
     "magnitude_stats": {
-      "requested_mean": 0.20311735066274803,
-      "applied_mean": 0.20311735066274803,
-      "applied_std": 0.07153175952998354
+      "requested_mean": 0.5901566658976177,
+      "applied_mean": 0.5901566658976177,
+      "applied_std": 0.11558648253207607
     },
     "target_distribution": {
       "attn_lora_A": 0,
       "attn_lora_B": 0,
-      "mlp_lora_B": 150
+      "mlp_lora_B": 3000
     },
     "memory_stats": {
-      "success": 150,
+      "success": 3000,
       "failure": 0,
       "recovery": 0,
-      "total": 150
+      "total": 3000
     },
-    "wall_seconds": 1119.8108305931091
-  },
-  "random": {
-    "arm": "random",
-    "rounds": 150,
-    "seed": 42,
-    "git_commit": "9ebf448ee49024e88ef61e2904ad37bbe8444a45",
-    "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
-    "hash_final": "06c9e1e33c49e92cb65980feea91f60549a346fadf447b67c83bd690a4e331f8",
-    "hash_changed": true,
-    "param_norm_0": 83.11617279052734,
-    "param_norm_final": 14.24573016166687,
-    "gross_drift": 46.36278303852305,
-    "net_drift": 3.7660963386297226,
-    "drift_ratio": 0.08123102393358173,
-    "probe_drift_final": 0.04303730744868517,
-    "probe_loss_final": 3.2206660662039344,
-    "probe_entropy_final": 4.568085074424744,
-    "success_count": 150,
-    "failure_count": 0,
-    "recovery_count": 0,
-    "repeated_errors": 0,
-    "failure_rate": 0.0,
-    "repeated_error_rate": 0.0,
-    "nan_total": 0,
-    "inf_total": 0,
-    "magnitude_stats": {
-      "requested_mean": 0.4996760515322372,
-      "applied_mean": 0.4996760515322372,
-      "applied_std": 0.2806848533588582
-    },
-    "target_distribution": {
-      "attn_lora_A": 51,
-      "attn_lora_B": 44,
-      "mlp_lora_B": 55
-    },
-    "memory_stats": {
-      "success": 150,
-      "failure": 0,
-      "recovery": 0,
-      "total": 150
-    },
-    "wall_seconds": 1352.8413407802582
+    "wall_seconds": 6955.69665813446
   }
 }

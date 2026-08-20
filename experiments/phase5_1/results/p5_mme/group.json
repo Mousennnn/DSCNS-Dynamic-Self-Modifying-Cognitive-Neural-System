@@ -1,20 +1,20 @@
 {
   "arm": "p5_mme",
-  "rounds": 150,
+  "rounds": 3000,
   "seed": 42,
-  "git_commit": "9ebf448ee49024e88ef61e2904ad37bbe8444a45",
+  "git_commit": "1825bc10f214e4ebdb0e0a7b472292f2d09d57b0",
   "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
-  "hash_final": "b67484b9d84e04aafb3d5dc5d27d20db148903a8c55547e5546d338ed0fe2ed8",
+  "hash_final": "c5f3bdc4f34fb630e5a7a32332c7bbff1e45b88448881821d6ec1ac4bbeb9f61",
   "hash_changed": true,
   "param_norm_0": 83.11617279052734,
-  "param_norm_final": 14.531090021133423,
-  "gross_drift": 2.4320184784010053,
-  "net_drift": 2.3496410250663757,
-  "drift_ratio": 0.966127949246179,
-  "probe_drift_final": 0.03983498131856322,
-  "probe_loss_final": 3.220720989738961,
-  "probe_entropy_final": 4.568177163600922,
-  "success_count": 150,
+  "param_norm_final": 55.86752796173096,
+  "gross_drift": 145.76879590004683,
+  "net_drift": 145.5432586669922,
+  "drift_ratio": 0.998452774260348,
+  "probe_drift_final": 2.4460142254829407,
+  "probe_loss_final": 3.2434266838894423,
+  "probe_entropy_final": 4.563903748989105,
+  "success_count": 3000,
   "failure_count": 0,
   "recovery_count": 0,
   "repeated_errors": 0,
@@ -23,20 +23,20 @@
   "nan_total": 0,
   "inf_total": 0,
   "magnitude_stats": {
-    "requested_mean": 0.20311735066274803,
-    "applied_mean": 0.20311735066274803,
-    "applied_std": 0.07153175952998354
+    "requested_mean": 0.5901566658976177,
+    "applied_mean": 0.5901566658976177,
+    "applied_std": 0.11558648253207607
   },
   "target_distribution": {
     "attn_lora_A": 0,
     "attn_lora_B": 0,
-    "mlp_lora_B": 150
+    "mlp_lora_B": 3000
   },
   "memory_stats": {
-    "success": 150,
+    "success": 3000,
     "failure": 0,
     "recovery": 0,
-    "total": 150
+    "total": 3000
   },
-  "wall_seconds": 1119.8108305931091
+  "wall_seconds": 6955.69665813446
 }
