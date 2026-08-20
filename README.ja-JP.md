@@ -487,7 +487,7 @@ dscns/
   author = {Mousennnn},
   year   = {2026},
   month  = {aug},
-  note   = {Version v0.3.0, early research prototype},
+  note   = {Version v0.4.0, early research prototype},
   howpublished = {GitHub repository},
   url    = {https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System}
 }
@@ -503,7 +503,7 @@ dscns/
 **帰属要件：** ドキュメントを再利用・改変する際は、以下をクレジットして
 ください：
 
-> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.3.0)、
+> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.4.0)、
 > Mousennnn 著、CC BY 4.0 ライセンス。
 > https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System
 
