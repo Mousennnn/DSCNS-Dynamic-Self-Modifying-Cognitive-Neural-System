@@ -1,0 +1,128 @@
+# DSCNS Phase 5.5 v0.5.3 configuration
+# Persistent Experience-to-Policy Learning
+#
+# Core difference from v0.5.2:  Memory now directly conditions the
+# Modification Policy (via PolicyAdapter), not just the Correction signal.
+#
+# Architecture: Experience → Credit → Value → Policy → Modification
+# Run: python scripts/run_v053.py
+
+# ====================================================================== #
+# ---- base model ----
+# ====================================================================== #
+model_name: models/hf/gpt2
+device: cuda
+torch_dtype: float32
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.1
+task_lr: 0.00005
+
+# ====================================================================== #
+# ---- P5 / P5.1 inherited ----
+# ====================================================================== #
+enable_plasticity: true
+plasticity_alpha: 0.01
+p51_m_min: 0.02
+p51_m_max: 1.0
+p51_error_dim: 32
+p51_memory_capacity: 2000
+p51_memory_top_k: 8
+p51_num_target_groups: 3
+p51_success_threshold: 0.001
+p51_failure_threshold: -0.001
+p51_catastrophic_entropy: 0.1
+p51_catastrophic_param_norm: 1000.0
+p51_max_param_ratio: 0.1
+p51_plasticity_lr: 0.0003
+
+# ====================================================================== #
+# ---- v0.5.1 / v0.5.2 inherited ----
+# ====================================================================== #
+v051_enabled: true
+correction_mode: memory_conditioned
+correction_hidden_dim: 64
+correction_memory_dim: 32
+memory_encoder_dim: 32
+memory_feature_dim: 15
+memory_similarity_threshold: 0.5
+recovery_threshold: 0.0001
+replay_buffer_size: 1000
+natural_failure_threshold: -0.0001
+
+# ====================================================================== #
+# ---- v0.5.3 specific ----
+# ====================================================================== #
+v053_enabled: true
+num_rounds: 450
+num_seeds: 5
+seed_base: 42
+
+# ---- Temporal Credit Assignment ----
+credit_gamma: 0.95
+credit_default_k: 3
+credit_windows: [1, 3, 5, 10]
+
+# ---- Experience Value ----
+exp_value_learning_rate: 0.1
+exp_value_decay_rate: 0.001
+exp_value_capacity: 5000
+
+# ---- Policy Adapter ----
+policy_adapter_hidden: 256
+policy_adapter_n_candidates: 4
+policy_adapter_value_dim: 16
+
+# ---- Exploration ----
+exploration_eps: 0.15
+exploration_min: 0.02
+exploration_decay: 0.001
+
+# ---- Policy Learning ----
+policy_learning_rate: 3e-4
+lambda_contrastive: 1.0
+lambda_avoid: 0.5
+lambda_reuse: 0.5
+lambda_stability: 0.1
+contrastive_margin: 0.1
+stability_max_kl: 0.5
+
+# ---- Online training ----
+online_train_enabled: true
+online_train_steps: 5
+online_train_batch: 8
+
+# ---- Failure injection ----
+failure_injection_rounds: [3,6,9,12,15,18,21,24,27,30,35,40,45,50,55,60,70,80,90,100,110,120,130,140,150,170,190,210,230,250,270,290,310,330,350,370,390,410,430,450]
+failure_injection_alpha: 0.1
+failure_injection_noise: 0.08
+
+# ---- Phase analysis ----
+phase_boundaries: [50, 150, 300, 450]
+
+# ---- Checkpoints ----
+checkpoint_rounds: [0, 50, 100, 200, 300, 450]
+eval_only_rounds: 150
+
+# ---- Policy diagnostics ----
+policy_diagnose_every: 50
+
+# ---- Memory ----
+memory_capacity: 2000
+memory_top_k: 8
+
+# ---- Experiment conditions ----
+experiment_conditions:
+  - FullPolicy
+  - NoMemory
+  - FrozenPolicy
+  - RandomMemory
+  - ZeroMemory
+  - NoCredit
+  - NoAlternatives
+  - NoExploration
+
+# ====================================================================== #
+# ---- output ----
+# ====================================================================== #
+output_dir: experiments/phase5_3_v053

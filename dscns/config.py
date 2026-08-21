@@ -174,6 +174,38 @@ class DSCNSConfig:
     regime_c_param_norm_cap: float = 1000.0
     regime_c_correction_norm_cap: float = 100.0
 
+    # ---- v0.5.3: Experience-to-Policy Learning (Phase 5.5) ----
+    v053_enabled: bool = False
+    # temporal credit assignment
+    credit_gamma: float = 0.95          # discount factor for temporal credit
+    credit_default_k: int = 3           # default temporal credit window
+    credit_windows: List[int] = field(default_factory=lambda: [1, 3, 5, 10])
+    # experience value
+    exp_value_learning_rate: float = 0.1
+    exp_value_decay_rate: float = 0.001
+    exp_value_capacity: int = 5000
+    # policy adapter
+    policy_adapter_hidden: int = 256
+    policy_adapter_n_candidates: int = 4
+    policy_adapter_value_dim: int = 16
+    # exploration
+    exploration_eps: float = 0.15
+    exploration_min: float = 0.02
+    exploration_decay: float = 0.001
+    # policy learning losses
+    policy_learning_rate: float = 3e-4
+    lambda_contrastive: float = 1.0
+    lambda_avoid: float = 0.5
+    lambda_reuse: float = 0.5
+    lambda_stability: float = 0.1
+    contrastive_margin: float = 0.1
+    stability_max_kl: float = 0.5
+    # checkpoints
+    checkpoint_rounds: List[int] = field(default_factory=lambda: [0, 50, 100, 200, 300, 450])
+    eval_only_rounds: int = 150         # rounds 450-600: evaluation only (policy frozen)
+    # policy diagnostics
+    policy_diagnose_every: int = 50     # compute D_policy every N rounds
+
     # ---- data sources ----
     datasets: Dict[str, str] = field(default_factory=lambda: {
         "general": "wikitext",          # wikitext-103-raw-v1 (Wikipedia dump)
