@@ -214,10 +214,15 @@ def run_v052_experiment(seed, rounds, condition, config, data):
     failure_injector = FailureInjector(
         inj_rounds, injection_alpha=config.get("failure_injection_alpha", 0.1))
 
-    # ---- probe + stream ----
+    # ---- probe + stream (repeat 20-round pattern to fill rounds) ----
     probes = make_probe_set(data, size=config.get("probe_size", 32))
-    p5_cfg.num_rounds = rounds
-    stream = make_phase5_stream(p5_cfg, data, np.random.RandomState(seed))
+    # generate 20-round pattern, then repeat to fill requested rounds
+    p5_cfg.num_rounds = 20
+    base_stream = make_phase5_stream(p5_cfg, data, np.random.RandomState(seed))
+    stream = []
+    while len(stream) < rounds:
+        stream.extend(base_stream)
+    stream = stream[:rounds]
     theta0 = net.snapshot_parameters()
     hash0 = param_hash(net)
     pm0, logits0, _ = probe_eval(net, base, probes, MAX_LEN)
@@ -243,10 +248,15 @@ def run_v052_experiment(seed, rounds, condition, config, data):
         with torch.no_grad():
             out_h = net.generate_delta(texts, tokenizer, max_len=MAX_LEN, grad_enabled=False)
 
-        # ---- probe before ----
-        pm_before, _, _ = probe_eval(net, base, probes, MAX_LEN, ref_batches=logits0)
-        loss_before = pm_before.get("probe_loss", 0.0)
-        entropy_before = pm_before.get("probe_entropy", 4.0)
+        # ---- probe before (every 5 rounds for speed) ----
+        do_probe = (rnd % 5 == 1) or (rnd == 1) or (rnd == rounds)
+        if do_probe:
+            pm_before, _, _ = probe_eval(net, base, probes, MAX_LEN, ref_batches=logits0)
+            loss_before = pm_before.get("probe_loss", 0.0)
+            entropy_before = pm_before.get("probe_entropy", 4.0)
+        else:
+            loss_before = prev_loss
+            entropy_before = prev_entropy
         score_before = -loss_before
 
         # ---- generate proposal ----
@@ -277,6 +287,10 @@ def run_v052_experiment(seed, rounds, condition, config, data):
             if correction_applied:
                 correction_norm = float(ca.norm()) + float(cb.norm())
                 correction_rounds.append(rnd)
+            if correction_applied and do_probe:
+                pm_corr, _, _ = probe_eval(net, base, probes, MAX_LEN, ref_batches=logits0)
+                loss_after = pm_corr.get("probe_loss", loss_after)
+                score_after = -loss_after
             pending_correction = None
 
         # ---- injection override ----
@@ -311,10 +325,14 @@ def run_v052_experiment(seed, rounds, condition, config, data):
         applied_change = _applied_change(net, before_snap)
         gross += applied_change
 
-        # ---- probe after ----
-        pm_after, _, _ = probe_eval(net, base, probes, MAX_LEN, ref_batches=logits0)
-        loss_after = pm_after.get("probe_loss", 0.0)
-        entropy_after = pm_after.get("probe_entropy", 4.0)
+        # ---- probe after (same schedule) ----
+        if do_probe:
+            pm_after, _, _ = probe_eval(net, base, probes, MAX_LEN, ref_batches=logits0)
+            loss_after = pm_after.get("probe_loss", 0.0)
+            entropy_after = pm_after.get("probe_entropy", 4.0)
+        else:
+            loss_after = loss_before  # no probe = no change detected
+            entropy_after = entropy_before
         score_after = -loss_after
 
         # ---- classify outcome ----

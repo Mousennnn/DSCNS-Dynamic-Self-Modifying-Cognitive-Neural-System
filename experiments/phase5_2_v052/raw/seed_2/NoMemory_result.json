@@ -1,0 +1,57 @@
+{
+  "condition": "NoMemory",
+  "seed": 44,
+  "rounds": 450,
+  "git_commit": "8e8e1cf01560c30d0be71d8387fc5127c1ee24fb",
+  "hash0": "529fea10b5f8c316d3190eb0e72223e618da4391a8719af138298da14615d42d",
+  "hash_final": "e03e6b37721d4321ec6d2209ece8793d9caef88d353e51ce891195ef4cbb53b3",
+  "net_drift": 2017.7373943328857,
+  "gross_drift": 4936.9734627119615,
+  "failure_rate": 0.017777777777777778,
+  "correction_rate": 0.028888888888888888,
+  "recovery_rate": 0.0,
+  "SRR": 0.0,
+  "RFR_target": 1.0,
+  "RFR_similar": 0.5714285714285714,
+  "w_after_failure": 0.6464464575983584,
+  "w_after_success": 0.3601458432773749,
+  "weight_adaptation": -0.28630061432098347,
+  "natural_failure_rate": 0.15,
+  "EAR": 0.0,
+  "high_sim_failure_rate": 0.4,
+  "high_sim_success_rate": 0.15,
+  "absorption_rate": 0.0,
+  "lineage_efficacy": 0.0,
+  "memory_stats": {
+    "success": 3,
+    "failure": 8,
+    "recovery": 0,
+    "total": 20
+  },
+  "tracker_stats": {
+    "n_experiences": 20,
+    "n_failures": 8,
+    "n_successes": 3,
+    "n_lineages": 0,
+    "absorption_rate": 0.0,
+    "lineage_efficacy": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n_lineages": 0
+    }
+  },
+  "phases": {
+    "R0-50": {
+      "n_rounds": 20,
+      "failure_rate": 0.4,
+      "SRR": 0.0,
+      "mean_weight": 0.33333884719759227,
+      "mean_weight_failure": 0.6464464575983584,
+      "mean_weight_success": 0.3601458432773749
+    },
+    "R50-150": {},
+    "R150-300": {},
+    "R300-450": {}
+  },
+  "wall_seconds": 171.88297963142395
+}
