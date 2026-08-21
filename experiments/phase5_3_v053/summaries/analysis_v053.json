@@ -1,0 +1,229 @@
+{
+  "policy_divergence": {
+    "FullPolicy_vs_NoMemory": {
+      "kl": 0.013176266185675821,
+      "js": 0.0032785925231199695,
+      "cosine": 0.9862991173751767,
+      "n_samples": 450
+    },
+    "FullPolicy_vs_FrozenPolicy": {
+      "kl": 0.24996227829324114,
+      "js": 0.051358076875282266,
+      "cosine": 0.9069070213902796,
+      "n_samples": 450
+    },
+    "FullPolicy_vs_RandomMemory": {
+      "kl": 0.001370810215040123,
+      "js": 0.00033998353522831076,
+      "cosine": 0.9988637125651689,
+      "n_samples": 450
+    },
+    "FullPolicy_vs_ZeroMemory": {
+      "kl": 0.013176266185675821,
+      "js": 0.0032785925231199695,
+      "cosine": 0.9862991173751767,
+      "n_samples": 450
+    },
+    "FullPolicy_vs_NoCredit": {
+      "kl": 0.0,
+      "js": 0.0,
+      "cosine": 0.9999999999999999,
+      "n_samples": 450
+    },
+    "FullPolicy_vs_NoAlternatives": {
+      "kl": 0.010010651443995398,
+      "js": 0.0025052056499523107,
+      "cosine": 0.9906036891404891,
+      "n_samples": 450
+    },
+    "FullPolicy_vs_NoExploration": {
+      "kl": 0.009068066621700576,
+      "js": 0.00225386393753202,
+      "cosine": 0.9918265295926246,
+      "n_samples": 450
+    }
+  },
+  "experience_policy_coupling": {
+    "FullPolicy": {
+      "EAR": 0.0,
+      "credit": 0,
+      "exp_value": 0,
+      "alt_success": 0.09733333333333334
+    },
+    "NoMemory": {
+      "EAR": 0.0,
+      "credit": 0,
+      "exp_value": 0,
+      "alt_success": 0.10577777777777778
+    },
+    "FrozenPolicy": {
+      "EAR": 0.0,
+      "credit": 0,
+      "exp_value": 0,
+      "alt_success": 0.09066666666666667
+    },
+    "RandomMemory": {
+      "EAR": 0.0,
+      "credit": 0,
+      "exp_value": 0,
+      "alt_success": 0.09511111111111112
+    },
+    "ZeroMemory": {
+      "EAR": 0.0,
+      "credit": 0,
+      "exp_value": 0,
+      "alt_success": 0.10577777777777778
+    },
+    "NoCredit": {
+      "EAR": 0.0,
+      "credit": 0,
+      "exp_value": 0,
+      "alt_success": 0.09733333333333334
+    },
+    "NoAlternatives": {
+      "EAR": 0.0,
+      "credit": 0,
+      "exp_value": 0,
+      "alt_success": 0.0
+    },
+    "NoExploration": {
+      "EAR": 0.0,
+      "credit": 0,
+      "exp_value": 0,
+      "alt_success": 0.09688888888888889
+    }
+  },
+  "modification_change": {
+    "FullPolicy": {
+      "SRR": 0.0,
+      "RFR": 0.4588281309333941,
+      "w_failure": 0.5732712059512813,
+      "w_success": 0.557334957579571,
+      "drift": 5213.566080474853
+    },
+    "NoMemory": {
+      "SRR": 0.0,
+      "RFR": 0.4383670383670384,
+      "w_failure": 0.5884657257037771,
+      "w_success": 0.5510017034118627,
+      "drift": 5213.004647064209
+    },
+    "FrozenPolicy": {
+      "SRR": 0.0,
+      "RFR": 0.48013565891472865,
+      "w_failure": 0.10044578391599288,
+      "w_success": 0.0654116279302991,
+      "drift": 5218.186351776123
+    },
+    "RandomMemory": {
+      "SRR": 0.0,
+      "RFR": 0.2968613447895384,
+      "w_failure": 0.5617591856065384,
+      "w_success": 0.553707174595863,
+      "drift": 5216.410958862305
+    },
+    "ZeroMemory": {
+      "SRR": 0.0,
+      "RFR": 0.4383670383670384,
+      "w_failure": 0.5884657257037771,
+      "w_success": 0.5510017034118627,
+      "drift": 5213.004647064209
+    },
+    "NoCredit": {
+      "SRR": 0.0,
+      "RFR": 0.4588281309333941,
+      "w_failure": 0.5732712059512813,
+      "w_success": 0.557334957579571,
+      "drift": 5213.566080474853
+    },
+    "NoAlternatives": {
+      "SRR": 0.0,
+      "RFR": 0.38899570860697164,
+      "w_failure": 0.5508671224671569,
+      "w_success": 0.5268978559988249,
+      "drift": 5225.205317687988
+    },
+    "NoExploration": {
+      "SRR": 0.0,
+      "RFR": 0.43764314132503024,
+      "w_failure": 0.5690739470080103,
+      "w_success": 0.5591186100604858,
+      "drift": 5213.455374145507
+    }
+  },
+  "outcome_improvement": {
+    "FullPolicy": {
+      "EAR": 0.0,
+      "RFR": 0.4588281309333941,
+      "failure_rate": 0.10044444444444445,
+      "recovery": 0
+    },
+    "NoMemory": {
+      "EAR": 0.0,
+      "RFR": 0.4383670383670384,
+      "failure_rate": 0.09244444444444445,
+      "recovery": 0
+    },
+    "FrozenPolicy": {
+      "EAR": 0.0,
+      "RFR": 0.48013565891472865,
+      "failure_rate": 0.10266666666666668,
+      "recovery": 0
+    },
+    "RandomMemory": {
+      "EAR": 0.0,
+      "RFR": 0.2968613447895384,
+      "failure_rate": 0.10311111111111111,
+      "recovery": 0
+    },
+    "ZeroMemory": {
+      "EAR": 0.0,
+      "RFR": 0.4383670383670384,
+      "failure_rate": 0.09244444444444445,
+      "recovery": 0
+    },
+    "NoCredit": {
+      "EAR": 0.0,
+      "RFR": 0.4588281309333941,
+      "failure_rate": 0.10044444444444445,
+      "recovery": 0
+    },
+    "NoAlternatives": {
+      "EAR": 0.0,
+      "RFR": 0.38899570860697164,
+      "failure_rate": 0.10400000000000001,
+      "recovery": 0
+    },
+    "NoExploration": {
+      "EAR": 0.0,
+      "RFR": 0.43764314132503024,
+      "failure_rate": 0.10044444444444445,
+      "recovery": 0
+    }
+  },
+  "causal_chain": {
+    "link1_E_to_pi": {
+      "kl": 0.013176266185675821,
+      "pass": true
+    },
+    "link2_pi_to_delta": {
+      "credit": 0,
+      "pass": false
+    },
+    "link3_delta_to_O": {
+      "rfr_full": 0.4588281309333941,
+      "rfr_nomem": 0.4383670383670384,
+      "pass": false
+    },
+    "full_chain": false
+  },
+  "acceptance_criteria": {
+    "minimum_pass": true,
+    "kl": 0.013176266185675821,
+    "strong_pass": false,
+    "rfr_full": 0.4588281309333941,
+    "rfr_nomem": 0.4383670383670384,
+    "full_pass": false,
+    "EAR": 0.0
+  }
+}

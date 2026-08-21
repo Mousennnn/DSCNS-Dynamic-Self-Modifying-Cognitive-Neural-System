@@ -1,0 +1,198 @@
+{
+  "condition": "NoExploration",
+  "seed": 43,
+  "rounds": 450,
+  "git_commit": "9ebda3e3378be032d9567f10ce8c4b3aae2be2a3",
+  "hash0": "758b8ee2adb32596babb2e705ae1e807a3704f3554a908592db8f17efecbc583",
+  "hash_final": "0de6c697d80ceee2cd6a448386e32d513220ad7ca19b90b44949999e2859f5e6",
+  "net_drift": 5209.634338378906,
+  "gross_drift": 32929.19070060202,
+  "failure_rate": 0.10666666666666667,
+  "correction_rate": 0.21333333333333335,
+  "recovery_rate": 0.0,
+  "SRR": 0.0,
+  "RFR_target": 0.5106382978723404,
+  "RFR_similar": 0.5319148936170213,
+  "w_after_failure": 0.5033443942666054,
+  "w_after_success": 0.514502980879375,
+  "weight_adaptation": 0.011158586612769583,
+  "natural_failure_rate": 0.10444444444444445,
+  "EAR": 0.0,
+  "high_sim_failure_rate": 0.10666666666666667,
+  "high_sim_success_rate": 0.09333333333333334,
+  "absorption_rate": 0.0,
+  "lineage_efficacy": 0.0,
+  "credit_mean": -0.0057162956968420395,
+  "credit_std": 0.18710658927871227,
+  "experience_value_mean": 0.010048498713479471,
+  "experience_value_std": 0.09699393183382868,
+  "n_experience_values": 450,
+  "alt_success_rate": 0.09333333333333334,
+  "alt_failure_rate": 0.10666666666666667,
+  "alt_n_selected": 445,
+  "exploration_rate": 0.0,
+  "memory_stats": {
+    "success": 42,
+    "failure": 48,
+    "recovery": 0,
+    "total": 450
+  },
+  "tracker_stats": {
+    "n_experiences": 450,
+    "n_failures": 48,
+    "n_successes": 42,
+    "n_lineages": 0,
+    "absorption_rate": 0.0,
+    "lineage_efficacy": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n_lineages": 0
+    }
+  },
+  "credit_statistics": {
+    "n_credits": 450,
+    "mean_credit": -0.0057162956968420395,
+    "std_credit": 0.18710658927871227,
+    "min_credit": -1.0,
+    "max_credit": 1.0,
+    "mean_immediate_reward": -0.0057162956968420395,
+    "credit_immediate_correlation": 1.0
+  },
+  "experience_value_statistics": {
+    "n_experiences": 450,
+    "mean_value": 0.010048498713479471,
+    "std_value": 0.09699393183382868,
+    "by_type": {
+      "failure": {
+        "mean": -0.011622149067130098,
+        "std": 0.042026577314760886,
+        "n": 408
+      },
+      "success": {
+        "mean": 0.22056336286797248,
+        "std": 0.18644545076024074,
+        "n": 42
+      }
+    }
+  },
+  "alternative_proposal_statistics": {
+    "n_generated": 1780,
+    "n_selected": 445,
+    "n_outcomes": 450,
+    "success_rate": 0.09333333333333334,
+    "failure_rate": 0.10666666666666667,
+    "target_distribution": {
+      "1": 0.5733333333333334,
+      "0": 0.1,
+      "2": 0.32666666666666666
+    },
+    "magnitude_distribution": {
+      "mean": 0.5389870163754225,
+      "std": 0.14926866436346073,
+      "min": 0.04716753959655762,
+      "max": 1.0
+    },
+    "exploration_rate": 0.02
+  },
+  "policy_learning_statistics": {
+    "total": {
+      "mean": 0.7574491218353311,
+      "std": 0.0923942729320202,
+      "last": 0.7722458839416504
+    },
+    "avoid": {
+      "mean": 0.35229101839164895,
+      "std": 0.037615801653247405,
+      "last": 0.3696146011352539
+    },
+    "stability": {
+      "mean": 0.00305515090803965,
+      "std": 0.0034231057553885517,
+      "last": 0.0023067982401698828
+    },
+    "n_steps": 48
+  },
+  "phases": {
+    "R0-50": {
+      "n_rounds": 50,
+      "failure_rate": 0.04,
+      "SRR": 0.0,
+      "mean_weight": 0.6303621852397918,
+      "mean_target": 1.32
+    },
+    "R50-150": {
+      "n_rounds": 100,
+      "failure_rate": 0.12,
+      "SRR": 0.0,
+      "mean_weight": 0.5526947812373113,
+      "mean_target": 1.29
+    },
+    "R150-300": {
+      "n_rounds": 150,
+      "failure_rate": 0.13333333333333333,
+      "SRR": 0.0,
+      "mean_weight": 0.520520483465031,
+      "mean_target": 1.0533333333333332
+    },
+    "R300-450": {
+      "n_rounds": 150,
+      "failure_rate": 0.09333333333333334,
+      "SRR": 0.0,
+      "mean_weight": 0.5178566497564315,
+      "mean_target": 1.3266666666666667
+    }
+  },
+  "policy_checkpoints": {
+    "50": {
+      "target_distribution": {
+        "0": 0.4243147671222687,
+        "1": 0.2926997244358063,
+        "2": 0.2829854488372803
+      },
+      "exploration_rate": 0.0,
+      "round": 50
+    },
+    "100": {
+      "target_distribution": {
+        "0": 0.3484654426574707,
+        "1": 0.28674787282943726,
+        "2": 0.36478668451309204
+      },
+      "exploration_rate": 0.0,
+      "round": 100
+    },
+    "200": {
+      "target_distribution": {
+        "0": 0.44448909163475037,
+        "1": 0.2503654956817627,
+        "2": 0.3051454424858093
+      },
+      "exploration_rate": 0.0,
+      "round": 200
+    },
+    "300": {
+      "target_distribution": {
+        "0": 0.42998796701431274,
+        "1": 0.28748729825019836,
+        "2": 0.2825247347354889
+      },
+      "exploration_rate": 0.0,
+      "round": 300
+    },
+    "450": {
+      "target_distribution": {
+        "0": 0.4204099178314209,
+        "1": 0.29894137382507324,
+        "2": 0.2806486487388611
+      },
+      "exploration_rate": 0.0,
+      "round": 450
+    }
+  },
+  "policy_target_distribution_mean": {
+    "0": 0.4102203913529714,
+    "1": 0.2915939886371295,
+    "2": 0.2981856215662426
+  },
+  "wall_seconds": 267.67617988586426
+}

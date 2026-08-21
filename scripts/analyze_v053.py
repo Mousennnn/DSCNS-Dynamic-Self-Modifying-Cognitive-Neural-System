@@ -16,6 +16,37 @@ import numpy as np
 BASE_DIR = os.path.join("experiments", "phase5_3_v053")
 
 
+def compute_policy_divergence(policy_A_dist, policy_B_dist):
+    """Compute KL, JS divergence, and cosine similarity between two
+    policy target distributions collected over time."""
+    if not policy_A_dist or not policy_B_dist:
+        return {"kl": 0.0, "js": 0.0, "cosine": 0.0, "n_samples": 0}
+    n_targets = 3
+    def _mean_dist(dists):
+        counts = np.zeros(n_targets)
+        for d in dists:
+            for t, p in d.items():
+                counts[min(int(t), n_targets-1)] += p
+        counts /= max(len(dists), 1)
+        total = counts.sum()
+        if total > 0:
+            counts /= total
+        else:
+            counts = np.ones(n_targets) / n_targets
+        return counts
+    p = _mean_dist(policy_A_dist)
+    q = _mean_dist(policy_B_dist)
+    eps = 1e-8
+    p = p + eps; q = q + eps
+    p /= p.sum(); q /= q.sum()
+    kl = float(np.sum(p * np.log(p / q)))
+    m = 0.5 * (p + q)
+    js = float(0.5 * np.sum(p * np.log(p / m)) + 0.5 * np.sum(q * np.log(q / m)))
+    norm = np.linalg.norm(p) * np.linalg.norm(q)
+    cosine = float(np.dot(p, q) / max(norm, 1e-12))
+    return {"kl": kl, "js": js, "cosine": cosine, "n_samples": len(policy_A_dist)}
+
+
 def load_condition_results(out_dir, condition, n_seeds=5):
     """Load per-seed results for a condition."""
     results = []
@@ -215,7 +246,7 @@ def causal_chain_verification(all_summaries, conditions):
     link1 = kl_full_vs_nomem > 0.001
     print(f"\n  Link 1: E → π (Experience changes Policy)")
     print(f"    D_policy(Full vs NoMemory) KL = {kl_full_vs_nomem:.4f}")
-    print(f"    {'✓ PASS' if link1 else '✗ FAIL'}")
+    print(f"    {'PASS' if link1 else 'FAIL'}")
 
     # Link 2: π → Δθ (Policy changes Modification)
     full_alt = full_summary.get("alt_success_rate_mean", 0)
@@ -224,7 +255,7 @@ def causal_chain_verification(all_summaries, conditions):
     print(f"\n  Link 2: π → Δθ (Policy changes Modification)")
     print(f"    Credit mean: {full_credit:.4f}")
     print(f"    Alt success rate: {full_alt:.4f}")
-    print(f"    {'✓ PASS' if link2 else '✗ FAIL'}")
+    print(f"    {'PASS' if link2 else 'FAIL'}")
 
     # Link 3: Δθ → O (Modification changes Outcome)
     full_rfr = full_summary.get("RFR_similar_mean", 1.0)
@@ -232,12 +263,12 @@ def causal_chain_verification(all_summaries, conditions):
     link3 = full_rfr < nomem_rfr if nomem_rfr > 0 else False
     print(f"\n  Link 3: Δθ → O (Modification changes Outcome)")
     print(f"    RFR_Full: {full_rfr:.4f} vs RFR_NoMemory: {nomem_rfr:.4f}")
-    print(f"    {'✓ PASS' if link3 else '✗ FAIL'}")
+    print(f"    {'PASS' if link3 else 'FAIL'}")
 
     # Link 4: Full chain
     link4 = link1 and link2 and link3
     print(f"\n  Full Chain E → π → Δθ → O:")
-    print(f"    {'✓ PASS' if link4 else '✗ PARTIAL (see above)'}")
+    print(f"    {'PASS' if link4 else 'PARTIAL (see above)'}")
 
     chain = {
         "link1_E_to_pi": {"kl": kl_full_vs_nomem, "pass": link1},
@@ -265,7 +296,7 @@ def acceptance_criteria(all_summaries):
     min_pass = kl > 0.001
     print(f"\n  Minimum Pass: D_policy > 0")
     print(f"    KL = {kl:.4f}")
-    print(f"    {'✓ PASS' if min_pass else '✗ FAIL'}")
+    print(f"    {'PASS' if min_pass else 'FAIL'}")
 
     # Strong Pass: D_policy > 0 AND RFR_Full < RFR_NoMemory
     rfr_full = full.get("RFR_similar_mean", 1.0)
@@ -273,14 +304,14 @@ def acceptance_criteria(all_summaries):
     strong_pass = min_pass and (rfr_full < rfr_nomem if rfr_nomem > 0 else False)
     print(f"\n  Strong Pass: D_policy > 0 AND RFR_Full < RFR_NoMemory")
     print(f"    KL = {kl:.4f}, RFR_full = {rfr_full:.4f}, RFR_nomem = {rfr_nomem:.4f}")
-    print(f"    {'✓ PASS' if strong_pass else '✗ FAIL'}")
+    print(f"    {'PASS' if strong_pass else 'FAIL'}")
 
     # Full Pass: all of above + SuccessReuse + EAR > 0
     ear = full.get("EAR_mean", 0)
     full_pass = strong_pass and ear > 0
     print(f"\n  Full Pass: + EAR > 0")
     print(f"    EAR = {ear:.4f}")
-    print(f"    {'✓ PASS' if full_pass else '✗ FAIL'}")
+    print(f"    {'PASS' if full_pass else 'FAIL'}")
 
     return {
         "minimum_pass": min_pass, "kl": kl,
@@ -298,9 +329,73 @@ def main():
     conditions = ["FullPolicy", "NoMemory", "FrozenPolicy", "RandomMemory",
                   "ZeroMemory", "NoCredit", "NoAlternatives", "NoExploration"]
 
-    # load data
+    # load data - re-aggregate from raw results
     print(f"Loading results from {args.out} ...")
     summaries = load_all_summaries(args.out)
+
+    # Re-aggregate from raw seed results for accuracy
+    conditions_list = ["FullPolicy", "NoMemory", "FrozenPolicy", "RandomMemory",
+                       "ZeroMemory", "NoCredit", "NoAlternatives", "NoExploration"]
+    for cond in conditions_list:
+        results = load_condition_results(args.out, cond, args.seeds)
+        if results:
+            agg = aggregate_seeds(results, [
+                "failure_rate", "SRR", "RFR_target", "RFR_similar",
+                "w_after_failure", "w_after_success", "weight_adaptation",
+                "EAR", "high_sim_failure_rate", "high_sim_success_rate",
+                "lineage_efficacy", "net_drift", "gross_drift",
+                "credit_mean", "credit_std",
+                "experience_value_mean", "experience_value_std",
+                "alt_success_rate", "alt_failure_rate"])
+            agg["seeds"] = len(results)
+            agg["rounds"] = results[0].get("rounds", 450) if results else 450
+            agg["condition"] = cond
+            summaries[cond] = agg
+
+    # Compute policy divergence from round logs
+    print("\nComputing policy divergence from round logs...")
+    cond_policy_dists = {}
+    for cond in conditions:
+        logs = load_round_logs(args.out, cond, args.seeds)
+        if logs:
+            dists = []
+            for log in logs:
+                seed_dists = []
+                for r in log:
+                    tgt = r.get("target", 0)
+                    d = {0: 0.0, 1: 0.0, 2: 0.0}
+                    d[tgt] = 1.0
+                    seed_dists.append(d)
+                dists.append(seed_dists)
+            if dists:
+                max_len = max(len(s) for s in dists)
+                avg_dists = []
+                for i in range(max_len):
+                    avg_d = {0: 0.0, 1: 0.0, 2: 0.0}
+                    count = 0
+                    for s in dists:
+                        if i < len(s):
+                            for k, v in s[i].items():
+                                avg_d[k] += v
+                            count += 1
+                    if count > 0:
+                        for k in avg_d:
+                            avg_d[k] /= count
+                    avg_dists.append(avg_d)
+                cond_policy_dists[cond] = avg_dists
+
+    policy_div_results = {}
+    if "FullPolicy" in cond_policy_dists:
+        baseline = cond_policy_dists["FullPolicy"]
+        for cond in conditions:
+            if cond == "FullPolicy" or cond not in cond_policy_dists:
+                continue
+            div = compute_policy_divergence(baseline, cond_policy_dists[cond])
+            key = f"FullPolicy_vs_{cond}"
+            policy_div_results[key] = div
+            print(f"  D_policy(FullPolicy vs {cond}): "
+                  f"KL={div['kl']:.4f} JS={div['js']:.4f} Cos={div['cosine']:.4f}")
+    summaries["policy_divergence"] = policy_div_results
 
     # analysis
     div_results = policy_divergence_analysis(summaries, conditions)
