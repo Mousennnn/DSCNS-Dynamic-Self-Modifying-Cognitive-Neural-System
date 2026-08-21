@@ -6,6 +6,16 @@
   RFR_similar_mean: A1=0.8857¡À0.1400 vs A2=0.8857¡À0.1400 Cohen's d=0.000
   weight_adaptation_mean: A1=-0.5662¡À0.2883 vs A2=-0.4108¡À0.4053 Cohen's d=-0.442
 
+## Full vs ShuffledMemory (A1 vs A3)
+  SRR_mean: A1=0.0650¡À0.0831 vs A3=0.0650¡À0.0831 Cohen's d=0.000
+  RFR_similar_mean: A1=0.8857¡À0.1400 vs A3=0.8857¡À0.1400 Cohen's d=0.000
+  weight_adaptation_mean: A1=-0.5662¡À0.2883 vs A3=-0.5662¡À0.2883 Cohen's d=0.000
+
+## Full vs RandomMemory (A1 vs A4)
+  SRR_mean: A1=0.0650¡À0.0831 vs A4=0.0250¡À0.0500 Cohen's d=0.583
+  RFR_similar_mean: A1=0.8857¡À0.1400 vs A4=0.8857¡À0.1400 Cohen's d=0.000
+  weight_adaptation_mean: A1=-0.5662¡À0.2883 vs A4=-0.4108¡À0.4053 Cohen's d=-0.442
+
 ## Full vs Reversal (A1 vs C2)
   SRR_mean: A1=0.0650¡À0.0831 vs C2=0.0000¡À0.0000 Cohen's d=1.107
   RFR_similar_mean: A1=0.8857¡À0.1400 vs C2=1.0000¡À0.0000 Cohen's d=-1.155
