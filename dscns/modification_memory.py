@@ -252,3 +252,201 @@ class EpisodicSelfModificationMemory:
             "repeated_error_rate": self.get_repeated_error_rate(),
             "records": [r.to_dict() for r in self.records[-100:]],  # last 100
         }
+
+    # ================================================================== #
+    # v0.5.1 extensions: multi-similarity retrieval & similar failure     #
+    # ================================================================== #
+
+    def retrieve_multi_similarity(
+        self,
+        query_context: Any = None,
+        query_proposal: Any = None,
+        query_error: Any = None,
+        query_target: Optional[int] = None,
+        k: Optional[int] = None,
+        lambda_context: float = 0.3,
+        lambda_proposal: float = 0.3,
+        lambda_error: float = 0.2,
+        lambda_target: float = 0.2,
+    ) -> List[EpisodicModificationRecord]:
+        """v0.5.1: retrieve top-k by weighted multi-similarity (task spec §10).
+
+        Similarity = λ_c*S_context + λ_p*S_proposal + λ_e*S_error + λ_t*S_target
+        """
+        import torch
+
+        k = k or self.top_k
+        if not self.records:
+            return []
+
+        scored = []
+        for r in self.records:
+            sim = 0.0
+            # context similarity (on core_z)
+            if query_context is not None and r.core_z is not None:
+                sim += lambda_context * self._cos_sim(query_context, r.core_z)
+            # proposal similarity (on delta norms)
+            if query_proposal is not None:
+                sim += lambda_proposal * self._proposal_sim(query_proposal, r)
+            # error similarity (on error_state)
+            if query_error is not None and r.error_state is not None:
+                sim += lambda_error * self._error_sim(query_error, r.error_state)
+            # target similarity
+            if query_target is not None:
+                sim += lambda_target * (1.0 if query_target == r.target_group else 0.0)
+            scored.append((sim, r))
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return [r for _, r in scored[:k]]
+
+    def find_similar_failures(
+        self,
+        query_error: Any = None,
+        query_context: Any = None,
+        similarity_threshold: float = 0.5,
+    ) -> List[EpisodicModificationRecord]:
+        """v0.5.1: find past failures similar to the current error (task spec §17).
+
+        A 'similar failure' has multi-similarity >= threshold.
+        """
+        failures = [r for r in self.records if r.category == "failure"]
+        if not failures:
+            return []
+
+        similar = []
+        for r in failures:
+            sim = 0.0
+            if query_error is not None and r.error_state is not None:
+                sim += 0.5 * self._error_sim(query_error, r.error_state)
+            if query_context is not None and r.core_z is not None:
+                sim += 0.5 * self._cos_sim(query_context, r.core_z)
+            if sim >= similarity_threshold:
+                similar.append(r)
+        return similar
+
+    def get_rfr_target(self) -> float:
+        """v0.5.1: Repeat Failure Rate by same target (baseline)."""
+        return self.get_repeated_error_rate()
+
+    def get_rfr_similar(self, similarity_threshold: float = 0.5) -> float:
+        """v0.5.1: Repeat Failure Rate by similar context/error/proposal (task spec §17).
+
+        Counts consecutive failures where the MULTI-SIMILARITY between
+        their error states + contexts exceeds the threshold.
+        """
+        failures = [r for r in self.records if r.category == "failure"]
+        if len(failures) < 2:
+            return 0.0
+        repeated = 0
+        for i in range(1, len(failures)):
+            sim = 0.0
+            curr, prev = failures[i], failures[i - 1]
+            if curr.error_state is not None and prev.error_state is not None:
+                sim += 0.5 * self._error_sim(curr.error_state, prev.error_state)
+            if curr.core_z is not None and prev.core_z is not None:
+                sim += 0.5 * self._cos_sim(curr.core_z, prev.core_z)
+            if sim >= similarity_threshold:
+                repeated += 1
+        return repeated / (len(failures) - 1)
+
+    def get_rfr_exact(self) -> float:
+        """v0.5.1: Repeat Failure Rate by exact same conditions."""
+        failures = [r for r in self.records if r.category == "failure"]
+        if len(failures) < 2:
+            return 0.0
+        repeated = 0
+        for i in range(1, len(failures)):
+            curr, prev = failures[i], failures[i - 1]
+            if (curr.target_group == prev.target_group and
+                    curr.magnitude == prev.magnitude):
+                repeated += 1
+        return repeated / (len(failures) - 1)
+
+    def get_weight_after_outcome(self, outcome_type: str) -> List[float]:
+        """v0.5.1: get weights for records of given category.
+
+        Used to verify: w_failure < w_success (task spec §4).
+        """
+        return [r.magnitude for r in self.records if r.category == outcome_type]
+
+    def get_weight_stats_by_outcome(self) -> Dict[str, Dict[str, float]]:
+        """v0.5.1: weight statistics grouped by outcome category."""
+        import torch
+        stats = {}
+        for cat in ["success", "failure", "recovery"]:
+            weights = [r.magnitude for r in self.records if r.category == cat]
+            if weights:
+                arr = np.array(weights)
+                stats[cat] = {
+                    "mean": float(arr.mean()),
+                    "std": float(arr.std()),
+                    "min": float(arr.min()),
+                    "max": float(arr.max()),
+                    "count": len(weights),
+                }
+            else:
+                stats[cat] = {"mean": 0.0, "std": 0.0, "min": 0.0,
+                              "max": 0.0, "count": 0}
+        return stats
+
+    def get_target_transition_matrix(self) -> Dict[str, int]:
+        """v0.5.1: count target transitions (e.g., 0→1, 1→2, etc.)."""
+        transitions: Dict[str, int] = {}
+        prev_target = None
+        for r in self.records:
+            if prev_target is not None:
+                key = f"{prev_target}->{r.target_group}"
+                transitions[key] = transitions.get(key, 0) + 1
+            prev_target = r.target_group
+        return transitions
+
+    @staticmethod
+    def _cos_sim(a: Any, b: Any) -> float:
+        """Cosine similarity between two tensors/arrays."""
+        import torch
+        if isinstance(a, torch.Tensor):
+            a_np = a.detach().cpu().float().numpy().flatten()
+        elif isinstance(a, np.ndarray):
+            a_np = a.flatten()
+        else:
+            return 0.0
+        if isinstance(b, torch.Tensor):
+            b_np = b.detach().cpu().float().numpy().flatten()
+        elif isinstance(b, np.ndarray):
+            b_np = b.flatten()
+        else:
+            return 0.0
+        norm = np.linalg.norm(a_np) * np.linalg.norm(b_np)
+        if norm < 1e-12:
+            return 0.0
+        return float(np.dot(a_np, b_np) / norm)
+
+    @staticmethod
+    def _proposal_sim(query: Any, record: EpisodicModificationRecord) -> float:
+        """Proposal similarity based on delta norms + target."""
+        if isinstance(query, dict):
+            q_norm = query.get("delta_norm", 0.0)
+            q_tgt = query.get("target_group", -1)
+        else:
+            q_norm = float(query) if query is not None else 0.0
+            q_tgt = -1
+        norm_sim = 1.0 - min(abs(q_norm - record.delta_norm) / max(q_norm + record.delta_norm, 1e-6), 1.0)
+        tgt_sim = 1.0 if q_tgt == record.target_group else 0.0
+        return 0.6 * norm_sim + 0.4 * tgt_sim
+
+    @staticmethod
+    def _error_sim(a: Any, b: Any) -> float:
+        """Error state similarity."""
+        import torch
+        if hasattr(a, "to_tensor"):
+            a = a.to_tensor()
+        if hasattr(b, "to_tensor"):
+            b = b.to_tensor()
+        if isinstance(a, torch.Tensor) and isinstance(b, torch.Tensor):
+            a_f = a.detach().cpu().float().flatten()
+            b_f = b.detach().cpu().float().flatten()
+            norm = a_f.norm() * b_f.norm()
+            if norm < 1e-12:
+                return 0.0
+            return float(torch.cosine_similarity(a_f.unsqueeze(0), b_f.unsqueeze(0)))
+        return 0.0

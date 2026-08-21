@@ -1,0 +1,88 @@
+# DSCNS Phase 5.1 v0.5.1 configuration
+# Memory-Conditioned Outcome Learning & Error-Driven Self-Modification
+
+# ---- base model (inherited) ----
+model_name: models/hf/gpt2
+device: cuda
+torch_dtype: float32
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.1
+task_lr: 0.00005
+
+# ---- P5 inherited ----
+enable_plasticity: true
+plasticity_alpha: 0.01
+p51_m_min: 0.02
+p51_m_max: 1.0
+p51_error_dim: 32
+p51_memory_capacity: 2000
+p51_memory_top_k: 8
+
+# ---- v0.5.1 core ----
+v051_enabled: true
+num_rounds: 150
+seed: 42
+num_seeds: 5
+
+# ---- correction policy ----
+correction_mode: memory_conditioned  # C5: full memory-conditioned
+correction_lr: 0.0003
+correction_hidden_dim: 64
+correction_memory_dim: 32
+
+# ---- memory encoder ----
+memory_encoder_dim: 32
+memory_feature_dim: 15
+memory_top_k: 8
+memory_lambda_context: 0.3
+memory_lambda_proposal: 0.3
+memory_lambda_error: 0.2
+memory_lambda_target: 0.2
+memory_similarity_threshold: 0.5
+
+# ---- probe sets ----
+probe_size_s: 32      # Probe-S: smoke/mechanism probe
+probe_size_m: 256     # Probe-M: medium validation
+
+# ---- recovery metrics ----
+recovery_threshold: 0.0001
+
+# ---- experience replay ----
+replay_buffer_size: 1000
+replay_failure_ratio: 1.0
+replay_offline_steps: 100
+
+# ---- natural failure detection ----
+natural_failure_threshold: -0.0001
+
+# ---- failure injection (for controlled experiments) ----
+failure_injection_rounds: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150]
+failure_injection_magnitude: 1.0
+failure_injection_alpha: 0.1
+
+# ---- experiment groups ----
+# Core ablations (5 conditions)
+# A1: Full (C5 memory_conditioned)
+# A2: No Memory (C4 error_conditioned, memory zeroed)
+# A3: Shuffled Memory (irrelevant episodes)
+# A4: Random Memory (random embeddings)
+# A5: Zero Memory (zero embeddings)
+
+# Correction ablations (6 conditions, C0-C5)
+# C0: no correction
+# C1: rollback
+# C2: pure reversal
+# C3: learned (no memory)
+# C4: error-conditioned (no memory)
+# C5: error + memory conditioned (full)
+
+# Weight ablations (5 conditions)
+# W1: fixed weight
+# W2: random weight
+# W3: P5.1 learned weight
+# W4: error-conditioned weight
+# W5: memory + error-conditioned weight
+
+# ---- output ----
+output_dir: experiments/phase5_1_v051

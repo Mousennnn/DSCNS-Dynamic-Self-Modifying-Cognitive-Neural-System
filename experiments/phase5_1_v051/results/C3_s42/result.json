@@ -1,0 +1,64 @@
+{
+  "experiment": "C3",
+  "correction_mode": "learned",
+  "memory_mode": "zero",
+  "weight_mode": "learned",
+  "use_injection": true,
+  "seed": 42,
+  "rounds": 150,
+  "probe_size": 32,
+  "git_commit": "6fd7fdd816f80244cc480e73362c8212b9025bf4",
+  "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
+  "hash_final": "a5a296acafbca2fc201ccdaa75ca888329ddedd7b127971ffce1d1444aef14fc",
+  "param_norm_0": 353.4674072265625,
+  "param_norm_final": 353.4674072265625,
+  "net_drift": 2017.945177078247,
+  "gross_drift": 4938.000891253585,
+  "failure_rate": 0.05333333333333334,
+  "correction_rate": 1.625,
+  "recovery_rate": 0.25,
+  "CAR": 0.375,
+  "SRR": 0.125,
+  "RE": 0.4915635293469019,
+  "RFR_target": 1.0,
+  "RFR_similar": 0.8571428571428571,
+  "RFR_exact": 0.5714285714285714,
+  "w_after_failure": 0.762099458836019,
+  "w_after_success": 0.0,
+  "weight_adaptation": -0.762099458836019,
+  "natural_failure_rate": 0.1,
+  "natural_failure_count": 2,
+  "memory_stats": {
+    "success": 0,
+    "failure": 8,
+    "recovery": 2,
+    "total": 20
+  },
+  "target_transitions": {
+    "2->2": 19
+  },
+  "weight_stats_by_outcome": {
+    "success": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "count": 0
+    },
+    "failure": {
+      "mean": 0.762099458836019,
+      "std": 0.4120604616602022,
+      "min": 0.044488050043582916,
+      "max": 1.0,
+      "count": 8
+    },
+    "recovery": {
+      "mean": 0.04450211115181446,
+      "std": 1.2891367077827454e-05,
+      "min": 0.04448921978473663,
+      "max": 0.04451500251889229,
+      "count": 2
+    }
+  },
+  "wall_seconds": 75.48047256469727
+}

@@ -141,6 +141,39 @@ class DSCNSConfig:
     train_steps_per_round: int = 8  # compute budget for Control mode
     max_grad_steps_per_round: int = 8  # compute budget for Exp1/Exp2 (parity)
 
+    # ---- v0.5.1: Memory-Conditioned Outcome Learning ----
+    v051_enabled: bool = False
+    # correction policy
+    correction_mode: str = "memory_conditioned"  # none/rollback/reversal/learned/error_conditioned/memory_conditioned
+    correction_lr: float = 3e-4
+    correction_hidden_dim: int = 64
+    correction_memory_dim: int = 32
+    # memory encoder
+    memory_encoder_dim: int = 32
+    memory_feature_dim: int = 15
+    memory_top_k: int = 8
+    memory_lambda_context: float = 0.3
+    memory_lambda_proposal: float = 0.3
+    memory_lambda_error: float = 0.2
+    memory_lambda_target: float = 0.2
+    memory_similarity_threshold: float = 0.5
+    # probe sets
+    probe_size_s: int = 32
+    probe_size_m: int = 256
+    probe_size_l: int = 1000
+    # recovery metrics thresholds
+    recovery_threshold: float = 0.0001
+    # experience replay
+    replay_buffer_size: int = 1000
+    replay_failure_ratio: float = 1.0
+    replay_offline_steps: int = 100
+    # natural failure
+    natural_failure_threshold: float = -0.0001
+    # long-horizon
+    regime_a_threshold: float = 0.1      # D_net / D_gross ratio for stable adaptation
+    regime_c_param_norm_cap: float = 1000.0
+    regime_c_correction_norm_cap: float = 100.0
+
     # ---- data sources ----
     datasets: Dict[str, str] = field(default_factory=lambda: {
         "general": "wikitext",          # wikitext-103-raw-v1 (Wikipedia dump)

@@ -1,0 +1,101 @@
+{
+  "failure_rate_mean": 0.03866666666666667,
+  "failure_rate_std": 0.0026666666666666674,
+  "failure_rate_ci95": [
+    0.036329230274186886,
+    0.04100410305914645
+  ],
+  "correction_rate_mean": 0.0,
+  "correction_rate_std": 0.0,
+  "correction_rate_ci95": [
+    0.0,
+    0.0
+  ],
+  "recovery_rate_mean": 0.0,
+  "recovery_rate_std": 0.0,
+  "recovery_rate_ci95": [
+    0.0,
+    0.0
+  ],
+  "CAR_mean": 0.0,
+  "CAR_std": 0.0,
+  "CAR_ci95": [
+    0.0,
+    0.0
+  ],
+  "SRR_mean": 0.0,
+  "SRR_std": 0.0,
+  "SRR_ci95": [
+    0.0,
+    0.0
+  ],
+  "RE_mean": 0.0,
+  "RE_std": 0.0,
+  "RE_ci95": [
+    0.0,
+    0.0
+  ],
+  "RFR_target_mean": 1.0,
+  "RFR_target_std": 0.0,
+  "RFR_target_ci95": [
+    1.0,
+    1.0
+  ],
+  "RFR_similar_mean": 1.0,
+  "RFR_similar_std": 0.0,
+  "RFR_similar_ci95": [
+    1.0,
+    1.0
+  ],
+  "RFR_exact_mean": 1.0,
+  "RFR_exact_std": 0.0,
+  "RFR_exact_ci95": [
+    1.0,
+    1.0
+  ],
+  "w_after_failure_mean": 1.0,
+  "w_after_failure_std": 0.0,
+  "w_after_failure_ci95": [
+    1.0,
+    1.0
+  ],
+  "w_after_success_mean": 0.2,
+  "w_after_success_std": 0.4000000000000001,
+  "w_after_success_ci95": [
+    -0.1506154588719671,
+    0.5506154588719672
+  ],
+  "weight_adaptation_mean": -0.8,
+  "weight_adaptation_std": 0.4000000000000001,
+  "weight_adaptation_ci95": [
+    -1.1506154588719673,
+    -0.44938454112803294
+  ],
+  "net_drift_mean": 2016.0851902008058,
+  "net_drift_std": 0.9927049427345116,
+  "net_drift_ci95": [
+    2015.2150459532525,
+    2016.955334448359
+  ],
+  "gross_drift_mean": 4937.868438635598,
+  "gross_drift_std": 0.6279802724900893,
+  "gross_drift_ci95": [
+    4937.317989657094,
+    4938.4188876141025
+  ],
+  "natural_failure_rate_mean": 0.0,
+  "natural_failure_rate_std": 0.0,
+  "natural_failure_rate_ci95": [
+    0.0,
+    0.0
+  ],
+  "natural_failure_count_mean": 0.0,
+  "natural_failure_count_std": 0.0,
+  "natural_failure_count_ci95": [
+    0.0,
+    0.0
+  ],
+  "seeds": 5,
+  "rounds": 150,
+  "experiment": "C0"
+}

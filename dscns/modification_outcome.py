@@ -143,3 +143,174 @@ class FailureInjector:
             "alpha": self.injection_alpha,
             "injected": True,
         }
+
+
+# ====================================================================== #
+# v0.5.1: Separated Recovery Metrics (task spec §16)                    #
+# ====================================================================== #
+
+@dataclass
+class RecoveryMetrics:
+    """Separated metrics for correction effectiveness (task spec §16).
+
+    Three metrics that MUST NOT be merged:
+      CAR: system attempts correction
+      SRR: correction actually succeeds
+      RE: how much of the original loss is recovered
+    """
+    correction_application_rate: float = 0.0   # CAR = N_corrections / N_failures
+    successful_recovery_rate: float = 0.0      # SRR = N_successful_recovery / N_failures
+    recovery_efficiency: float = 0.0           # RE = (P_after_corr - P_after_fail) / (P_before - P_after_fail + eps)
+
+    # component counts
+    total_failures: int = 0
+    total_corrections_applied: int = 0
+    total_successful_recoveries: int = 0
+
+    def to_dict(self) -> Dict[str, float]:
+        return {
+            "CAR": self.correction_application_rate,
+            "SRR": self.successful_recovery_rate,
+            "RE": self.recovery_efficiency,
+            "total_failures": self.total_failures,
+            "total_corrections_applied": self.total_corrections_applied,
+            "total_successful_recoveries": self.total_successful_recoveries,
+        }
+
+
+class V051OutcomeEvaluator:
+    """v0.5.1 outcome evaluator with separated recovery metrics.
+
+    Extends OutcomeEvaluator with:
+      - Correction Application Rate (CAR)
+      - Successful Recovery Rate (SRR)
+      - Recovery Efficiency (RE)
+      - Similar failure tracking
+      - Weight adaptation tracking
+
+    Thresholds are fixed BEFORE the experiment (no post-hoc tuning).
+    """
+
+    def __init__(self,
+                 success_threshold: float = 0.0001,
+                 failure_threshold: float = -0.0001,
+                 recovery_threshold: float = 0.0001,
+                 catastrophic_entropy: float = 0.1,
+                 catastrophic_param_norm: float = 1000.0):
+        self.success_threshold = success_threshold
+        self.failure_threshold = failure_threshold
+        self.recovery_threshold = recovery_threshold
+        self.catastrophic_entropy = catastrophic_entropy
+        self.catastrophic_param_norm = catastrophic_param_norm
+
+    def evaluate(self, score_before: float, score_after: float,
+                 loss_before: float = 0.0, loss_after: float = 0.0,
+                 entropy_before: float = 4.0, entropy_after: float = 4.0,
+                 param_norm: float = 10.0, has_nan: bool = False,
+                 delta_score: float = 0.0) -> Dict[str, Any]:
+        """Classify modification outcome with fixed thresholds."""
+        ds = score_after - score_before if abs(delta_score) < 0.0001 else delta_score
+        catastrophic = (has_nan or
+                        entropy_after < self.catastrophic_entropy or
+                        param_norm > self.catastrophic_param_norm)
+        if catastrophic:
+            outcome, category = "catastrophic", "failure"
+        elif ds < self.failure_threshold:
+            outcome, category = "failure", "failure"
+        elif ds > self.success_threshold * 5:
+            outcome, category = "success", "success"
+        elif ds > self.success_threshold:
+            outcome, category = "partial_success", "success"
+        else:
+            outcome, category = "neutral", "neutral"
+        return {
+            "delta_score": ds,
+            "outcome": outcome,
+            "category": category,
+            "catastrophic": catastrophic,
+        }
+
+    def compute_recovery_metrics(
+        self,
+        outcomes: List[Dict[str, Any]],
+    ) -> RecoveryMetrics:
+        """v0.5.1: compute CAR, SRR, RE from a list of round outcomes.
+
+        Each outcome dict must contain:
+          - category: "success"/"failure"/"recovery"
+          - correction_applied: bool
+          - score_before_modification: float
+          - score_after_modification: float
+          - score_after_correction: float (if correction applied)
+        """
+        metrics = RecoveryMetrics()
+        for ev in outcomes:
+            if ev.get("category") == "failure":
+                metrics.total_failures += 1
+                if ev.get("correction_applied", False):
+                    metrics.total_corrections_applied += 1
+                    # check if recovery actually happened
+                    score_after_fail = ev.get("score_after_modification", 0.0)
+                    score_after_corr = ev.get("score_after_correction", score_after_fail)
+                    score_before = ev.get("score_before_modification", 0.0)
+                    if score_after_corr > score_after_fail + self.recovery_threshold:
+                        metrics.total_successful_recoveries += 1
+
+        metrics.correction_application_rate = (
+            metrics.total_corrections_applied / max(metrics.total_failures, 1))
+        metrics.successful_recovery_rate = (
+            metrics.total_successful_recoveries / max(metrics.total_failures, 1))
+
+        # RE averaged over failures that had corrections
+        re_values = []
+        for ev in outcomes:
+            if ev.get("category") == "failure" and ev.get("correction_applied", False):
+                score_before = ev.get("score_before_modification", 0.0)
+                score_after_fail = ev.get("score_after_modification", 0.0)
+                score_after_corr = ev.get("score_after_correction", score_after_fail)
+                denom = abs(score_before - score_after_fail) + 1e-8
+                re_values.append((score_after_corr - score_after_fail) / denom)
+        if re_values:
+            metrics.recovery_efficiency = float(np.mean(re_values))
+
+        return metrics
+
+
+class NaturalFailureDetector:
+    """v0.5.1: detect natural failures (task spec §19-20).
+
+    A 'natural failure' is a failure NOT caused by injection —
+    the model's own modification led to performance degradation.
+
+    This is the most important experiment for proving the model
+    learns from its OWN errors.
+    """
+
+    def __init__(self, failure_threshold: float = -0.0001):
+        self.failure_threshold = failure_threshold
+        self.natural_failures: List[Dict[str, Any]] = []
+        self.total_natural_rounds = 0
+        self.total_natural_failures = 0
+
+    def record_round(self, round_id: int, delta_score: float,
+                     injected: bool = False, **kwargs) -> Dict[str, Any]:
+        """Record a round's outcome and classify if it's a natural failure."""
+        is_natural_failure = (not injected and delta_score < self.failure_threshold)
+        if is_natural_failure:
+            self.total_natural_failures += 1
+            self.natural_failures.append({
+                "round_id": round_id,
+                "delta_score": delta_score,
+                **kwargs,
+            })
+        self.total_natural_rounds += 1
+        return {
+            "is_natural_failure": is_natural_failure,
+            "natural_failure_count": self.total_natural_failures,
+        }
+
+    @property
+    def natural_failure_rate(self) -> float:
+        if self.total_natural_rounds == 0:
+            return 0.0
+        return self.total_natural_failures / self.total_natural_rounds
