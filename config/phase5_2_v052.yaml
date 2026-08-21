@@ -1,0 +1,174 @@
+# DSCNS Phase 5.2 v0.5.2 configuration
+# Persistent Error-Experience Absorption & Self-Modification Learning
+#
+# Builds on config/phase5_1_v051.yaml (v0.5.1) and inherits the P5 / P5.1 /
+# P5.2 fields from config/phase5_2.yaml.  Where a value exists in both the
+# v0.5.1 config and the original P5.2 config, the v0.5.2 value (or the
+# v0.5.1 value when v0.5.2 does not override it) wins.
+#
+# Run: python scripts/run_v052.py   (450 rounds x 5 seeds x 9 conditions)
+# Analyze: python scripts/analyze_v052.py
+
+# ====================================================================== #
+# ---- base model (inherited from P5 / P5.2) ----
+# ====================================================================== #
+model_name: models/hf/gpt2
+device: cuda
+torch_dtype: float32
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.1
+task_lr: 0.00005
+
+# ====================================================================== #
+# ---- P5 inherited (from phase5_2.yaml / phase5_1_v051.yaml) ----
+# ====================================================================== #
+enable_plasticity: true
+plasticity_alpha: 0.01
+p51_m_min: 0.02
+p51_m_max: 1.0
+p51_error_dim: 32
+p51_memory_capacity: 2000
+p51_memory_top_k: 8
+p51_num_target_groups: 3
+p51_success_threshold: 0.001
+p51_failure_threshold: -0.001
+p51_catastrophic_entropy: 0.1
+p51_catastrophic_param_norm: 1000.0
+p51_max_param_ratio: 0.1
+p51_train_every: 1
+p51_lambda_delta: 1.0
+p51_lambda_mag: 0.5
+p51_lambda_target: 0.5
+p51_failure_replay_ratio: 1.0
+p51_plasticity_lr: 0.0003
+p51_plasticity_batch: 8
+
+# ====================================================================== #
+# ---- P5.2 core (inherited from phase5_2.yaml) ----
+# ====================================================================== #
+p52_enabled: true
+# num_rounds / seed / num_seeds are overridden by the v0.5.2 block below.
+correction_blending: 0.3          # how much correction to blend with next proposal
+correction_lr: 0.0003
+failure_injection_magnitude: 1.0
+
+# ====================================================================== #
+# ---- v0.5.1 core (inherited from phase5_1_v051.yaml) ----
+# ====================================================================== #
+v051_enabled: true
+
+# ---- correction policy ----
+correction_mode: memory_conditioned  # C5: full memory-conditioned
+correction_hidden_dim: 64
+correction_memory_dim: 32
+
+# ---- memory encoder ----
+memory_encoder_dim: 32
+memory_feature_dim: 15
+memory_similarity_threshold: 0.5
+memory_lambda_context: 0.3
+memory_lambda_proposal: 0.3
+memory_lambda_error: 0.2
+memory_lambda_target: 0.2
+
+# ---- probe sets ----
+probe_size_s: 32      # Probe-S: smoke/mechanism probe
+probe_size_m: 256     # Probe-M: medium validation
+
+# ---- recovery metrics ----
+recovery_threshold: 0.0001
+
+# ---- experience replay ----
+replay_buffer_size: 1000
+replay_failure_ratio: 1.0
+replay_offline_steps: 100
+
+# ---- natural failure detection ----
+natural_failure_threshold: -0.0001
+
+# ====================================================================== #
+# ---- v0.5.2 specific fields ----
+# ====================================================================== #
+v052_enabled: true
+num_rounds: 450
+num_seeds: 5
+seed_base: 42
+
+# ---- Online training ----
+# The correction policy + memory encoder receive gradient updates during
+# the experiment (online), instead of being frozen at inference time as in
+# v0.5.1.
+online_train_enabled: true
+online_train_every: 1        # train policy every N rounds
+online_train_batch: 8
+online_train_steps: 5        # gradient steps per training round
+policy_lr: 3e-4
+
+# ---- Weight ranking loss ----
+# L_ranking = max(0, margin - w_success + w_failure) — enforces
+# w_success > w_failure + margin, fixing the v0.5.1 reversal.
+weight_ranking_loss: true
+weight_ranking_margin: 0.1
+weight_min: 0.02
+weight_max: 1.0
+
+# ---- Direction encoding ----
+# Encodes the actual delta_theta DIRECTION (not just its norm) so that
+# +deltaW and -deltaW are distinguishable in memory retrieval.
+direction_encoding_enabled: true
+direction_dim: 16
+
+# ---- Outcome-aware attention ----
+# Replaces mean pooling with learned attention that distinguishes SUCCESS
+# and FAILURE episodes when aggregating retrieved memory.
+outcome_aware_attention: true
+outcome_embedding_dim: 8
+
+# ---- Memory ----
+memory_capacity: 2000
+memory_top_k: 8
+
+# ---- Failure injection (for generating failures to train on) ----
+# 40 injection rounds spread across the full 450-round horizon.
+failure_injection_rounds: [3,6,9,12,15,18,21,24,27,30,35,40,45,50,55,60,70,80,90,100,110,120,130,140,150,170,190,210,230,250,270,290,310,330,350,370,390,410,430,450]
+failure_injection_alpha: 0.1
+failure_injection_noise: 0.08   # std of the weight-corruption noise at injection
+
+# ---- Phase analysis ----
+# 4 phases: Early Adaptation (R0-50), Experience Accumulation (R51-150),
+# Experience Reuse (R151-300), Long-term Stability (R301-450).
+phase_boundaries: [50, 150, 300, 450]
+
+# ---- Experience lineage ----
+# Each failure gets a unique experience_id; future modifications record
+# source_experience_ids so failures can be linked to later successes.
+lineage_tracking: true
+max_lineage_depth: 10
+
+# ---- Experiment conditions ----
+# 9-condition experiment matrix (see docs/PHASE5_2_v052.md):
+#   Full         : memory + correction + replay + direction + outcome
+#   NoMemory     : memory disabled
+#   NoReplay     : experience replay disabled (no online training signal)
+#   NoDirection  : direction encoding disabled
+#   NoOutcome    : outcome-aware attention disabled
+#   PureReversal : correction = -delta_theta (no learned correction)
+#   ErrorOnly    : error-only correction (no memory)
+#   RandomMemory : random memory content
+#   ZeroMemory   : zero memory embeddings
+experiment_conditions:
+  - Full
+  - NoMemory
+  - NoReplay
+  - NoDirection
+  - NoOutcome
+  - PureReversal
+  - ErrorOnly
+  - RandomMemory
+  - ZeroMemory
+
+# ====================================================================== #
+# ---- output ----
+# ====================================================================== #
+output_dir: experiments/phase5_2_v052
