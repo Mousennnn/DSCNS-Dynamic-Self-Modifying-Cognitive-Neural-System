@@ -1,0 +1,35 @@
+# DSCNS Phase 5.2 configuration
+# Outcome-Conditioned Error-Driven Self-Modification
+
+# ---- base model (inherited) ----
+model_name: models/hf/gpt2
+device: cuda
+torch_dtype: float32
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.1
+task_lr: 0.00005
+
+# ---- P5.2 core ----
+p52_enabled: true
+num_rounds: 150
+seed: 42
+num_seeds: 5
+
+# failure injection
+failure_injection_rounds: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150]
+failure_injection_magnitude: 1.0
+failure_injection_alpha: 0.1
+
+# correction generator
+correction_blending: 0.3          # how much correction to blend with next proposal
+correction_lr: 0.0003
+
+# P5 inherited
+enable_plasticity: true
+plasticity_alpha: 0.01
+p51_m_min: 0.02
+p51_m_max: 1.0
+p51_error_dim: 32
+p51_memory_capacity: 500
+p51_memory_top_k: 4

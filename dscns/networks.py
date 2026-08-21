@@ -528,10 +528,8 @@ class CognitiveNetwork:
         The magnitude scales the update and the target_group selects
         which adapter projection group receives the delta.
 
-        Target groups (P5.1, shape-compatible projections only):
-          0 = attn c_proj lora_A  (12 layers × 16×768, shape matched by dA)
-          1 = attn c_proj lora_B  (12 layers × 768×16, shape matched by dB)
-          2 = mlp  c_proj lora_B  (12 layers × 768×16, shape matched by dB)
+        If proposal contains 'alpha_override', that value is used instead
+        of the default alpha (for failure injection experiments).
 
         Returns True if at least one parameter was modified.
         """
@@ -541,7 +539,8 @@ class CognitiveNetwork:
         dB = proposal["delta_W_B"].transpose(0, 1)   # (H, r)
         magnitude = float(proposal["magnitude"])
         target = int(proposal["target_group"])
-        effective_alpha = alpha * magnitude
+        use_alpha = proposal.get("alpha_override", alpha)
+        effective_alpha = use_alpha * magnitude
         modified = False
         with torch.no_grad():
             for n, p in self.peft_model.named_parameters():

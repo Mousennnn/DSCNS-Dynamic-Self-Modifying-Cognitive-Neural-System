@@ -1,0 +1,23 @@
+{
+  "failure_rate_mean": 0.0,
+  "failure_rate_std": 0.0,
+  "correction_rate_mean": 0.0,
+  "correction_rate_std": 0.0,
+  "recovery_rate_mean": 0.0,
+  "recovery_rate_std": 0.0,
+  "repeat_failure_rate_mean": 0.0,
+  "repeat_failure_rate_std": 0.0,
+  "net_drift_mean": 0.08609460564330221,
+  "net_drift_std": 0.030091748849111474,
+  "probe_drift_final_mean": 0.001544083812041208,
+  "probe_drift_final_std": 0.0008218890355596805,
+  "total_failures_mean": 0.0,
+  "total_failures_std": 0.0,
+  "total_corrections_mean": 0.0,
+  "total_corrections_std": 0.0,
+  "total_recovery_mean": 0.0,
+  "total_recovery_std": 0.0,
+  "seeds": 5,
+  "rounds": 150,
+  "wall_seconds_mean": 83.53799958229065
+}

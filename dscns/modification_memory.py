@@ -142,6 +142,9 @@ class EpisodicModificationRecord:
     outcome: str = "neutral"             # success / failure / partial_success / catastrophic / neutral
     category: str = "success"            # success / failure / recovery
     rolled_back: bool = False
+    # P5.2 correction
+    correction_applied: bool = False
+    correction_norm: float = 0.0
     # error representation (computed, not raw)
     error_state: Optional[Any] = None
     error_embedding: Optional[Any] = None  # (error_dim,) after ErrorEncoder

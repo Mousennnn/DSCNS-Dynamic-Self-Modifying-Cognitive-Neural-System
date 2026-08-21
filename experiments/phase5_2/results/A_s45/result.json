@@ -1,0 +1,28 @@
+{
+  "experiment": "A",
+  "seed": 45,
+  "rounds": 150,
+  "git_commit": "32b8c7789af8c5c74149bd5abf9e6d94220253c3",
+  "hash0": "20ba86386fb907ccd9ec5a71b36de24606cfde87fd863e6250689583cb8670f5",
+  "hash_final": "dffaa70935bd4768dfe5b10e49285124d52530c6051bad3fd5077a50feb0ecb1",
+  "param_norm_0": 83.13206386566162,
+  "param_norm_final": 13.85542106628418,
+  "net_drift": 0.1428104811348021,
+  "gross_drift": 0.1483471733808983,
+  "probe_drift_final": 0.0,
+  "failure_rate": 0.0,
+  "correction_rate": 0.0,
+  "recovery_rate": 0.0,
+  "repeat_failure_rate": 0.0,
+  "total_failures": 0,
+  "total_corrections": 0,
+  "total_recovery": 0,
+  "repeat_failures": 0,
+  "memory_stats": {
+    "success": 0,
+    "failure": 0,
+    "recovery": 0,
+    "total": 20
+  },
+  "wall_seconds": 110.60749411582947
+}
