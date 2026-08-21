@@ -398,13 +398,12 @@ def run_v053_experiment(seed, rounds, condition, config, data):
                                 device=base.device)
 
         # ---- retrieve memory ----
-        core_z = proposal_core_z = proposal.get("core_z", torch.zeros(256)).to(base.device) \
-            if 'proposal' in dir() else out_h["components"]["pooled_h"].detach().mean(0, keepdim=True).to(base.device)
-        # Actually we haven't generated proposal yet.  Use pooled hidden.
+        # Use pooled hidden as core_z (768-dim), project to 256 for corrector
         core_z_for_memory = out_h["components"]["pooled_h"].detach().to(base.device)
         if core_z_for_memory.dim() == 3:
             core_z_for_memory = core_z_for_memory.mean(1)
-        core_z_flat = core_z_for_memory.mean(0, keepdim=True)  # (1, 256)
+        core_z_flat_768 = core_z_for_memory.mean(0, keepdim=True)  # (1, 768)
+        core_z_flat = core_z_flat_768[:, :256]  # (1, 256) for policy adapter
 
         # Retrieve similar episodes from memory
         mem_eps = memory.records if use_memory else []
@@ -671,11 +670,19 @@ def run_v053_experiment(seed, rounds, condition, config, data):
         if is_failure:
             with torch.no_grad():
                 err_t_corr = error_state.to_tensor().unsqueeze(0).to(base.device)
-                core_z_corr = out_h["components"]["pooled_h"].detach().to(base.device)
-                if core_z_corr.dim() == 3:
-                    core_z_corr = core_z_corr.mean(1)
-                core_z_corr = core_z_corr.mean(0, keepdim=True)
-                corr_output = corrector(err_t_corr, core_z_corr, dA, dB,
+                # core_z must be 256-dim for CorrectionPolicy.context_encoder(256→32)
+                core_z_for_corr = proposal.get("core_z", torch.zeros(256)).to(base.device)
+                if core_z_for_corr.dim() == 1:
+                    core_z_for_corr = core_z_for_corr.unsqueeze(0)
+                if core_z_for_corr.size(-1) != 256:
+                    # project from pooled hidden (768) to 256
+                    pooled_768 = out_h["components"]["pooled_h"].detach().to(base.device)
+                    if pooled_768.dim() == 3:
+                        pooled_768 = pooled_768.mean(1)
+                    pooled_768 = pooled_768.mean(0, keepdim=True)
+                    # truncate to 256 (simple projection)
+                    core_z_for_corr = pooled_768[:, :256]
+                corr_output = corrector(err_t_corr, core_z_for_corr, dA, dB,
                                         mag_applied, proposal["target_group"],
                                         mem_eps, mode=corr_mode)
                 pending_correction = corr_output
