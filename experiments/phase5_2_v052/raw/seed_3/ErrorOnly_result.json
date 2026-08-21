@@ -1,0 +1,78 @@
+{
+  "condition": "ErrorOnly",
+  "seed": 45,
+  "rounds": 450,
+  "git_commit": "68b56f432d25ca79f91c0b86dc38cc772b89adcd",
+  "hash0": "20ba86386fb907ccd9ec5a71b36de24606cfde87fd863e6250689583cb8670f5",
+  "hash_final": "16391bd32d95bc59585fdcbf885946d0dbb8b96b41556021ede99a46452a2a21",
+  "net_drift": 5225.266677856445,
+  "gross_drift": 32920.873447489575,
+  "failure_rate": 0.1,
+  "correction_rate": 0.2,
+  "recovery_rate": 0.0,
+  "SRR": 0.0,
+  "RFR_target": 0.9545454545454546,
+  "RFR_similar": 1.0,
+  "w_after_failure": 0.08536437683635288,
+  "w_after_success": 0.06325356090484663,
+  "weight_adaptation": -0.022110815931506253,
+  "natural_failure_rate": 0.09555555555555556,
+  "EAR": 0.0,
+  "high_sim_failure_rate": 0.1,
+  "high_sim_success_rate": 0.09555555555555556,
+  "absorption_rate": 0.0,
+  "lineage_efficacy": 0.0,
+  "memory_stats": {
+    "success": 43,
+    "failure": 45,
+    "recovery": 0,
+    "total": 450
+  },
+  "tracker_stats": {
+    "n_experiences": 450,
+    "n_failures": 45,
+    "n_successes": 43,
+    "n_lineages": 0,
+    "absorption_rate": 0.0,
+    "lineage_efficacy": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n_lineages": 0
+    }
+  },
+  "phases": {
+    "R0-50": {
+      "n_rounds": 50,
+      "failure_rate": 0.1,
+      "SRR": 0.0,
+      "mean_weight": 0.30998140305280686,
+      "mean_weight_failure": 0.4230934552848339,
+      "mean_weight_success": 0.03398745320737362
+    },
+    "R50-150": {
+      "n_rounds": 100,
+      "failure_rate": 0.07,
+      "SRR": 0.0,
+      "mean_weight": 0.14952557396143676,
+      "mean_weight_failure": 0.040736623640571325,
+      "mean_weight_success": 0.03854529129771086
+    },
+    "R150-300": {
+      "n_rounds": 150,
+      "failure_rate": 0.1,
+      "SRR": 0.0,
+      "mean_weight": 0.08999927627543608,
+      "mean_weight_failure": 0.04296273688475291,
+      "mean_weight_success": 0.04291037768125534
+    },
+    "R300-450": {
+      "n_rounds": 150,
+      "failure_rate": 0.12,
+      "SRR": 0.0,
+      "mean_weight": 0.09657678954303264,
+      "mean_weight_failure": 0.044240681247578725,
+      "mean_weight_success": 0.11593721233881436
+    }
+  },
+  "wall_seconds": 237.38987469673157
+}

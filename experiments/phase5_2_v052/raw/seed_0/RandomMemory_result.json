@@ -1,0 +1,78 @@
+{
+  "condition": "RandomMemory",
+  "seed": 42,
+  "rounds": 450,
+  "git_commit": "68b56f432d25ca79f91c0b86dc38cc772b89adcd",
+  "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
+  "hash_final": "dd9cd661ad2714a9e6889cddc53d2439901a3f915d4b586ce4c334427db9f491",
+  "net_drift": 5217.07190322876,
+  "gross_drift": 32919.01393120125,
+  "failure_rate": 0.09555555555555556,
+  "correction_rate": 0.19111111111111112,
+  "recovery_rate": 0.0,
+  "SRR": 0.0,
+  "RFR_target": 0.6666666666666666,
+  "RFR_similar": 0.9761904761904762,
+  "w_after_failure": 0.09477637223033018,
+  "w_after_success": 0.0717500148429757,
+  "weight_adaptation": -0.02302635738735448,
+  "natural_failure_rate": 0.09111111111111111,
+  "EAR": 0.0,
+  "high_sim_failure_rate": 0.09555555555555556,
+  "high_sim_success_rate": 0.09333333333333334,
+  "absorption_rate": 0.0,
+  "lineage_efficacy": 0.0,
+  "memory_stats": {
+    "success": 42,
+    "failure": 43,
+    "recovery": 0,
+    "total": 450
+  },
+  "tracker_stats": {
+    "n_experiences": 450,
+    "n_failures": 43,
+    "n_successes": 42,
+    "n_lineages": 0,
+    "absorption_rate": 0.0,
+    "lineage_efficacy": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n_lineages": 0
+    }
+  },
+  "phases": {
+    "R0-50": {
+      "n_rounds": 50,
+      "failure_rate": 0.08,
+      "SRR": 0.0,
+      "mean_weight": 0.3155371017754078,
+      "mean_weight_failure": 0.5221463637426496,
+      "mean_weight_success": 0.044273875653743744
+    },
+    "R50-150": {
+      "n_rounds": 100,
+      "failure_rate": 0.09,
+      "SRR": 0.0,
+      "mean_weight": 0.15602115843445064,
+      "mean_weight_failure": 0.04790267679426405,
+      "mean_weight_success": 0.047628896310925484
+    },
+    "R150-300": {
+      "n_rounds": 150,
+      "failure_rate": 0.10666666666666667,
+      "SRR": 0.0,
+      "mean_weight": 0.09686028125385443,
+      "mean_weight_failure": 0.052590421168133616,
+      "mean_weight_success": 0.04865413451833384
+    },
+    "R300-450": {
+      "n_rounds": 150,
+      "failure_rate": 0.09333333333333334,
+      "SRR": 0.0,
+      "mean_weight": 0.10302110748986402,
+      "mean_weight_failure": 0.05101626579250608,
+      "mean_weight_success": 0.10657528831678278
+    }
+  },
+  "wall_seconds": 1152.1162993907928
+}
