@@ -1,0 +1,1188 @@
+{
+  "version": "v0.6.0",
+  "phase": "P6",
+  "total_conditions": 11,
+  "seeds_per_condition": 5,
+  "seed_values": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "rounds": 450,
+  "conditions": [
+    "FullPolicy",
+    "NoMemory",
+    "FrozenPolicy",
+    "RandomMemory",
+    "ZeroMemory",
+    "NoCredit",
+    "NoAlternatives",
+    "NoExploration",
+    "NoOutcomeReward",
+    "Oracle",
+    "Random"
+  ],
+  "best_checkpoints": [
+    {
+      "condition": "FullPolicy",
+      "seed": 42,
+      "score": -21.061574714058086,
+      "round": 21,
+      "sha256": "363034f05b4205549a44b3743219e8fa2897ae9b75131401a20665019080eb68",
+      "path": "experiments/phase6\\checkpoints\\FullPolicy\\seed_42\\best\\metadata.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 43,
+      "score": -21.392816997159414,
+      "round": 6,
+      "sha256": "2ba344bb5daf67a8db9f0c56662e530b8b5dd91d6cdf9aeed03a85c7e8adea8c",
+      "path": "experiments/phase6\\checkpoints\\FullPolicy\\seed_43\\best\\metadata.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 44,
+      "score": -21.822548530735588,
+      "round": 21,
+      "sha256": "b6f77b217b8e606b057c4be1b68215e566459ce1f9649b680ab1dbe386e31b9f",
+      "path": "experiments/phase6\\checkpoints\\FullPolicy\\seed_44\\best\\metadata.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 45,
+      "score": -21.138211422407455,
+      "round": 16,
+      "sha256": "b9a00d4fd401f856f1e24679c01697b4f588a648f18b6e4245398c39d4e4849a",
+      "path": "experiments/phase6\\checkpoints\\FullPolicy\\seed_45\\best\\metadata.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 46,
+      "score": -21.351740129808526,
+      "round": 11,
+      "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+      "path": "experiments/phase6\\checkpoints\\FullPolicy\\seed_46\\best\\metadata.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 42,
+      "score": -21.06157927740938,
+      "round": 21,
+      "sha256": "363034f05b4205549a44b3743219e8fa2897ae9b75131401a20665019080eb68",
+      "path": "experiments/phase6\\checkpoints\\NoMemory\\seed_42\\best\\metadata.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 43,
+      "score": -21.392821586072024,
+      "round": 6,
+      "sha256": "2ba344bb5daf67a8db9f0c56662e530b8b5dd91d6cdf9aeed03a85c7e8adea8c",
+      "path": "experiments/phase6\\checkpoints\\NoMemory\\seed_43\\best\\metadata.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 44,
+      "score": -21.822566966297618,
+      "round": 21,
+      "sha256": "b6f77b217b8e606b057c4be1b68215e566459ce1f9649b680ab1dbe386e31b9f",
+      "path": "experiments/phase6\\checkpoints\\NoMemory\\seed_44\\best\\metadata.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 45,
+      "score": -21.13821127765041,
+      "round": 16,
+      "sha256": "b9a00d4fd401f856f1e24679c01697b4f588a648f18b6e4245398c39d4e4849a",
+      "path": "experiments/phase6\\checkpoints\\NoMemory\\seed_45\\best\\metadata.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 46,
+      "score": -21.351754391086455,
+      "round": 6,
+      "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+      "path": "experiments/phase6\\checkpoints\\NoMemory\\seed_46\\best\\metadata.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 42,
+      "score": -21.119008121422514,
+      "round": 6,
+      "sha256": "363034f05b4205549a44b3743219e8fa2897ae9b75131401a20665019080eb68",
+      "path": "experiments/phase6\\checkpoints\\FrozenPolicy\\seed_42\\best\\metadata.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 43,
+      "score": -21.003358972084936,
+      "round": 6,
+      "sha256": "2ba344bb5daf67a8db9f0c56662e530b8b5dd91d6cdf9aeed03a85c7e8adea8c",
+      "path": "experiments/phase6\\checkpoints\\FrozenPolicy\\seed_43\\best\\metadata.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 44,
+      "score": -21.147271796557526,
+      "round": 16,
+      "sha256": "b6f77b217b8e606b057c4be1b68215e566459ce1f9649b680ab1dbe386e31b9f",
+      "path": "experiments/phase6\\checkpoints\\FrozenPolicy\\seed_44\\best\\metadata.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 45,
+      "score": -21.31257544081914,
+      "round": 21,
+      "sha256": "b9a00d4fd401f856f1e24679c01697b4f588a648f18b6e4245398c39d4e4849a",
+      "path": "experiments/phase6\\checkpoints\\FrozenPolicy\\seed_45\\best\\metadata.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 46,
+      "score": -21.01239941195387,
+      "round": 21,
+      "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+      "path": "experiments/phase6\\checkpoints\\FrozenPolicy\\seed_46\\best\\metadata.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 42,
+      "score": -21.061583297786207,
+      "round": 21,
+      "sha256": "363034f05b4205549a44b3743219e8fa2897ae9b75131401a20665019080eb68",
+      "path": "experiments/phase6\\checkpoints\\RandomMemory\\seed_42\\best\\metadata.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 43,
+      "score": -21.392793019655333,
+      "round": 11,
+      "sha256": "2ba344bb5daf67a8db9f0c56662e530b8b5dd91d6cdf9aeed03a85c7e8adea8c",
+      "path": "experiments/phase6\\checkpoints\\RandomMemory\\seed_43\\best\\metadata.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 44,
+      "score": -21.822578249290647,
+      "round": 21,
+      "sha256": "b6f77b217b8e606b057c4be1b68215e566459ce1f9649b680ab1dbe386e31b9f",
+      "path": "experiments/phase6\\checkpoints\\RandomMemory\\seed_44\\best\\metadata.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 45,
+      "score": -21.138226531242946,
+      "round": 21,
+      "sha256": "b9a00d4fd401f856f1e24679c01697b4f588a648f18b6e4245398c39d4e4849a",
+      "path": "experiments/phase6\\checkpoints\\RandomMemory\\seed_45\\best\\metadata.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 46,
+      "score": -21.35174611517167,
+      "round": 16,
+      "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+      "path": "experiments/phase6\\checkpoints\\RandomMemory\\seed_46\\best\\metadata.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 42,
+      "score": -21.06157927740938,
+      "round": 21,
+      "sha256": "363034f05b4205549a44b3743219e8fa2897ae9b75131401a20665019080eb68",
+      "path": "experiments/phase6\\checkpoints\\ZeroMemory\\seed_42\\best\\metadata.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 43,
+      "score": -21.392821586072024,
+      "round": 6,
+      "sha256": "2ba344bb5daf67a8db9f0c56662e530b8b5dd91d6cdf9aeed03a85c7e8adea8c",
+      "path": "experiments/phase6\\checkpoints\\ZeroMemory\\seed_43\\best\\metadata.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 44,
+      "score": -21.822566966297618,
+      "round": 21,
+      "sha256": "b6f77b217b8e606b057c4be1b68215e566459ce1f9649b680ab1dbe386e31b9f",
+      "path": "experiments/phase6\\checkpoints\\ZeroMemory\\seed_44\\best\\metadata.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 45,
+      "score": -21.13821127765041,
+      "round": 16,
+      "sha256": "b9a00d4fd401f856f1e24679c01697b4f588a648f18b6e4245398c39d4e4849a",
+      "path": "experiments/phase6\\checkpoints\\ZeroMemory\\seed_45\\best\\metadata.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 46,
+      "score": -21.351754391086455,
+      "round": 6,
+      "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+      "path": "experiments/phase6\\checkpoints\\ZeroMemory\\seed_46\\best\\metadata.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 42,
+      "score": -21.061574714058086,
+      "round": 21,
+      "sha256": "363034f05b4205549a44b3743219e8fa2897ae9b75131401a20665019080eb68",
+      "path": "experiments/phase6\\checkpoints\\NoCredit\\seed_42\\best\\metadata.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 43,
+      "score": -21.392816997159414,
+      "round": 6,
+      "sha256": "2ba344bb5daf67a8db9f0c56662e530b8b5dd91d6cdf9aeed03a85c7e8adea8c",
+      "path": "experiments/phase6\\checkpoints\\NoCredit\\seed_43\\best\\metadata.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 44,
+      "score": -21.822548530735588,
+      "round": 21,
+      "sha256": "b6f77b217b8e606b057c4be1b68215e566459ce1f9649b680ab1dbe386e31b9f",
+      "path": "experiments/phase6\\checkpoints\\NoCredit\\seed_44\\best\\metadata.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 45,
+      "score": -21.138211422407455,
+      "round": 16,
+      "sha256": "b9a00d4fd401f856f1e24679c01697b4f588a648f18b6e4245398c39d4e4849a",
+      "path": "experiments/phase6\\checkpoints\\NoCredit\\seed_45\\best\\metadata.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 46,
+      "score": -21.351740129808526,
+      "round": 11,
+      "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+      "path": "experiments/phase6\\checkpoints\\NoCredit\\seed_46\\best\\metadata.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 42,
+      "score": -21.061583008271796,
+      "round": 21,
+      "sha256": "363034f05b4205549a44b3743219e8fa2897ae9b75131401a20665019080eb68",
+      "path": "experiments/phase6\\checkpoints\\NoAlternatives\\seed_42\\best\\metadata.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 43,
+      "score": -21.392819286369857,
+      "round": 6,
+      "sha256": "2ba344bb5daf67a8db9f0c56662e530b8b5dd91d6cdf9aeed03a85c7e8adea8c",
+      "path": "experiments/phase6\\checkpoints\\NoAlternatives\\seed_43\\best\\metadata.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 44,
+      "score": -21.822583144127414,
+      "round": 6,
+      "sha256": "b6f77b217b8e606b057c4be1b68215e566459ce1f9649b680ab1dbe386e31b9f",
+      "path": "experiments/phase6\\checkpoints\\NoAlternatives\\seed_44\\best\\metadata.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 45,
+      "score": -21.138210244708716,
+      "round": 21,
+      "sha256": "b9a00d4fd401f856f1e24679c01697b4f588a648f18b6e4245398c39d4e4849a",
+      "path": "experiments/phase6\\checkpoints\\NoAlternatives\\seed_45\\best\\metadata.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 46,
+      "score": -21.35175348325943,
+      "round": 6,
+      "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+      "path": "experiments/phase6\\checkpoints\\NoAlternatives\\seed_46\\best\\metadata.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 42,
+      "score": -21.061575989967114,
+      "round": 21,
+      "sha256": "363034f05b4205549a44b3743219e8fa2897ae9b75131401a20665019080eb68",
+      "path": "experiments/phase6\\checkpoints\\NoExploration\\seed_42\\best\\metadata.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 43,
+      "score": -21.392792825120974,
+      "round": 11,
+      "sha256": "2ba344bb5daf67a8db9f0c56662e530b8b5dd91d6cdf9aeed03a85c7e8adea8c",
+      "path": "experiments/phase6\\checkpoints\\NoExploration\\seed_43\\best\\metadata.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 44,
+      "score": -21.8225722050007,
+      "round": 11,
+      "sha256": "b6f77b217b8e606b057c4be1b68215e566459ce1f9649b680ab1dbe386e31b9f",
+      "path": "experiments/phase6\\checkpoints\\NoExploration\\seed_44\\best\\metadata.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 45,
+      "score": -21.138189069255393,
+      "round": 21,
+      "sha256": "b9a00d4fd401f856f1e24679c01697b4f588a648f18b6e4245398c39d4e4849a",
+      "path": "experiments/phase6\\checkpoints\\NoExploration\\seed_45\\best\\metadata.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 46,
+      "score": -21.35173860366836,
+      "round": 11,
+      "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+      "path": "experiments/phase6\\checkpoints\\NoExploration\\seed_46\\best\\metadata.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 42,
+      "score": -21.061574714058086,
+      "round": 21,
+      "sha256": "363034f05b4205549a44b3743219e8fa2897ae9b75131401a20665019080eb68",
+      "path": "experiments/phase6\\checkpoints\\NoOutcomeReward\\seed_42\\best\\metadata.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 43,
+      "score": -21.392816997159414,
+      "round": 6,
+      "sha256": "2ba344bb5daf67a8db9f0c56662e530b8b5dd91d6cdf9aeed03a85c7e8adea8c",
+      "path": "experiments/phase6\\checkpoints\\NoOutcomeReward\\seed_43\\best\\metadata.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 44,
+      "score": -21.822548530735588,
+      "round": 21,
+      "sha256": "b6f77b217b8e606b057c4be1b68215e566459ce1f9649b680ab1dbe386e31b9f",
+      "path": "experiments/phase6\\checkpoints\\NoOutcomeReward\\seed_44\\best\\metadata.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 45,
+      "score": -21.138211422407455,
+      "round": 16,
+      "sha256": "b9a00d4fd401f856f1e24679c01697b4f588a648f18b6e4245398c39d4e4849a",
+      "path": "experiments/phase6\\checkpoints\\NoOutcomeReward\\seed_45\\best\\metadata.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 46,
+      "score": -21.351740129808526,
+      "round": 11,
+      "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+      "path": "experiments/phase6\\checkpoints\\NoOutcomeReward\\seed_46\\best\\metadata.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 42,
+      "score": -21.061574714058086,
+      "round": 21,
+      "sha256": "363034f05b4205549a44b3743219e8fa2897ae9b75131401a20665019080eb68",
+      "path": "experiments/phase6\\checkpoints\\Oracle\\seed_42\\best\\metadata.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 43,
+      "score": -21.392816997159414,
+      "round": 6,
+      "sha256": "2ba344bb5daf67a8db9f0c56662e530b8b5dd91d6cdf9aeed03a85c7e8adea8c",
+      "path": "experiments/phase6\\checkpoints\\Oracle\\seed_43\\best\\metadata.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 44,
+      "score": -21.822548530735588,
+      "round": 21,
+      "sha256": "b6f77b217b8e606b057c4be1b68215e566459ce1f9649b680ab1dbe386e31b9f",
+      "path": "experiments/phase6\\checkpoints\\Oracle\\seed_44\\best\\metadata.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 45,
+      "score": -21.138211422407455,
+      "round": 16,
+      "sha256": "b9a00d4fd401f856f1e24679c01697b4f588a648f18b6e4245398c39d4e4849a",
+      "path": "experiments/phase6\\checkpoints\\Oracle\\seed_45\\best\\metadata.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 46,
+      "score": -21.351740129808526,
+      "round": 11,
+      "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+      "path": "experiments/phase6\\checkpoints\\Oracle\\seed_46\\best\\metadata.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 42,
+      "score": -21.119008121422514,
+      "round": 6,
+      "sha256": "363034f05b4205549a44b3743219e8fa2897ae9b75131401a20665019080eb68",
+      "path": "experiments/phase6\\checkpoints\\Random\\seed_42\\best\\metadata.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 43,
+      "score": -21.0033585528817,
+      "round": 21,
+      "sha256": "2ba344bb5daf67a8db9f0c56662e530b8b5dd91d6cdf9aeed03a85c7e8adea8c",
+      "path": "experiments/phase6\\checkpoints\\Random\\seed_43\\best\\metadata.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 44,
+      "score": -21.147272250471037,
+      "round": 21,
+      "sha256": "b6f77b217b8e606b057c4be1b68215e566459ce1f9649b680ab1dbe386e31b9f",
+      "path": "experiments/phase6\\checkpoints\\Random\\seed_44\\best\\metadata.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 45,
+      "score": -21.31256850242687,
+      "round": 21,
+      "sha256": "b9a00d4fd401f856f1e24679c01697b4f588a648f18b6e4245398c39d4e4849a",
+      "path": "experiments/phase6\\checkpoints\\Random\\seed_45\\best\\metadata.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 46,
+      "score": -21.012400434403062,
+      "round": 21,
+      "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+      "path": "experiments/phase6\\checkpoints\\Random\\seed_46\\best\\metadata.json"
+    }
+  ],
+  "final_checkpoints": [
+    {
+      "condition": "FullPolicy",
+      "seed": 42,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\FullPolicy\\seed_42\\final\\metadata.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 43,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\FullPolicy\\seed_43\\final\\metadata.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 44,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\FullPolicy\\seed_44\\final\\metadata.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 45,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\FullPolicy\\seed_45\\final\\metadata.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 46,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\FullPolicy\\seed_46\\final\\metadata.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 42,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoMemory\\seed_42\\final\\metadata.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 43,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoMemory\\seed_43\\final\\metadata.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 44,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoMemory\\seed_44\\final\\metadata.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 45,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoMemory\\seed_45\\final\\metadata.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 46,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoMemory\\seed_46\\final\\metadata.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 42,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\FrozenPolicy\\seed_42\\final\\metadata.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 43,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\FrozenPolicy\\seed_43\\final\\metadata.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 44,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\FrozenPolicy\\seed_44\\final\\metadata.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 45,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\FrozenPolicy\\seed_45\\final\\metadata.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 46,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\FrozenPolicy\\seed_46\\final\\metadata.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 42,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\RandomMemory\\seed_42\\final\\metadata.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 43,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\RandomMemory\\seed_43\\final\\metadata.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 44,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\RandomMemory\\seed_44\\final\\metadata.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 45,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\RandomMemory\\seed_45\\final\\metadata.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 46,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\RandomMemory\\seed_46\\final\\metadata.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 42,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\ZeroMemory\\seed_42\\final\\metadata.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 43,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\ZeroMemory\\seed_43\\final\\metadata.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 44,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\ZeroMemory\\seed_44\\final\\metadata.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 45,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\ZeroMemory\\seed_45\\final\\metadata.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 46,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\ZeroMemory\\seed_46\\final\\metadata.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 42,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoCredit\\seed_42\\final\\metadata.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 43,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoCredit\\seed_43\\final\\metadata.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 44,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoCredit\\seed_44\\final\\metadata.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 45,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoCredit\\seed_45\\final\\metadata.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 46,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoCredit\\seed_46\\final\\metadata.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 42,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoAlternatives\\seed_42\\final\\metadata.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 43,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoAlternatives\\seed_43\\final\\metadata.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 44,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoAlternatives\\seed_44\\final\\metadata.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 45,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoAlternatives\\seed_45\\final\\metadata.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 46,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoAlternatives\\seed_46\\final\\metadata.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 42,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoExploration\\seed_42\\final\\metadata.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 43,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoExploration\\seed_43\\final\\metadata.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 44,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoExploration\\seed_44\\final\\metadata.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 45,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoExploration\\seed_45\\final\\metadata.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 46,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoExploration\\seed_46\\final\\metadata.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 42,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoOutcomeReward\\seed_42\\final\\metadata.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 43,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoOutcomeReward\\seed_43\\final\\metadata.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 44,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoOutcomeReward\\seed_44\\final\\metadata.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 45,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoOutcomeReward\\seed_45\\final\\metadata.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 46,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\NoOutcomeReward\\seed_46\\final\\metadata.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 42,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\Oracle\\seed_42\\final\\metadata.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 43,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\Oracle\\seed_43\\final\\metadata.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 44,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\Oracle\\seed_44\\final\\metadata.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 45,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\Oracle\\seed_45\\final\\metadata.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 46,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\Oracle\\seed_46\\final\\metadata.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 42,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\Random\\seed_42\\final\\metadata.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 43,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\Random\\seed_43\\final\\metadata.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 44,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\Random\\seed_44\\final\\metadata.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 45,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\Random\\seed_45\\final\\metadata.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 46,
+      "round": 450,
+      "path": "experiments/phase6\\checkpoints\\Random\\seed_46\\final\\metadata.json"
+    }
+  ],
+  "relay_checkpoints": [
+    {
+      "condition": "FullPolicy",
+      "seed": 42,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\FullPolicy\\seed_42\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 43,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\FullPolicy\\seed_43\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 44,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\FullPolicy\\seed_44\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 45,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\FullPolicy\\seed_45\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "FullPolicy",
+      "seed": 46,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\FullPolicy\\seed_46\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 42,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoMemory\\seed_42\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 43,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoMemory\\seed_43\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 44,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoMemory\\seed_44\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 45,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoMemory\\seed_45\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoMemory",
+      "seed": 46,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoMemory\\seed_46\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 42,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\FrozenPolicy\\seed_42\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 43,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\FrozenPolicy\\seed_43\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 44,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\FrozenPolicy\\seed_44\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 45,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\FrozenPolicy\\seed_45\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "FrozenPolicy",
+      "seed": 46,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\FrozenPolicy\\seed_46\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 42,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\RandomMemory\\seed_42\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 43,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\RandomMemory\\seed_43\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 44,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\RandomMemory\\seed_44\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 45,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\RandomMemory\\seed_45\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "RandomMemory",
+      "seed": 46,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\RandomMemory\\seed_46\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 42,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\ZeroMemory\\seed_42\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 43,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\ZeroMemory\\seed_43\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 44,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\ZeroMemory\\seed_44\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 45,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\ZeroMemory\\seed_45\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "ZeroMemory",
+      "seed": 46,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\ZeroMemory\\seed_46\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 42,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoCredit\\seed_42\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 43,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoCredit\\seed_43\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 44,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoCredit\\seed_44\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 45,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoCredit\\seed_45\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoCredit",
+      "seed": 46,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoCredit\\seed_46\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 42,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoAlternatives\\seed_42\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 43,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoAlternatives\\seed_43\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 44,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoAlternatives\\seed_44\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 45,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoAlternatives\\seed_45\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoAlternatives",
+      "seed": 46,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoAlternatives\\seed_46\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 42,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoExploration\\seed_42\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 43,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoExploration\\seed_43\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 44,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoExploration\\seed_44\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 45,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoExploration\\seed_45\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoExploration",
+      "seed": 46,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoExploration\\seed_46\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 42,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoOutcomeReward\\seed_42\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 43,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoOutcomeReward\\seed_43\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 44,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoOutcomeReward\\seed_44\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 45,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoOutcomeReward\\seed_45\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "NoOutcomeReward",
+      "seed": 46,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\NoOutcomeReward\\seed_46\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 42,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\Oracle\\seed_42\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 43,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\Oracle\\seed_43\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 44,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\Oracle\\seed_44\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 45,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\Oracle\\seed_45\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "Oracle",
+      "seed": 46,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\Oracle\\seed_46\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 42,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\Random\\seed_42\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 43,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\Random\\seed_43\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 44,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\Random\\seed_44\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 45,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\Random\\seed_45\\relay_v0.6.0_stage_450\\lineage.json"
+    },
+    {
+      "condition": "Random",
+      "seed": 46,
+      "round": 450,
+      "total_lineage_rounds": 450,
+      "path": "experiments/phase6\\relay\\Random\\seed_46\\relay_v0.6.0_stage_450\\lineage.json"
+    }
+  ]
+}

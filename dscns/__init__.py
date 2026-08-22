@@ -12,7 +12,7 @@ Phase 5: intrinsic parameter self-modification
         (theta -> h -> delta_theta -> theta', IntrinsicPlasticityModule).
 """
 
-__version__ = "0.4.0"
+__version__ = "0.6.0"
 
 from .error_correction import (ErrorEncoder, ErrorState, OutcomeEvaluator)
 from .intrinsic_plasticity import IntrinsicPlasticityModule

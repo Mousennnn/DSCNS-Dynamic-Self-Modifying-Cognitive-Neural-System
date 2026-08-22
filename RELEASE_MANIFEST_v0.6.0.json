@@ -1,0 +1,40 @@
+{
+  "version": "v0.6.0",
+  "phase": "P6",
+  "tag": "v0.6.0",
+  "experiment_protocol": {
+    "conditions": 11,
+    "seeds": 5,
+    "rounds_per_seed": 450,
+    "total_rounds": 24750
+  },
+  "checkpoints": {
+    "best": 55,
+    "final": 55,
+    "relay": 55
+  },
+  "acceptance_criteria": {
+    "minimum_pass": "PASS",
+    "mechanism_pass": "PASS",
+    "strong_pass": "PASS",
+    "full_pass": "FAIL"
+  },
+  "evidence_matrix": {
+    "experience_to_policy": "SUPPORTED",
+    "policy_to_target": "SUPPORTED",
+    "policy_to_magnitude": "SUPPORTED",
+    "modification_to_outcome": "SUPPORTED",
+    "outcome_to_credit": "PARTIAL",
+    "credit_to_policy": "NOT_ESTABLISHED",
+    "full_closed_loop": "NOT_ESTABLISHED"
+  },
+  "documentation": {
+    "readme": true,
+    "phase6_spec": true,
+    "evidence_matrix": true,
+    "relay_doc": true,
+    "inference_doc": true,
+    "figures_readme": true,
+    "report": true
+  }
+}

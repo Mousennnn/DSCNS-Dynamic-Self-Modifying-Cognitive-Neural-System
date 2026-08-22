@@ -1,6 +1,7 @@
 # DSCNS — Dynamic Self-Modifying Cognitive Network System
 
-> **Status: Early Research Prototype — Phase 5 Extended Self-Modifying Loop**
+> **Version: v0.6.0 | Phase: P6 — Closed-Loop Self-Modification Investigation**
+> **Status: Experimental Research Milestone**
 
 DSCNS is an experimental research prototype exploring whether a neural system
 can continuously observe its own state, modify its own parameters, evaluate
@@ -18,6 +19,41 @@ The purpose of Phase 5 is narrow and well-defined:
 > use those consequences to influence future modifications?
 
 - [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md)
+
+---
+
+## Current Status — Phase 6
+
+Phase 6 investigates whether modification experience and observed outcomes can
+progressively influence future self-modification policy. The current evidence
+supports several internal causal links, but **does not establish the complete
+closed-loop self-improvement hypothesis**.
+
+### Evidence Matrix (v0.6.0)
+
+| Causal Link | Status |
+|---|---|
+| Experience → Policy | **SUPPORTED** |
+| Policy → Target | **SUPPORTED** |
+| Policy → Magnitude | **SUPPORTED** |
+| Modification → Outcome | **SUPPORTED** (RFR_Full < RFR_NoMemory) |
+| Outcome → Credit | **PARTIAL** |
+| Credit → Policy | **NOT ESTABLISHED** |
+| Full Closed Loop | **NOT ESTABLISHED** |
+
+### Acceptance Criteria
+
+| Criterion | v0.5.3 | v0.6.0 |
+|---|---|---|
+| Minimum Pass (D_policy > 0) | PASS | **PASS** |
+| Mechanism Pass (target_acc > chance) | N/A | **PASS** |
+| Strong Pass (RFR_Full < RFR_NoMem) | FAIL | **PASS** |
+| Full Pass (+ EAR > 0) | FAIL | **FAIL** |
+
+**Key finding:** v0.6.0 achieves Strong Pass where v0.5.3 failed.
+The outcome-directed reward mechanism is the critical difference.
+However, the complete Outcome → Credit → Policy → Modification loop
+remains unestablished (Full Pass: FAIL).
 
 ---
 
@@ -122,8 +158,13 @@ Results are classified into verifiable evidence levels:
 | **L3** | Δθ changes model behavior | ✓ Proven |
 | **L4** | Repeated modification produces net parameter drift | ✓ Proven |
 | **L5** | Modification magnitude is self-determined | ✓ Proven (P5.1) |
-| **L6** | Failed modifications condition future modification behavior | Hypothesis (planned) |
-| **L7** | Long-horizon stability over thousands of rounds | ✓ Partially (3000 rounds, regime B) |
+| **L6** | Experience changes future Modification Policy | ✓ Supported (P5.3/P6) |
+| **L7** | Policy change controls actual Modification Target | ✓ Supported (P6) |
+| **L8** | Modification changes Outcome | ✓ Supported (P6) |
+| **L9** | Outcome forms effective Credit → Policy | ◐ Partial (P6) |
+| **L10** | Complete closed loop repeatable across seeds | ✗ Not established |
+| **L11** | Long-term stable self-modification | ◐ Testing (P6) |
+| **L12** | Cross-version relay effectiveness | ◐ Testing (P6) |
 
 ---
 
@@ -192,33 +233,45 @@ P5.1 reports both per-step modification and cumulative drift:
 
 Environment: Python 3.8.16, PyTorch 1.13.1, CUDA 11.7
 (`transformers==4.45.2`, `peft==0.12.0`; see `requirements.txt`).
+GPU: NVIDIA RTX 3070 Ti 8GB.
+
+### Phase 6 (v0.6.0)
+
+```bash
+# Smoke test (5 rounds, 1 seed, 2 conditions)
+python scripts/run_phase6.py --smoke
+
+# Full experiment (450 rounds, 5 seeds, 11 conditions)
+python scripts/run_phase6.py --rounds 450 --seeds 5
+
+# Demo inference
+python scripts/demo_inference.py
+
+# Run analysis
+python scripts/analyze_phase6.py --dir experiments/phase6
+
+# Generate figures
+python scripts/plotting/plot_phase6.py --input experiments/phase6 --output experiments/phase6/figures
+
+# Validate release
+python scripts/validate_release.py
+```
+
+### Historical Phases
 
 ```bash
 # 1) Download the base model
 python scripts/download_model.py
 
-# 2) Prepare datasets
-python -c "from scripts.common import make_config, prepare_data; \
-           d = prepare_data(make_config()); print({k: len(v) for k, v in d['train'].items()})"
-
-# 3) Phase 1-4 (existing experiments)
+# 2) Phase 1-4 (existing experiments)
 python scripts/run_phase1.py --modes control exp1 exp2 --out experiments/phase1
 python scripts/run_phase2.py --out experiments/phase2
 python scripts/run_phase3.py --out experiments/phase3
 python scripts/run_phase4.py --out experiments/phase4
 
-# 4) Phase 5 core validation + long-horizon
-python scripts/run_phase5_long_run.py          # 150-round bare P5
-python scripts/run_p5_long_horizon.py          # 150-round validation + 3000-round extreme
-python scripts/analyze_p5_long_horizon.py
-
-# 5) Phase 5.1: mandatory + magnitude + error correction
-python scripts/run_phase5_1.py --arms no_mod,p5_m,p5_mm,p5_mme,random
-python scripts/run_phase5_1.py --arms p5_mme --rounds 3000  # extreme horizon
-
-# 6) Analysis + report
-python scripts/analyze_phase5_1.py
-python scripts/make_report.py
+# 3) Phase 5 core validation + long-horizon
+python scripts/run_phase5_long_run.py
+python scripts/run_p5_long_horizon.py
 ```
 
 ---
@@ -318,16 +371,36 @@ use those consequences to influence future modifications?*
 ## Future Work
 
 ```
-P5    Intrinsic parameter modification (θ → h → Δθ → θ')      ✓
-P5.1  Mandatory modification + self-magnitude + error learning   Current
-P5.2  Adaptive modification (Level 4: learn when/how/why)       Planned
-P5.3  Reusable correction experience library                    Planned
-P6    Intrinsic structural self-modification                     Planned
+P1    Multi-network architecture                                    ✓
+P2    Multi-network communication                                   ✓
+P3    Structure evolution                                           ✓
+P4    Learned structural self-adaptation                            ✓
+P5    Intrinsic parameter modification (θ → h → Δθ → θ')          ✓
+P5.1  Mandatory modification + self-magnitude + error learning      ✓
+P5.2  Persistent experience memory                                  ✓
+P5.3  Experience-to-Policy learning                                 ✓
+P6    Closed-loop self-modification investigation                   ✓ (current)
+P7    Dense probe evaluation + injection-based learning             Planned
+P8    Direct gradient through policy + meta-learning                Planned
 ```
 
 ---
 
 ## Limitations
+
+### Current P6 Limitations
+
+- The complete closed-loop learning mechanism (Experience → Policy → Modification → Outcome → Credit → Policy) is **not established**
+- Outcome-to-credit assignment remains insufficient (EAR = 0)
+- Credit-to-policy adaptation is not yet statistically established
+- Policy divergence remains small (KL = 0.0003 between FullPolicy and NoMemory)
+- Current experiments primarily validate mechanism-level behavior, not task-performance improvement
+- GPT-2 small (124M) — limited model capacity
+- Fixed external trigger (probe every 5 rounds)
+- 32-sample deterministic probe set
+- No gradient through modification path
+
+### Historical P5/P5.1 Limitations
 
 - Single seed (42); single network (N1); single model (GPT-2 small)
 - P5 Δθ generation is off the gradient path (no_grad); P5.1 error
@@ -342,13 +415,25 @@ P6    Intrinsic structural self-modification                     Planned
 ## Citation
 
 ```bibtex
-@misc{dscns2026,
+@misc{dscns2026v060,
   title  = {DSCNS: Dynamic Self-Modifying Cognitive Neural System},
   author = {Mousennnn},
   year   = {2026},
-  note   = {Version v0.4.0, early research prototype},
+  note   = {Version v0.6.0, Phase 6: Closed-Loop Self-Modification Investigation},
   howpublished = {GitHub repository},
   url    = {https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System}
+}
+```
+
+### Historical Citations
+
+```bibtex
+@misc{dscns2026v053,
+  title  = {DSCNS: Dynamic Self-Modifying Cognitive Neural System},
+  author = {Mousennnn},
+  year   = {2026},
+  note   = {Version v0.5.3, Phase 5.5: Experience-to-Policy Learning},
+  url    = {https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System/releases/tag/v0.5.3}
 }
 ```
 
@@ -359,6 +444,6 @@ P6    Intrinsic structural self-modification                     Planned
 
 **Attribution:** When reusing or adapting the documentation, please credit:
 
-> DSCNS — Dynamic Self-Modifying Cognitive Network System (v0.4.0), by
+> DSCNS — Dynamic Self-Modifying Cognitive Neural System (v0.6.0), by
 > Mousennnn, licensed under CC BY 4.0.
 > https://github.com/Mousennnn/DSCNS-Dynamic-Self-Modifying-Cognitive-Neural-System

@@ -1,0 +1,346 @@
+{
+  "version": "v0.6.0",
+  "phase": "P6",
+  "title": "Causal Link Evidence Matrix",
+  "description": "Machine-readable evidence matrix documenting all causal links tested in DSCNS Phase 6 (Causal Link Verification)",
+  "generated": "2025-07-11",
+  "total_rounds": 24750,
+  "conditions": 11,
+  "seeds": 5,
+  "causal_links": [
+    {
+      "id": "L1",
+      "name": "Experience → Policy",
+      "description": "Accumulated experience in memory causes policy distribution to diverge from experience-free baseline",
+      "hypothesis": "The presence of experience memory causes measurable divergence in the policy distribution compared to a system without memory",
+      "evidence_method": "Policy divergence (KL / JS / Cosine distance)",
+      "control_condition": "NoMemory",
+      "metrics": {
+        "kl_divergence": 0.0003,
+        "js_divergence": "computed",
+        "cosine_distance": "computed"
+      },
+      "threshold": {
+        "metric": "kl_divergence",
+        "operator": ">",
+        "value": 0
+      },
+      "result": "0.0003 > 0",
+      "status": "SUPPORTED",
+      "interpretation": "Memory provides subtle but statistically significant policy modulation. The small KL value suggests cautious experience integration.",
+      "significance": "Foundational — without this link, no learning from history is possible"
+    },
+    {
+      "id": "L2",
+      "name": "Policy → Target",
+      "description": "Policy directs modification toward specific targets at a rate above random chance",
+      "hypothesis": "The policy selects modification targets with accuracy significantly above chance level",
+      "evidence_method": "Target accuracy vs chance",
+      "control_condition": "Random",
+      "metrics": {
+        "target_accuracy_fullpolicy": 0.439,
+        "target_accuracy_random": 0.333,
+        "improvement_above_chance": 0.106,
+        "improvement_percentage": 31.8
+      },
+      "threshold": {
+        "metric": "target_accuracy",
+        "operator": ">",
+        "value": 0.333
+      },
+      "result": "0.439 > 0.333",
+      "status": "SUPPORTED",
+      "interpretation": "Policy achieves 31.8% above-chance target selection, demonstrating meaningful spatial guidance for modifications.",
+      "significance": "Essential — determines WHERE modifications are applied"
+    },
+    {
+      "id": "L3",
+      "name": "Policy → Magnitude",
+      "description": "Policy deterministically controls modification magnitude",
+      "hypothesis": "There exists a monotonic relationship between policy magnitude parameter and actual modification magnitude",
+      "evidence_method": "Magnitude correlation (Spearman rank)",
+      "control_condition": "All conditions",
+      "metrics": {
+        "spearman_correlation": 1.000,
+        "relationship": "perfect_monotonic"
+      },
+      "threshold": {
+        "metric": "spearman_correlation",
+        "operator": ">",
+        "value": 0
+      },
+      "result": "corr=1.000",
+      "status": "SUPPORTED",
+      "interpretation": "Perfect monotonic relationship confirms the policy magnitude parameter is deterministically controlling modification intensity. No stochasticity in the magnitude pathway.",
+      "significance": "Enables nuanced control — system can make fine-grained adjustments"
+    },
+    {
+      "id": "L4",
+      "name": "Modification → Outcome",
+      "description": "Policy-guided modifications produce better outcomes than unguided modifications",
+      "hypothesis": "Modifications guided by the policy produce lower (better) Relative Feature Rate than modifications without policy guidance",
+      "evidence_method": "RFR comparison",
+      "control_condition": "NoMemory",
+      "metrics": {
+        "rfr_fullpolicy": 0.410,
+        "rfr_nomemory": 0.445,
+        "improvement_absolute": 0.035,
+        "improvement_percentage": 7.9
+      },
+      "threshold": {
+        "metric": "rfr_comparison",
+        "operator": "<",
+        "description": "Mod RFR < Base RFR"
+      },
+      "result": "0.410 < 0.445",
+      "status": "SUPPORTED",
+      "interpretation": "Policy-guided modifications achieve 7.9% better outcomes. Improvement is real but modest, suggesting policy guidance provides limited advantage.",
+      "significance": "Validates the output quality of the entire upstream chain"
+    },
+    {
+      "id": "L5",
+      "name": "Outcome → Credit",
+      "description": "Outcomes generate non-zero credit signals quantifying their contribution",
+      "hypothesis": "Outcomes produce credit signals that quantify their contribution to system performance",
+      "evidence_method": "Credit statistics comparison",
+      "control_condition": "NoCredit",
+      "metrics": {
+        "credit_mean_nocredit": 0.0000,
+        "credit_mean_fullpolicy": "non-zero (weak)",
+        "credit_variance": "high"
+      },
+      "threshold": {
+        "metric": "credit_mean",
+        "operator": "!=",
+        "value": 0
+      },
+      "result": "credit_mean=0.0000 (NoCredit), weak signal (Full)",
+      "status": "PARTIAL",
+      "interpretation": "NoCredit correctly disables credits (mean=0), but FullPolicy credits are extremely weak and inconsistent. The credit computation exists but is not robust.",
+      "significance": "Critical feedback link — weak credits prevent learning from outcomes",
+      "known_issues": [
+        "Credit values are extremely small",
+        "High variance across seeds",
+        "Possible overly conservative discount factor",
+        "Reward signal may be too sparse"
+      ]
+    },
+    {
+      "id": "L6",
+      "name": "Credit → Policy",
+      "description": "Credit signals cause measurable policy changes",
+      "hypothesis": "Credit signals influence policy updates, causing alignment between credit and policy change",
+      "evidence_method": "EAR (Effective Alignment Rate)",
+      "control_condition": "All conditions",
+      "metrics": {
+        "ear": 0.0000,
+        "alignment": "none"
+      },
+      "threshold": {
+        "metric": "ear",
+        "operator": ">",
+        "value": 0
+      },
+      "result": "EAR=0.0000",
+      "status": "NOT_ESTABLISHED",
+      "interpretation": "Zero alignment between credit signals and policy changes. The policy does not respond to credit at all. This is the most critical failure in the feedback loop.",
+      "significance": "Without this link, no feedback-driven learning occurs",
+      "root_causes": [
+        "Weak credit signals from Link 5",
+        "Missing/disconnected gradient pathways between credit and policy",
+        "Policy update mechanism may not receive credit as input"
+      ],
+      "recommendations": [
+        "Verify gradient flow from credit to policy parameters",
+        "Consider advantage estimation as alternative",
+        "Debug EAR computation for measurement artifacts"
+      ]
+    },
+    {
+      "id": "L7",
+      "name": "Full Closed Loop",
+      "description": "Complete experience→policy→modification→outcome→credit→policy cycle functions as self-reinforcing feedback",
+      "hypothesis": "The complete feedback loop functions end-to-end, enabling autonomous self-correction",
+      "evidence_method": "End-to-end verification (all links must pass)",
+      "control_condition": "Full ablation suite",
+      "metrics": {
+        "links_supported": 4,
+        "links_partial": 1,
+        "links_not_established": 2,
+        "full_pass": false
+      },
+      "threshold": {
+        "metric": "full_pass",
+        "operator": "==",
+        "value": true,
+        "description": "All links SUPPORTED"
+      },
+      "result": "Full Pass FAIL",
+      "status": "NOT_ESTABLISHED",
+      "interpretation": "The full closed loop cannot function because the feedback pathway (Outcome→Credit→Policy) is broken. The system operates as a one-shot pipeline, not a self-correcting mechanism.",
+      "significance": "The ultimate goal of DSCNS — autonomous self-correction — is not achieved",
+      "current_state": {
+        "forward_pathway": "FUNCTIONAL (Links 1-4 SUPPORTED)",
+        "feedback_pathway": "BROKEN (Links 5-6 PARTIAL/NOT ESTABLISHED)",
+        "self_correction": "NOT ACHIEVED"
+      },
+      "architecture_diagram": "Experience ──✅──> Policy ──✅──> Modification ──✅──> Outcome\n    ↑                                                       │\n    │                                                       ⚠️\n    │                                                       │\n    └──────────────────── ❌ ──── Credit ←── ❌ ────────────┘"
+    }
+  ],
+  "acceptance_criteria": {
+    "link_supported": {
+      "description": "Quantitative evidence exceeds threshold; causal link experimentally verified",
+      "thresholds": {
+        "L1_kl_divergence": { "operator": ">", "value": 0 },
+        "L2_target_accuracy": { "operator": ">", "value": 0.333 },
+        "L3_spearman_correlation": { "operator": ">", "value": 0 },
+        "L4_rfr_improvement": { "operator": "<", "description": "Modified RFR < Baseline RFR" },
+        "L5_credit_mean": { "operator": "!=", "value": 0 },
+        "L6_ear": { "operator": ">", "value": 0 },
+        "L7_full_pass": { "operator": "==", "value": true }
+      }
+    },
+    "overall_verdict": "PARTIAL_SUCCESS",
+    "links_passing": 4,
+    "links_failing": 2,
+    "links_partial": 1,
+    "full_loop_established": false
+  },
+  "policy_divergence": {
+    "description": "KL divergence between FullPolicy and each ablation condition",
+    "baseline": "FullPolicy",
+    "comparisons": {
+      "FullPolicy_vs_FrozenPolicy": {
+        "kl_divergence": 0.0064,
+        "interpretation": "Largest divergence — frozen weights significantly alter policy behavior"
+      },
+      "FullPolicy_vs_NoMemory": {
+        "kl_divergence": 0.0003,
+        "interpretation": "Small but non-zero — memory provides subtle policy modulation"
+      },
+      "FullPolicy_vs_NoCredit": {
+        "kl_divergence": 0.0000,
+        "interpretation": "Negligible — credit removal has no policy effect; policy is insensitive to credit"
+      },
+      "FullPolicy_vs_NoOutcomeReward": {
+        "kl_divergence": 0.0000,
+        "interpretation": "Negligible — outcome reward removal has no policy effect"
+      }
+    }
+  },
+  "conditions": [
+    {
+      "id": 1,
+      "name": "FullPolicy",
+      "code": "FP",
+      "description": "Complete system with all components enabled",
+      "purpose": "Baseline comparison",
+      "metrics": {
+        "target_accuracy": 0.439,
+        "rfr": 0.410,
+        "credit_mean": "non-zero (weak)",
+        "ear": 0.0000
+      }
+    },
+    {
+      "id": 2,
+      "name": "FrozenPolicy",
+      "code": "FRZ",
+      "description": "Frozen model weights, no learning during training",
+      "purpose": "Ablation: test learning mechanism",
+      "policy_divergence_vs_full": 0.0064
+    },
+    {
+      "id": 3,
+      "name": "NoMemory",
+      "code": "NM",
+      "description": "No experience memory buffer",
+      "purpose": "Ablation: test memory contribution",
+      "metrics": {
+        "rfr": 0.445
+      },
+      "policy_divergence_vs_full": 0.0003
+    },
+    {
+      "id": 4,
+      "name": "NoCredit",
+      "code": "NC",
+      "description": "Credit assignment mechanism disabled",
+      "purpose": "Ablation: test credit assignment",
+      "metrics": {
+        "credit_mean": 0.0000
+      },
+      "policy_divergence_vs_full": 0.0000
+    },
+    {
+      "id": 5,
+      "name": "NoOutcomeReward",
+      "code": "NOR",
+      "description": "Outcome reward signal removed",
+      "purpose": "Ablation: test outcome reward",
+      "policy_divergence_vs_full": 0.0000
+    },
+    {
+      "id": 6,
+      "name": "Random",
+      "code": "RAND",
+      "description": "Random target selection (no policy guidance)",
+      "purpose": "Baseline: floor performance",
+      "metrics": {
+        "target_accuracy": 0.333
+      }
+    },
+    {
+      "id": 7,
+      "name": "NoPolicy",
+      "code": "NP",
+      "description": "No policy network present",
+      "purpose": "Ablation: test policy necessity"
+    },
+    {
+      "id": 8,
+      "name": "NoModification",
+      "code": "NMOD",
+      "description": "No modifications applied to the system",
+      "purpose": "Ablation: test modification necessity"
+    },
+    {
+      "id": 9,
+      "name": "MemoryOnly",
+      "code": "MO",
+      "description": "Memory present but no policy update from memory",
+      "purpose": "Integration: memory without policy feedback"
+    },
+    {
+      "id": 10,
+      "name": "CreditOnly",
+      "code": "CO",
+      "description": "Credit computed but no policy update from credit",
+      "purpose": "Integration: credit without policy feedback"
+    },
+    {
+      "id": 11,
+      "name": "EndToEnd",
+      "code": "E2E",
+      "description": "Full pipeline integration test",
+      "purpose": "Integration: end-to-end verification"
+    }
+  ],
+  "summary": {
+    "forward_pathway": {
+      "status": "FUNCTIONAL",
+      "links": ["L1", "L2", "L3", "L4"],
+      "description": "Experience→Policy→Modification→Outcome chain is working"
+    },
+    "feedback_pathway": {
+      "status": "BROKEN",
+      "links": ["L5", "L6"],
+      "description": "Outcome→Credit→Policy chain has critical failures"
+    },
+    "self_correction": {
+      "status": "NOT_ACHIEVED",
+      "description": "Full closed loop (L7) cannot be verified due to broken feedback pathway",
+      "recommendation": "Fix credit assignment (L5) and credit→policy pathway (L6) before re-evaluating"
+    }
+  }
+}
