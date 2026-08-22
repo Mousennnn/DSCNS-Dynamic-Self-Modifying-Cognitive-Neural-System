@@ -553,7 +553,7 @@ def run_phase6_experiment(seed, rounds, condition, config, data):
             candidates = alt_generator.generate_candidates(
                 base_target=proposal["target_group"],
                 base_magnitude=proposal["magnitude"],
-                candidate_scores=policy_out["candidate_scores"] if not freeze_policy and rnd > 1 else None,
+                candidate_scores=policy_out["candidate_scores"] if (not freeze_policy and not random_policy and rnd > 1 and 'policy_out' in dir()) else None,
             )
             selected_candidate = alt_generator.select_candidate(
                 candidates, exploration_eps=exploration_eps)
