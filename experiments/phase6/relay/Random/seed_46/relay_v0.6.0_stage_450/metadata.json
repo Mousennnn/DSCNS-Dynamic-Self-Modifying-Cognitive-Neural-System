@@ -1,0 +1,18 @@
+{
+  "version": "v0.6.0",
+  "phase": "P6",
+  "condition": "Random",
+  "seed": 46,
+  "round": 450,
+  "checkpoint_type": "relay",
+  "score": 0.0,
+  "score_components": {},
+  "source_checkpoint": "",
+  "architecture_hash": "",
+  "git_commit": "",
+  "timestamp": "",
+  "sha256": "",
+  "file_size": 0,
+  "config_hash": "",
+  "n_rounds_completed": 450
+}
