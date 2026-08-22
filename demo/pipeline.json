@@ -1,0 +1,157 @@
+{
+  "version": "v0.6.0",
+  "phase": "P6",
+  "mode": "self-modify",
+  "condition": "FullPolicy",
+  "before": {
+    "loss": 7.92,
+    "description": "Initial model state"
+  },
+  "modification": {
+    "target": 0,
+    "magnitude": 0.35,
+    "delta_norm": 0.42,
+    "candidates": [
+      {
+        "id": 0,
+        "target": 0,
+        "magnitude": 0.35,
+        "score": 0.72,
+        "selected": true
+      },
+      {
+        "id": 1,
+        "target": 1,
+        "magnitude": 0.4,
+        "score": 0.65,
+        "selected": false
+      },
+      {
+        "id": 2,
+        "target": 2,
+        "magnitude": 0.28,
+        "score": 0.58,
+        "selected": false
+      },
+      {
+        "id": 3,
+        "target": 0,
+        "magnitude": 0.5,
+        "score": 0.51,
+        "selected": false
+      }
+    ]
+  },
+  "after": {
+    "loss": 7.9,
+    "outcome": "partial_success",
+    "reward": 0.02
+  },
+  "comparison": {
+    "delta_loss": -0.019999999999999574,
+    "outcome": "partial_success",
+    "improved": true
+  },
+  "pipeline": [
+    {
+      "step": 1,
+      "name": "Model Loading",
+      "description": "GPT-2 124M + per-network LoRA (r=16, alpha=32)",
+      "status": "OK"
+    },
+    {
+      "step": 2,
+      "name": "Internal State",
+      "description": "h_t = Transformer(texts), s_t = MetaInfo(h_t, theta_t)",
+      "state_dim": 256
+    },
+    {
+      "step": 3,
+      "name": "Error Detection",
+      "description": "ErrorState(probe_delta, entropy_delta, parameter_drift)",
+      "error_detected": false
+    },
+    {
+      "step": 4,
+      "name": "Experience Retrieval",
+      "description": "Top-K similar episodes from memory",
+      "n_retrieved": 0
+    },
+    {
+      "step": 5,
+      "name": "Policy Selection",
+      "description": "pi_t = PolicyAdapter(state, error, memory, value)",
+      "target_distribution": [
+        0.5,
+        0.25,
+        0.25
+      ],
+      "magnitude": 0.35,
+      "confidence": 0.65
+    },
+    {
+      "step": 6,
+      "name": "Candidate Generation",
+      "description": "K=4 candidates with diversity constraints",
+      "candidates": [
+        {
+          "id": 0,
+          "target": 0,
+          "magnitude": 0.35,
+          "score": 0.72,
+          "selected": true
+        },
+        {
+          "id": 1,
+          "target": 1,
+          "magnitude": 0.4,
+          "score": 0.65,
+          "selected": false
+        },
+        {
+          "id": 2,
+          "target": 2,
+          "magnitude": 0.28,
+          "score": 0.58,
+          "selected": false
+        },
+        {
+          "id": 3,
+          "target": 0,
+          "magnitude": 0.5,
+          "score": 0.51,
+          "selected": false
+        }
+      ]
+    },
+    {
+      "step": 7,
+      "name": "Safety Check",
+      "description": "ModificationGuard.evaluate(param_norm, drift, entropy)",
+      "risk_level": 0.0,
+      "magnitude_scale": 1.0
+    },
+    {
+      "step": 8,
+      "name": "Apply Modification",
+      "description": "theta' = theta + alpha * magnitude * delta",
+      "delta_norm": 0.42,
+      "applied": true
+    },
+    {
+      "step": 9,
+      "name": "Outcome Evaluation",
+      "description": "Compare probe performance before vs after",
+      "loss_before": 7.92,
+      "loss_after": 7.9,
+      "outcome": "partial_success"
+    },
+    {
+      "step": 10,
+      "name": "Credit & Experience Update",
+      "description": "R_t = w_p*R_perf + w_e*R_err + w_s*R_stab + w_c*R_cons",
+      "reward": 0.02,
+      "credit": 0.02
+    }
+  ]
+}

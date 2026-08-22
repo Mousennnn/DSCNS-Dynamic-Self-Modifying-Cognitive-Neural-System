@@ -30,7 +30,7 @@ def load_all_results(base_dir):
         for fname in os.listdir(seed_path):
             if fname.endswith("_result.json"):
                 cond = fname.replace("_result.json", "")
-                with open(os.path.join(seed_dir, fname)) as f:
+                with open(os.path.join(seed_path, fname)) as f:
                     data = json.load(f)
                 results.setdefault(cond, []).append(data)
     return results
@@ -48,7 +48,7 @@ def load_round_logs(base_dir, max_seeds=5):
         for fname in os.listdir(seed_path):
             if fname.endswith("_round_log.json"):
                 cond = fname.replace("_round_log.json", "")
-                with open(os.path.join(seed_dir, fname)) as f:
+                with open(os.path.join(seed_path, fname)) as f:
                     data = json.load(f)
                 logs.setdefault(cond, []).append(data)
     return logs
@@ -213,12 +213,25 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
 
     print("Loading results...")
-    results = load_all_results(args.input)
+    raw_results = load_all_results(args.input)
     logs = load_round_logs(args.input)
 
-    if not results:
+    if not raw_results:
         print("No results found")
         return
+
+    # aggregate per-condition
+    agg_keys = ["SRR", "RFR_similar", "EAR", "target_accuracy",
+                "magnitude_correlation", "policy_action_mi", "net_drift"]
+    results = {}
+    for cond, seeds in raw_results.items():
+        agg = {}
+        for key in agg_keys:
+            vals = [s.get(key, 0) for s in seeds if key in s]
+            if vals:
+                agg[f"{key}_mean"] = float(np.mean(vals))
+                agg[f"{key}_std"] = float(np.std(vals))
+        results[cond] = agg
 
     print(f"Found {len(results)} conditions: {sorted(results.keys())}")
 

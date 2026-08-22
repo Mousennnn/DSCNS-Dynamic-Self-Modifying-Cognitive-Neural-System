@@ -1,0 +1,35 @@
+{
+  "target": 0,
+  "magnitude": 0.35,
+  "delta_norm": 0.42,
+  "candidates": [
+    {
+      "id": 0,
+      "target": 0,
+      "magnitude": 0.35,
+      "score": 0.72,
+      "selected": true
+    },
+    {
+      "id": 1,
+      "target": 1,
+      "magnitude": 0.4,
+      "score": 0.65,
+      "selected": false
+    },
+    {
+      "id": 2,
+      "target": 2,
+      "magnitude": 0.28,
+      "score": 0.58,
+      "selected": false
+    },
+    {
+      "id": 3,
+      "target": 0,
+      "magnitude": 0.5,
+      "score": 0.51,
+      "selected": false
+    }
+  ]
+}
