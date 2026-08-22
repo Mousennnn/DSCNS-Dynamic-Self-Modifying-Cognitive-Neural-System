@@ -1,0 +1,236 @@
+{
+  "condition": "RandomMemory",
+  "seed": 43,
+  "rounds": 450,
+  "git_commit": "945c978c60d6604311e383cec12675477a50e14e",
+  "hash0": "758b8ee2adb32596babb2e705ae1e807a3704f3554a908592db8f17efecbc583",
+  "hash_final": "4481391c56fe0d2ff18472d3e9e7fc977f479216dc71a29c1550b7aa227f028e",
+  "net_drift": 3948.1001586914062,
+  "gross_drift": 18931.22482142187,
+  "failure_rate": 0.051111111111111114,
+  "correction_rate": 0.1,
+  "recovery_rate": 0.0,
+  "SRR": 0.0,
+  "RFR_target": 0.36363636363636365,
+  "RFR_similar": 0.36363636363636365,
+  "w_after_failure": 0.053815143547387104,
+  "w_after_success": 0.052180956820355666,
+  "weight_adaptation": -0.0016341867270314378,
+  "natural_failure_rate": 0.051111111111111114,
+  "EAR": 0.0,
+  "high_sim_failure_rate": 0.051111111111111114,
+  "high_sim_success_rate": 0.06666666666666667,
+  "absorption_rate": 0.0,
+  "lineage_efficacy": 0.0,
+  "credit_mean": 0.0015876511315845911,
+  "credit_std": 0.06620431153898898,
+  "experience_value_mean": 0.003605535035782687,
+  "experience_value_std": 0.039204214377054965,
+  "n_experience_values": 450,
+  "alt_success_rate": 0.06666666666666667,
+  "alt_failure_rate": 0.051111111111111114,
+  "exploration_rate": 0.3,
+  "trace_diagnostics": {
+    "n_entries": 450,
+    "n_applied": 450,
+    "target_accuracy": 0.26222222222222225,
+    "magnitude_correlation": 1.0,
+    "applied_ratio": 1.0,
+    "policy_action_mi": 0.0039168009105188875,
+    "confidence_reward_corr": -0.009247274216721574,
+    "mean_reward": 0.0015876511315845911,
+    "std_reward": 0.06620431153898898,
+    "outcome_distribution": {
+      "neutral": 397,
+      "success": 30,
+      "failure": 23
+    }
+  },
+  "outcome_reward_summary": {
+    "reward_model": {
+      "n_rewards": 450,
+      "mean_total": -9.129800613412064,
+      "std_total": 3.107244616252829,
+      "mean_performance_delta": 0.0001587651131584591,
+      "positive_reward_fraction": 0.0,
+      "positive_performance_fraction": 0.12666666666666668
+    },
+    "credit_assigner": {
+      "n_credits": 450,
+      "mean_credit": -41.29197071019461,
+      "std_credit": 13.840925881716338,
+      "credit_by_target": {
+        "1": {
+          "mean": -43.454332332423284,
+          "std": 12.290457497117838,
+          "n": 187
+        },
+        "0": {
+          "mean": -46.28050145085753,
+          "std": 12.89547879354309,
+          "n": 117
+        },
+        "2": {
+          "mean": -34.52471235393212,
+          "std": 13.856214115759597,
+          "n": 146
+        }
+      }
+    },
+    "n_rounds": 450
+  },
+  "safety_summary": {
+    "n_checks": 450,
+    "mean_risk": 0.9977779447495526,
+    "max_risk": 1.0,
+    "mean_scale": 0.10400000000000001,
+    "min_scale": 0.1,
+    "n_interventions": 448,
+    "current_risk": 1.0
+  },
+  "target_accuracy": 0.26222222222222225,
+  "magnitude_correlation": 1.0,
+  "policy_action_mi": 0.0039168009105188875,
+  "confidence_reward_corr": -0.009247274216721574,
+  "memory_stats": {
+    "success": 30,
+    "failure": 23,
+    "recovery": 0,
+    "total": 450
+  },
+  "tracker_stats": {
+    "n_experiences": 450,
+    "n_failures": 23,
+    "n_successes": 30,
+    "n_lineages": 0,
+    "absorption_rate": 0.0,
+    "lineage_efficacy": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n_lineages": 0
+    }
+  },
+  "credit_statistics": {
+    "n_credits": 450,
+    "mean_credit": 0.0015876511315845911,
+    "std_credit": 0.06620431153898898,
+    "min_credit": -0.40154486221776864,
+    "max_credit": 0.6971994833167372,
+    "mean_immediate_reward": 0.0015876511315845911,
+    "credit_immediate_correlation": 1.0
+  },
+  "experience_value_statistics": {
+    "n_experiences": 450,
+    "mean_value": 0.003605535035782687,
+    "std_value": 0.039204214377054965,
+    "by_type": {
+      "failure": {
+        "mean": -0.0019958802562566485,
+        "std": 0.011849345976500194,
+        "n": 420
+      },
+      "success": {
+        "mean": 0.08202534912433339,
+        "std": 0.12041565174562106,
+        "n": 30
+      }
+    }
+  },
+  "alternative_proposal_statistics": {
+    "n_generated": 1780,
+    "n_selected": 445,
+    "n_outcomes": 450,
+    "success_rate": 0.06666666666666667,
+    "failure_rate": 0.051111111111111114,
+    "target_distribution": {
+      "1": 0.41555555555555557,
+      "0": 0.26,
+      "2": 0.3244444444444444
+    },
+    "magnitude_distribution": {
+      "mean": 0.5495793950040884,
+      "std": 0.14313613616121731,
+      "min": 0.04716753959655762,
+      "max": 1.0
+    },
+    "exploration_rate": 0.02
+  },
+  "policy_learning_statistics": {
+    "total": {
+      "mean": 0.8127206408459208,
+      "std": 0.05476569610873875,
+      "last": 0.7554205656051636
+    },
+    "avoid": {
+      "mean": 0.41828850689141645,
+      "std": 0.10517799243292923,
+      "last": 0.31087416410446167
+    },
+    "reuse": {
+      "mean": 1.206433513890142,
+      "std": 0.06351394901627934,
+      "last": 1.1993293762207031
+    },
+    "stability": {
+      "mean": 0.003596265334635973,
+      "std": 0.0032874515427520298,
+      "last": 0.0031878333538770676
+    },
+    "n_steps": 23
+  },
+  "phases": {},
+  "policy_checkpoints": {
+    "50": {
+      "target_distribution": {
+        "0": 0.42435890436172485,
+        "1": 0.28586891293525696,
+        "2": 0.2897722125053406
+      },
+      "exploration_rate": 0.3,
+      "round": 50
+    },
+    "100": {
+      "target_distribution": {
+        "0": 0.48556262254714966,
+        "1": 0.27646538615226746,
+        "2": 0.23797200620174408
+      },
+      "exploration_rate": 0.3,
+      "round": 100
+    },
+    "200": {
+      "target_distribution": {
+        "0": 0.46577388048171997,
+        "1": 0.2649090588092804,
+        "2": 0.26931703090667725
+      },
+      "exploration_rate": 0.3,
+      "round": 200
+    },
+    "300": {
+      "target_distribution": {
+        "0": 0.3644363582134247,
+        "1": 0.30063506960868835,
+        "2": 0.3349285423755646
+      },
+      "exploration_rate": 0.3,
+      "round": 300
+    },
+    "450": {
+      "target_distribution": {
+        "0": 0.460379958152771,
+        "1": 0.26719391345977783,
+        "2": 0.27242612838745117
+      },
+      "exploration_rate": 0.3,
+      "round": 450
+    }
+  },
+  "policy_target_distribution_mean": {
+    "0": 0.42911780767970614,
+    "1": 0.28182253672016994,
+    "2": 0.2890596564610799
+  },
+  "wall_seconds": 232.11874222755432,
+  "best_score": -21.392793019655333
+}

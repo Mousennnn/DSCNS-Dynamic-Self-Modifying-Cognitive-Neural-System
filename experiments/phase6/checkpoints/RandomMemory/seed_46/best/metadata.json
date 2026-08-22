@@ -1,0 +1,22 @@
+{
+  "version": "v0.6.0",
+  "phase": "P6",
+  "condition": "RandomMemory",
+  "seed": 46,
+  "round": 16,
+  "checkpoint_type": "best",
+  "score": -21.35174611517167,
+  "score_components": {
+    "performance": -8.217264600452356,
+    "rfr": 0.0,
+    "drift": 131.36747932434082
+  },
+  "source_checkpoint": "",
+  "architecture_hash": "2ddf95c335ba8aefefe9dd517edd0ac324a8b663837731fb65cecc104e05481d",
+  "git_commit": "945c978c60d6604311e383cec12675477a50e14e",
+  "timestamp": "2026-08-22 20:15:56",
+  "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+  "file_size": 15561858,
+  "config_hash": "",
+  "n_rounds_completed": 16
+}

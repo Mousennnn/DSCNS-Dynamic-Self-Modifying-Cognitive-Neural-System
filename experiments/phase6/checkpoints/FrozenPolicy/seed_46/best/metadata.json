@@ -1,0 +1,22 @@
+{
+  "version": "v0.6.0",
+  "phase": "P6",
+  "condition": "FrozenPolicy",
+  "seed": 46,
+  "round": 21,
+  "checkpoint_type": "best",
+  "score": -21.01239941195387,
+  "score_components": {
+    "performance": -7.875974357777224,
+    "rfr": 0.0,
+    "drift": 131.3869113922119
+  },
+  "source_checkpoint": "",
+  "architecture_hash": "2ddf95c335ba8aefefe9dd517edd0ac324a8b663837731fb65cecc104e05481d",
+  "git_commit": "945c978c60d6604311e383cec12675477a50e14e",
+  "timestamp": "2026-08-22 19:49:28",
+  "sha256": "f3776108a0cf59a379418988113eebecb499338894c964a7735bcd6824653079",
+  "file_size": 15561858,
+  "config_hash": "",
+  "n_rounds_completed": 21
+}

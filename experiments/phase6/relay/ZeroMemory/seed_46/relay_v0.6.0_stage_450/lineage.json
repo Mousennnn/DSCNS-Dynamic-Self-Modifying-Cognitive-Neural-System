@@ -1,0 +1,14 @@
+{
+  "source_version": "v0.5.3",
+  "source_relay": "none",
+  "target_version": "v0.6.0",
+  "continued_rounds": 450,
+  "total_lineage_rounds": 450,
+  "source_condition": "ZeroMemory",
+  "source_seed": 46,
+  "created_at": "2026-08-22 20:55:18",
+  "version": "v0.6.0",
+  "round": 450,
+  "condition": "ZeroMemory",
+  "seed": 46
+}

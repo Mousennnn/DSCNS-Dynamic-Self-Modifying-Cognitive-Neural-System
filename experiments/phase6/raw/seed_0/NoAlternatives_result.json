@@ -1,0 +1,225 @@
+{
+  "condition": "NoAlternatives",
+  "seed": 42,
+  "rounds": 450,
+  "git_commit": "945c978c60d6604311e383cec12675477a50e14e",
+  "hash0": "f36cf4e3985b5551f191e39152e6c2ecce5dce95b77706ef58c999b65d7cc4f3",
+  "hash_final": "d9ca6fcc4cac7efd6678ed88ab2f0f8145809263efb51f208d50e167841fef26",
+  "net_drift": 3945.9386444091797,
+  "gross_drift": 18929.63754082253,
+  "failure_rate": 0.07333333333333333,
+  "correction_rate": 0.14444444444444443,
+  "recovery_rate": 0.0,
+  "SRR": 0.0,
+  "RFR_target": 0.59375,
+  "RFR_similar": 0.28125,
+  "w_after_failure": 0.05609493598793491,
+  "w_after_success": 0.05662347173690795,
+  "weight_adaptation": 0.00052853574897304,
+  "natural_failure_rate": 0.07333333333333333,
+  "EAR": 0.0,
+  "high_sim_failure_rate": 0.07333333333333333,
+  "high_sim_success_rate": 0.05555555555555555,
+  "absorption_rate": 0.0,
+  "lineage_efficacy": 0.0,
+  "credit_mean": -0.003788214474278442,
+  "credit_std": 0.07119081049456832,
+  "experience_value_mean": 0.0016791410025408914,
+  "experience_value_std": 0.037208849892278004,
+  "n_experience_values": 450,
+  "alt_success_rate": 0.0,
+  "alt_failure_rate": 0.0,
+  "exploration_rate": 0.3,
+  "trace_diagnostics": {
+    "n_entries": 450,
+    "n_applied": 450,
+    "target_accuracy": 1.0,
+    "magnitude_correlation": 1.0,
+    "applied_ratio": 1.0,
+    "policy_action_mi": 0.6747726320423959,
+    "confidence_reward_corr": -0.05131448180467069,
+    "mean_reward": -0.003788214474278442,
+    "std_reward": 0.07119081049456832,
+    "outcome_distribution": {
+      "neutral": 392,
+      "success": 25,
+      "failure": 33
+    }
+  },
+  "outcome_reward_summary": {
+    "reward_model": {
+      "n_rewards": 450,
+      "mean_total": -9.13838757716833,
+      "std_total": 3.1089316103880322,
+      "mean_performance_delta": -0.00037882144742784423,
+      "positive_reward_fraction": 0.0,
+      "positive_performance_fraction": 0.10444444444444445
+    },
+    "credit_assigner": {
+      "n_credits": 450,
+      "mean_credit": -41.330463133918855,
+      "std_credit": 13.84848145827966,
+      "credit_by_target": {
+        "2": {
+          "mean": -40.66399822492246,
+          "std": 14.295164712237318,
+          "n": 268
+        },
+        "0": {
+          "mean": -42.31185102189158,
+          "std": 13.101590667140204,
+          "n": 182
+        }
+      }
+    },
+    "n_rounds": 450
+  },
+  "safety_summary": {
+    "n_checks": 450,
+    "mean_risk": 0.9977791437819041,
+    "max_risk": 1.0,
+    "mean_scale": 0.10400000000000001,
+    "min_scale": 0.1,
+    "n_interventions": 448,
+    "current_risk": 1.0
+  },
+  "target_accuracy": 1.0,
+  "magnitude_correlation": 1.0,
+  "policy_action_mi": 0.6747726320423959,
+  "confidence_reward_corr": -0.05131448180467069,
+  "memory_stats": {
+    "success": 25,
+    "failure": 33,
+    "recovery": 0,
+    "total": 450
+  },
+  "tracker_stats": {
+    "n_experiences": 450,
+    "n_failures": 33,
+    "n_successes": 25,
+    "n_lineages": 0,
+    "absorption_rate": 0.0,
+    "lineage_efficacy": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n_lineages": 0
+    }
+  },
+  "credit_statistics": {
+    "n_credits": 450,
+    "mean_credit": -0.003788214474278442,
+    "std_credit": 0.07119081049456832,
+    "min_credit": -0.4431479809927197,
+    "max_credit": 0.5356101635126009,
+    "mean_immediate_reward": -0.003788214474278442,
+    "credit_immediate_correlation": 1.0
+  },
+  "experience_value_statistics": {
+    "n_experiences": 450,
+    "mean_value": 0.0016791410025408914,
+    "std_value": 0.037208849892278004,
+    "by_type": {
+      "failure": {
+        "mean": -0.0034286171032780056,
+        "std": 0.0158444596638281,
+        "n": 425
+      },
+      "success": {
+        "mean": 0.08851102880146215,
+        "std": 0.11256057406294159,
+        "n": 25
+      }
+    }
+  },
+  "alternative_proposal_statistics": {
+    "n_generated": 0,
+    "n_selected": 0,
+    "n_outcomes": 0,
+    "success_rate": 0.0,
+    "failure_rate": 0.0,
+    "target_distribution": {},
+    "magnitude_distribution": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "exploration_rate": 0.15
+  },
+  "policy_learning_statistics": {
+    "total": {
+      "mean": 0.7351045048598087,
+      "std": 0.01200225630753098,
+      "last": 0.7306999564170837
+    },
+    "avoid": {
+      "mean": 0.490314346371275,
+      "std": 0.028165528955592475,
+      "last": 0.5105584859848022
+    },
+    "reuse": {
+      "mean": 0.9795581012061148,
+      "std": 0.026624643256293268,
+      "last": 0.9505972266197205
+    },
+    "stability": {
+      "mean": 0.0016828113355476296,
+      "std": 0.0020318565244216913,
+      "last": 0.0012214872986078262
+    },
+    "n_steps": 33
+  },
+  "phases": {},
+  "policy_checkpoints": {
+    "50": {
+      "target_distribution": {
+        "0": 0.3518553078174591,
+        "1": 0.2782400846481323,
+        "2": 0.36990460753440857
+      },
+      "exploration_rate": 0.3,
+      "round": 50
+    },
+    "100": {
+      "target_distribution": {
+        "0": 0.3435773253440857,
+        "1": 0.23570862412452698,
+        "2": 0.4207140803337097
+      },
+      "exploration_rate": 0.3,
+      "round": 100
+    },
+    "200": {
+      "target_distribution": {
+        "0": 0.3800896406173706,
+        "1": 0.23880434036254883,
+        "2": 0.3811059594154358
+      },
+      "exploration_rate": 0.3,
+      "round": 200
+    },
+    "300": {
+      "target_distribution": {
+        "0": 0.36991408467292786,
+        "1": 0.24492257833480835,
+        "2": 0.3851633071899414
+      },
+      "exploration_rate": 0.3,
+      "round": 300
+    },
+    "450": {
+      "target_distribution": {
+        "0": 0.3374897837638855,
+        "1": 0.26267048716545105,
+        "2": 0.39983969926834106
+      },
+      "exploration_rate": 0.3,
+      "round": 450
+    }
+  },
+  "policy_target_distribution_mean": {
+    "0": 0.37410562687449983,
+    "1": 0.24501883748504852,
+    "2": 0.38087554057439166
+  },
+  "wall_seconds": 246.3315510749817,
+  "best_score": -21.061583008271796
+}
