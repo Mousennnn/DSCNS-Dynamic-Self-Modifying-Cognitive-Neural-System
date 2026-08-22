@@ -206,6 +206,51 @@ class DSCNSConfig:
     # policy diagnostics
     policy_diagnose_every: int = 50     # compute D_policy every N rounds
 
+    # ---- v0.6.0: Policy Causality & Outcome-directed Learning (Phase 6) ----
+    v060_enabled: bool = False
+    # outcome-directed reward
+    reward_w_performance: float = 0.4
+    reward_w_error: float = 0.3
+    reward_w_stability: float = 0.2
+    reward_w_consistency: float = 0.1
+    drift_penalty_scale: float = 0.1
+    consistency_window: int = 10
+    # credit assignment (outcome-directed)
+    outcome_credit_gamma: float = 0.95
+    outcome_credit_horizon: int = 5
+    # safety envelope
+    safety_enabled: bool = True
+    safety_max_param_drift: float = 100.0
+    safety_max_param_norm: float = 5000.0
+    safety_min_entropy: float = 0.1
+    safety_max_policy_kl: float = 2.0
+    safety_min_probe_perf: float = 0.01
+    safety_risk_threshold: float = 0.7
+    safety_min_mag_scale: float = 0.1
+    # adaptive exploration
+    adaptive_exploration: bool = True
+    exploration_uncertainty_scale: float = 2.0
+    # policy learning rate sweep
+    policy_lr_sweep: List[float] = field(default_factory=lambda: [0, 1e-5, 1e-4, 1e-3, 1e-2])
+    # best score weights (validation only)
+    best_score_w_perf: float = 1.0
+    best_score_w_rfr: float = 0.5
+    best_score_w_drift: float = 0.1
+    best_score_w_stab: float = 0.3
+    # relay
+    relay_stage_rounds: List[int] = field(default_factory=lambda: [450, 900, 1350, 1800])
+    # experiment conditions
+    p6_conditions: List[str] = field(default_factory=lambda: [
+        "FullPolicy", "NoMemory", "FrozenPolicy", "RandomMemory",
+        "ZeroMemory", "NoCredit", "NoAlternatives", "NoExploration",
+        "NoOutcomeReward", "Oracle", "Random",
+    ])
+    # diagnostic
+    diagnostic_rounds: int = 50
+    diagnostic_seeds: int = 3
+    # hard task difficulty
+    difficulty_levels: List[str] = field(default_factory=lambda: ["simple", "medium", "hard"])
+
     # ---- data sources ----
     datasets: Dict[str, str] = field(default_factory=lambda: {
         "general": "wikitext",          # wikitext-103-raw-v1 (Wikipedia dump)
